@@ -19,6 +19,35 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Paleta do protótipo Prisma (espelhada em constants/_theme.ts).
+        prisma: {
+          background: "#0a0e14",
+          surface: "#12161d",
+          ink: "#f4f6fa",
+          body: "#e5e7eb",
+          muted: "#9ca3af",
+          faint: "#6b7280",
+          accent: "#60a5fa",
+          brand: "#3b82f6",
+          "brand-dark": "#1d4ed8",
+          success: "#10b981",
+          danger: "#f87171",
+          "danger-text": "#fca5a5",
+          // Superfícies translúcidas usadas em campos, cards e bordas.
+          field: "rgba(255, 255, 255, 0.045)",
+          "field-border": "rgba(255, 255, 255, 0.07)",
+          "field-border-strong": "rgba(255, 255, 255, 0.09)",
+          "field-active": "rgba(59, 130, 246, 0.10)",
+          "sheet-border": "rgba(96, 165, 250, 0.16)",
+          "info-bg": "rgba(96, 165, 250, 0.07)",
+          "info-border": "rgba(96, 165, 250, 0.16)",
+          "danger-bg": "rgba(239, 68, 68, 0.10)",
+          "danger-border": "rgba(239, 68, 68, 0.30)",
+          "success-bg": "rgba(16, 185, 129, 0.12)",
+          "success-border": "rgba(16, 185, 129, 0.40)",
+          "ghost-bg": "rgba(255, 255, 255, 0.06)",
+          "ghost-border": "rgba(255, 255, 255, 0.08)",
+        },
         primary: {
           0: "rgb(var(--color-primary-0)/<alpha-value>)",
           50: "rgb(var(--color-primary-50)/<alpha-value>)",

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics=""><meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:Inter,system-ui,sans-serif}
+a{color:#2a78d6}a:hover{color:#1a5aa8}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 Inter,system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 Inter,system-ui,sans-serif;color:rgba(0,0,0,.55);max-width:402px}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 Inter,system-ui,sans-serif;color:rgba(0,0,0,.5)}
+@keyframes pFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-40px) scale(1.12)}66%{transform:translate(-40px,40px) scale(.92)}}
+@keyframes pPulse{0%,100%{opacity:.45}50%{opacity:.8}}
+@keyframes pRise{0%{transform:translateY(0);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateY(-360px);opacity:0}}
+@keyframes pIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pSpin{to{transform:rotate(360deg)}}
+</style></helmet>
+
+<section class="dv-turn" id="t5" style="position: absolute; left: 3438px; top: -188px">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Vincular Contas — passo do onboarding, com pular</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="5a">
+<div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Último passo do cadastro: cada plataforma conectada acende sua cor no prisma do topo e na barra de progresso. Toque em Conectar para simular o OAuth (spinner → conectado; toque de novo para desvincular). "Pular por agora" sempre disponível.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif;display:flex;flex-direction:column">
+  <div style="position:relative;height:236px;flex:none;overflow:hidden">
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-250px;left:-150px;background:radial-gradient(circle,rgba(0,112,204,.45) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out;transition:opacity .6s ease;opacity:{{ p.glowPs }}"></div>
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-200px;right:-190px;background:radial-gradient(circle,rgba(102,192,244,.45) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse;transition:opacity .6s ease;opacity:{{ p.glowSteam }}"></div>
+    <div style="position:absolute;width:330px;height:330px;border-radius:50%;filter:blur(90px);bottom:-180px;left:10px;background:radial-gradient(circle,rgba(16,124,16,.4) 0%,transparent 70%);animation:pFloat 18s infinite ease-in-out;animation-delay:2s;transition:opacity .6s ease;opacity:{{ p.glowXbox }}"></div>
+    <div style="position:absolute;width:330px;height:330px;border-radius:50%;filter:blur(90px);bottom:-170px;right:-40px;background:radial-gradient(circle,rgba(212,160,23,.4) 0%,transparent 70%);animation:pFloat 22s infinite ease-in-out reverse;animation-delay:3s;transition:opacity .6s ease;opacity:{{ p.glowRetro }}"></div>
+    <div style="position:absolute;inset:0;background:rgba(10,14,20,.66)"></div>
+
+    <div style="position:absolute;left:0;right:0;top:54px;bottom:0;padding:0 24px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:48px;flex:none">
+        <button style="width:40px;height:40px;margin-left:-10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#e5e7eb;font-size:15px;cursor:pointer"><i class="fas fa-arrow-left"></i></button>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:8px">
+        <h1 style="margin:0;font-size:30px;font-weight:800;letter-spacing:-1.2px;color:#f4f6fa;line-height:1.1">Vincule suas contas</h1>
+        <p style="margin:8px 0 0;font-size:13.5px;color:#9ca3af;line-height:1.5">Cada plataforma conectada acende sua cor no seu prisma. Dá para vincular o resto depois.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1;background:#12161d;border-radius:34px 34px 0 0;border-top:1px solid rgba(96,165,250,.16);box-shadow:0 -24px 60px rgba(0,0,0,.6);padding:22px 24px 46px;display:flex;flex-direction:column;min-height:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex:none">
+      <span style="font-size:13px;font-weight:600;color:#e5e7eb">{{ p.counter }}</span>
+      <div style="display:flex;gap:4px">
+        <div style="width:26px;height:4px;border-radius:2px;background:{{ p.steamBar }}"></div>
+        <div style="width:26px;height:4px;border-radius:2px;background:{{ p.psBar }}"></div>
+        <div style="width:26px;height:4px;border-radius:2px;background:{{ p.xboxBar }}"></div>
+        <div style="width:26px;height:4px;border-radius:2px;background:{{ p.retroBar }}"></div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:2px 4px">
+      <div style="display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.045);border:1px solid {{ p.steamBorder }};border-radius:18px;padding:14px 14px 14px 16px">
+        <div style="width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#66c0f4;background:rgba(102,192,244,.14)"><i class="fab fa-steam"></i></div>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:15px;font-weight:700;color:#f4f6fa">Steam</p>
+          <p style="margin:3px 0 0;font-size:12px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.steamDesc }}</p>
+        </div>
+        <button onClick="{{ p.tapSteam }}" style="flex:none;height:36px;padding:{{ p.steamBtnPad }};border-radius:11px;font-size:13px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;background:{{ p.steamBtnBg }};color:{{ p.steamBtnColor }};border:1px solid {{ p.steamBtnBorder }}">
+          <i class="{{ p.steamBtnIcon }}" style="font-size:12px"></i>{{ p.steamBtnLabel }}
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.045);border:1px solid {{ p.psBorder }};border-radius:18px;padding:14px 14px 14px 16px">
+        <div style="width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#4a9eea;background:rgba(0,112,204,.18)"><i class="fab fa-playstation"></i></div>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:15px;font-weight:700;color:#f4f6fa">PlayStation</p>
+          <p style="margin:3px 0 0;font-size:12px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.psDesc }}</p>
+        </div>
+        <button onClick="{{ p.tapPs }}" style="flex:none;height:36px;padding:{{ p.psBtnPad }};border-radius:11px;font-size:13px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;background:{{ p.psBtnBg }};color:{{ p.psBtnColor }};border:1px solid {{ p.psBtnBorder }}">
+          <i class="{{ p.psBtnIcon }}" style="font-size:12px"></i>{{ p.psBtnLabel }}
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.045);border:1px solid {{ p.xboxBorder }};border-radius:18px;padding:14px 14px 14px 16px">
+        <div style="width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#4caf50;background:rgba(16,124,16,.2)"><i class="fab fa-xbox"></i></div>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:15px;font-weight:700;color:#f4f6fa">Xbox Live</p>
+          <p style="margin:3px 0 0;font-size:12px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.xboxDesc }}</p>
+        </div>
+        <button onClick="{{ p.tapXbox }}" style="flex:none;height:36px;padding:{{ p.xboxBtnPad }};border-radius:11px;font-size:13px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;background:{{ p.xboxBtnBg }};color:{{ p.xboxBtnColor }};border:1px solid {{ p.xboxBtnBorder }}">
+          <i class="{{ p.xboxBtnIcon }}" style="font-size:12px"></i>{{ p.xboxBtnLabel }}
+        </button>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.045);border:1px solid {{ p.retroBorder }};border-radius:18px;padding:14px 14px 14px 16px">
+        <div style="width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;color:#D4A017;background:rgba(212,160,23,.16)"><i class="fas fa-trophy"></i></div>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:15px;font-weight:700;color:#f4f6fa">RetroAchievements</p>
+          <p style="margin:3px 0 0;font-size:12px;color:#9ca3af;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.retroDesc }}</p>
+        </div>
+        <button onClick="{{ p.tapRetro }}" style="flex:none;height:36px;padding:{{ p.retroBtnPad }};border-radius:11px;font-size:13px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;gap:7px;background:{{ p.retroBtnBg }};color:{{ p.retroBtnColor }};border:1px solid {{ p.retroBtnBorder }}">
+          <i class="{{ p.retroBtnIcon }}" style="font-size:12px"></i>{{ p.retroBtnLabel }}
+        </button>
+      </div>
+
+      <div style="display:flex;gap:12px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.16);border-radius:16px;padding:14px 16px;margin-top:2px">
+        <i class="fas fa-lock" style="font-size:13px;color:#60a5fa;margin-top:2px"></i>
+        <p style="margin:0;font-size:12px;color:#9ca3af;line-height:1.5">O Prisma só lê conquistas e estatísticas públicas. Nunca postamos nem alteramos nada nas suas contas.</p>
+      </div>
+    </div>
+
+    <button onClick="{{ p.finish }}" style="flex:none;width:100%;height:58px;margin-top:16px;border:none;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.32);opacity:{{ p.finishOpacity }}">
+      <sc-if value="{{ p.finishing }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>
+      {{ p.finishLabel }}
+    </button>
+  </div>
+
+  <sc-if value="{{ p.modalOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:absolute;inset:0;z-index:80;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(4,7,11,.72);backdrop-filter:blur(3px)">
+    <div onClick="{{ p.closeModal }}" style="flex:1;min-height:54px"></div>
+    <div style="background:#141a23;border-radius:28px 28px 0 0;border:1px solid rgba(96,165,250,.16);border-bottom:none;box-shadow:0 -20px 60px rgba(0,0,0,.7);display:flex;flex-direction:column;max-height:88%;animation:pIn .32s ease both">
+      <div style="display:flex;align-items:center;gap:13px;padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.07);flex:none">
+        <div style="width:46px;height:46px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;color:{{ p.modalColor }};background:{{ p.modalIconBg }}"><i class="{{ p.modalIcon }}"></i></div>
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:17px;font-weight:700;color:#f4f6fa">{{ p.modalName }}</p>
+          <p style="margin:2px 0 0;font-size:13px;color:#9ca3af">Configuração de API</p>
+        </div>
+        <button onClick="{{ p.closeModal }}" style="width:34px;height:34px;flex:none;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:#9ca3af;font-size:14px;cursor:pointer"><i class="fas fa-xmark"></i></button>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow:auto;padding:18px 22px 8px;display:flex;flex-direction:column;gap:12px">
+        <sc-if value="{{ p.modalSteam }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
+            <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">1) Gere sua Steam Web API Key</p>
+            <p style="margin:5px 0 0;font-size:12.5px;color:#9ca3af;line-height:1.55">Acesse <a href="https://steamcommunity.com/dev/apikey" style="color:#60a5fa">steamcommunity.com/dev/apikey</a>, faça login com sua conta Steam, informe um domínio (pode usar <span style="font-family:ui-monospace,Menlo,monospace;color:#cbd5e1">localhost</span>), aceite os termos e copie a chave gerada.</p>
+          </div>
+          <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
+            <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">2) Cole a chave abaixo</p>
+            <p style="margin:5px 0 0;font-size:12.5px;color:#9ca3af;line-height:1.55">Vamos redirecionar você ao Steam para confirmar que a conta é sua (login via OpenID). Sua chave fica só no seu perfil e é usada para sincronizar jogos e conquistas.</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ p.modalPs }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
+            <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">1) Confirme que esta conta é sua</p>
+            <p style="margin:5px 0 0;font-size:12.5px;color:#9ca3af;line-height:1.55">Cole o código abaixo em qualquer ponto do campo "Sobre Mim" do seu perfil PlayStation antes de vincular. Não precisa apagar o texto existente. Pode levar alguns segundos para refletir.</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ p.modalRetro }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
+            <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">1) Confirme que esta conta é sua</p>
+            <p style="margin:5px 0 0;font-size:12.5px;color:#9ca3af;line-height:1.55">Cole o código abaixo em qualquer ponto do campo "Motto" do seu perfil RetroAchievements antes de vincular. Pode mantê-lo junto do seu texto atual.</p>
+            <a href="https://retroachievements.org/settings" style="display:inline-block;margin-top:8px;font-size:12.5px;color:#60a5fa">Abrir configurações do RetroAchievements</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ p.modalHasCode }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(8,12,18,.85);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+            <div style="flex:1;min-width:0;text-align:center">
+              <p style="margin:0;font-size:11.5px;color:#6b7280">Código de verificação</p>
+              <p style="margin:5px 0 0;font:700 21px/1 ui-monospace,Menlo,monospace;letter-spacing:2px;color:#f4f6fa">{{ p.modalCode }}</p>
+            </div>
+            <button onClick="{{ p.copyCode }}" style="width:40px;height:40px;flex:none;border-radius:12px;background:rgba(96,165,250,.14);border:1px solid rgba(96,165,250,.28);color:#93c5fd;font-size:14px;cursor:pointer"><i class="{{ p.copyIcon }}"></i></button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ p.modalPs }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
+            <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">2) Insira suas credenciais</p>
+            <p style="margin:5px 0 0;font-size:12.5px;color:#9ca3af;line-height:1.55">PSN ID e Token de Acesso (NPSSO). Obtenha o NPSSO em <a href="https://ca.account.sony.com/api/v1/ssocookie" style="color:#60a5fa">ca.account.sony.com/api/v1/ssocookie</a> enquanto conectado na sua conta PlayStation.</p>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ p.modalRetro }}" hint-placeholder-val="{{ false }}">
+          <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
+            <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">2) Insira suas credenciais</p>
+            <p style="margin:5px 0 0;font-size:12.5px;color:#9ca3af;line-height:1.55">Nome de usuário e Web API Key, disponíveis no menu de configurações do RetroAchievements.</p>
+          </div>
+        </sc-if>
+
+        <div style="margin-top:2px">
+          <p style="margin:0 0 8px 2px;font-size:12.5px;font-weight:600;color:#cbd5e1">{{ p.f1Label }}</p>
+          <input type="text" placeholder="{{ p.f1Ph }}" value="{{ p.f1 }}" onChange="{{ p.setF1 }}" style="width:100%;height:54px;box-sizing:border-box;background:rgba(8,12,18,.8);border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:0 16px;color:#e5e7eb;font-size:15px;font-family:Inter,sans-serif;outline:none" style-focus="border-color:rgba(96,165,250,.6)">
+        </div>
+
+        <sc-if value="{{ p.modalHasF2 }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <p style="margin:0 0 8px 2px;font-size:12.5px;font-weight:600;color:#cbd5e1">{{ p.f2Label }}</p>
+            <input type="text" placeholder="{{ p.f2Ph }}" value="{{ p.f2 }}" onChange="{{ p.setF2 }}" style="width:100%;height:54px;box-sizing:border-box;background:rgba(8,12,18,.8);border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:0 16px;color:#e5e7eb;font-size:15px;font-family:Inter,sans-serif;outline:none" style-focus="border-color:rgba(96,165,250,.6)">
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;gap:12px;padding:16px 22px 40px;flex:none;border-top:1px solid rgba(255,255,255,.07)">
+        <button onClick="{{ p.closeModal }}" style="flex:none;width:104px;height:54px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);color:#e5e7eb;font-size:15.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer">Sair</button>
+        <button onClick="{{ p.submitModal }}" style="flex:1;height:54px;border:none;border-radius:16px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 10px 26px rgba(59,130,246,.32);color:#fff;font-size:15.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;opacity:{{ p.modalBtnOpacity }}">
+          <sc-if value="{{ p.modalLoading }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>
+          {{ p.modalBtnLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">“faz a versão de gerenciamento dessa tela (dentro de Ajustes)” · “mostra o estado de erro na conexão” · “segue para o Dashboard”</p>
+</section>
+
+<section class="dv-turn" id="t4" style="position: absolute; left: 2918px; top: -188px">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Esqueci a senha — recuperação em 3 estados</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="4a">
+<div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>E-mail → código de 6 dígitos (com auto-avanço e reenvio em contagem) → nova senha → confirmação. Tudo no mesmo sheet, sem trocar de tela: o usuário nunca perde o contexto. Clicável de ponta a ponta.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif;display:flex;flex-direction:column">
+  <div style="position:relative;height:250px;flex:none;overflow:hidden">
+    <div style="position:absolute;width:480px;height:480px;border-radius:50%;filter:blur(90px);top:-260px;left:-160px;background:radial-gradient(circle,rgba(0,112,204,.5) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out"></div>
+    <div style="position:absolute;width:480px;height:480px;border-radius:50%;filter:blur(90px);top:-200px;right:-200px;background:radial-gradient(circle,rgba(102,192,244,.45) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+    <div style="position:absolute;width:340px;height:340px;border-radius:50%;filter:blur(90px);bottom:-190px;left:20px;background:radial-gradient(circle,rgba(16,124,16,.26) 0%,transparent 70%);animation:pFloat 22s infinite ease-in-out;animation-delay:3s"></div>
+    <div style="position:absolute;inset:0;background:rgba(10,14,20,.68)"></div>
+
+    <div style="position:absolute;left:0;right:0;top:54px;bottom:0;padding:0 24px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:14px;height:48px;flex:none">
+        <button onClick="{{ f.back }}" style="width:40px;height:40px;margin-left:-10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#e5e7eb;font-size:15px;cursor:pointer"><i class="fas fa-arrow-left"></i></button>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:8px">
+        <h1 style="margin:0;font-size:30px;font-weight:800;letter-spacing:-1.2px;color:#f4f6fa;line-height:1.1">{{ f.title }}</h1>
+        <p style="margin:8px 0 0;font-size:13.5px;color:#9ca3af;line-height:1.5">{{ f.subtitle }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1;background:#12161d;border-radius:34px 34px 0 0;border-top:1px solid rgba(96,165,250,.16);box-shadow:0 -24px 60px rgba(0,0,0,.6);padding:22px 24px 46px;display:flex;flex-direction:column">
+    <div style="height:26px;flex:none"></div>
+
+    <sc-if value="{{ f.s1 }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:12px">
+          <i class="fas fa-envelope" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="email" placeholder="E-mail da conta" value="{{ f.email }}" onChange="{{ f.setEmail }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+        </div>
+        <div style="display:flex;gap:12px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.16);border-radius:16px;padding:14px 16px">
+          <i class="fas fa-circle-info" style="font-size:14px;color:#60a5fa;margin-top:2px"></i>
+          <p style="margin:0;font-size:12.5px;color:#9ca3af;line-height:1.5">O código chega em segundos. Confira também a pasta de spam.</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ f.s2 }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <div style="display:flex;gap:9px">
+          <input inputmode="numeric" maxlength="1" value="{{ f.d0 }}" onChange="{{ f.setD0 }}" ref="{{ f.ref0 }}" style="flex:1;min-width:0;height:64px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;color:#f4f6fa;font-size:26px;font-weight:700;font-family:Inter,sans-serif;outline:none" style-focus="border-color:#3b82f6;background:rgba(59,130,246,.1)">
+          <input inputmode="numeric" maxlength="1" value="{{ f.d1 }}" onChange="{{ f.setD1 }}" ref="{{ f.ref1 }}" style="flex:1;min-width:0;height:64px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;color:#f4f6fa;font-size:26px;font-weight:700;font-family:Inter,sans-serif;outline:none" style-focus="border-color:#3b82f6;background:rgba(59,130,246,.1)">
+          <input inputmode="numeric" maxlength="1" value="{{ f.d2 }}" onChange="{{ f.setD2 }}" ref="{{ f.ref2 }}" style="flex:1;min-width:0;height:64px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;color:#f4f6fa;font-size:26px;font-weight:700;font-family:Inter,sans-serif;outline:none" style-focus="border-color:#3b82f6;background:rgba(59,130,246,.1)">
+          <input inputmode="numeric" maxlength="1" value="{{ f.d3 }}" onChange="{{ f.setD3 }}" ref="{{ f.ref3 }}" style="flex:1;min-width:0;height:64px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;color:#f4f6fa;font-size:26px;font-weight:700;font-family:Inter,sans-serif;outline:none" style-focus="border-color:#3b82f6;background:rgba(59,130,246,.1)">
+          <input inputmode="numeric" maxlength="1" value="{{ f.d4 }}" onChange="{{ f.setD4 }}" ref="{{ f.ref4 }}" style="flex:1;min-width:0;height:64px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;color:#f4f6fa;font-size:26px;font-weight:700;font-family:Inter,sans-serif;outline:none" style-focus="border-color:#3b82f6;background:rgba(59,130,246,.1)">
+          <input inputmode="numeric" maxlength="1" value="{{ f.d5 }}" onChange="{{ f.setD5 }}" ref="{{ f.ref5 }}" style="flex:1;min-width:0;height:64px;text-align:center;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);border-radius:16px;color:#f4f6fa;font-size:26px;font-weight:700;font-family:Inter,sans-serif;outline:none" style-focus="border-color:#3b82f6;background:rgba(59,130,246,.1)">
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <span style="font-size:13px;color:#6b7280">Não recebeu?</span>
+          <button onClick="{{ f.resend }}" style="background:none;border:none;padding:6px 0;font-size:13.5px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;color:{{ f.resendColor }}">{{ f.resendLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ f.s3 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 8px 0 16px;gap:12px">
+          <i class="fas fa-lock" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="{{ f.passType }}" placeholder="Nova senha" value="{{ f.pass }}" onChange="{{ f.setPass }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+          <button type="button" onClick="{{ f.toggleEye }}" style="width:40px;height:40px;background:none;border:none;color:#6b7280;font-size:15px;cursor:pointer"><i class="{{ f.eyeIcon }}"></i></button>
+        </div>
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:10px">
+          <i class="fas fa-lock" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="{{ f.passType }}" placeholder="Confirmar nova senha" value="{{ f.pass2 }}" onChange="{{ f.setPass2 }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+          <span style="font-size:13px;color:{{ f.matchColor }}"><i class="{{ f.matchIcon }}"></i></span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ f.s4 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 8px 0">
+        <div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:#10b981;background:rgba(16,185,129,.12);border:1.5px solid rgba(16,185,129,.4);margin-bottom:18px"><i class="fas fa-check"></i></div>
+        <h3 style="margin:0;font-size:20px;font-weight:700;color:#f4f6fa">Senha redefinida</h3>
+        <p style="margin:8px 0 0;font-size:13.5px;color:#9ca3af;line-height:1.5">Sua nova senha já está ativa. Entre novamente para continuar.</p>
+      </div>
+    </sc-if>
+
+    <div style="flex:1"></div>
+
+    <sc-if value="{{ f.hasError }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:14px;padding:12px 14px;margin-bottom:12px">
+        <i class="fas fa-circle-exclamation" style="color:#f87171;font-size:14px"></i>
+        <span style="font-size:12.5px;color:#fca5a5">{{ f.error }}</span>
+      </div>
+    </sc-if>
+
+    <button onClick="{{ f.next }}" style="width:100%;height:58px;border:none;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.32);opacity:{{ f.btnOpacity }}">
+      <sc-if value="{{ f.loading }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>
+      {{ f.btnLabel }}
+    </button>
+    <p style="text-align:center;margin:18px 0 0;font-size:14px;color:#9ca3af">Lembrou a senha? <a href="#2a" style="color:#60a5fa;font-weight:600;text-decoration:none">Entrar</a></p>
+  </div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">“aprovado, segue para Vincular Contas” · “usa link mágico no lugar do código” · “mostra a força da senha aqui também”</p>
+</section>
+
+<section class="dv-turn" id="t3" style="position: absolute; left: 2398px; top: -175px">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Cadastro — 3 passos, sobre a base aprovada da <a class="dv-oid" href="#2a">2a</a></span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3a">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Fluxo em 3 passos (identidade → e-mail → senha) no mesmo sheet: barra de progresso com o espectro das plataformas, validação em tempo real, checagem do @nickname e medidor de força da senha. Clicável — preencha e avance.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif;display:flex;flex-direction:column">
+  <div style="position:relative;height:250px;flex:none;overflow:hidden">
+    <div style="position:absolute;width:480px;height:480px;border-radius:50%;filter:blur(90px);top:-260px;left:-160px;background:radial-gradient(circle,rgba(0,112,204,.5) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out"></div>
+    <div style="position:absolute;width:480px;height:480px;border-radius:50%;filter:blur(90px);top:-200px;right:-200px;background:radial-gradient(circle,rgba(102,192,244,.45) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+    <div style="position:absolute;width:340px;height:340px;border-radius:50%;filter:blur(90px);bottom:-190px;left:20px;background:radial-gradient(circle,rgba(212,160,23,.28) 0%,transparent 70%);animation:pFloat 22s infinite ease-in-out;animation-delay:3s"></div>
+    <div style="position:absolute;inset:0;background:rgba(10,14,20,.68)"></div>
+
+    <div style="position:absolute;left:0;right:0;top:54px;bottom:0;padding:0 24px;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:14px;height:48px;flex:none">
+        <button onClick="{{ r.back }}" style="width:40px;height:40px;margin-left:-10px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#e5e7eb;font-size:15px;cursor:pointer"><i class="fas fa-arrow-left"></i></button>
+        <span style="font:600 11.5px/1 ui-monospace,Menlo,monospace;letter-spacing:2px;color:#60a5fa">{{ r.stepLabel }}</span>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px;flex:none">
+        <div style="flex:1;height:4px;border-radius:2px;background:{{ r.bar1 }}"></div>
+        <div style="flex:1;height:4px;border-radius:2px;background:{{ r.bar2 }}"></div>
+        <div style="flex:1;height:4px;border-radius:2px;background:{{ r.bar3 }}"></div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:8px">
+        <h1 style="margin:0;font-size:30px;font-weight:800;letter-spacing:-1.2px;color:#f4f6fa;line-height:1.1">{{ r.title }}</h1>
+        <p style="margin:8px 0 0;font-size:13.5px;color:#9ca3af;line-height:1.5">{{ r.subtitle }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:1;background:#12161d;border-radius:34px 34px 0 0;border-top:1px solid rgba(96,165,250,.16);box-shadow:0 -24px 60px rgba(0,0,0,.6);padding:22px 24px 46px;display:flex;flex-direction:column">
+    <div style="height:26px;flex:none"></div>
+
+    <sc-if value="{{ r.s1 }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:12px">
+          <i class="fas fa-user" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="text" placeholder="Nome completo" value="{{ r.name }}" onChange="{{ r.setName }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+        </div>
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:8px">
+          <i class="fas fa-at" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="text" placeholder="nickname" value="{{ r.nick }}" onChange="{{ r.setNick }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+          <span style="font-size:12.5px;font-weight:600;color:{{ r.nickColor }}">{{ r.nickStatus }}</span>
+        </div>
+        <p style="margin:2px 2px 0;font-size:12px;color:#6b7280;line-height:1.5">Apenas letras minúsculas, números e underscore. Este será seu @ público no Prisma.</p>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ r.s2 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:12px">
+          <i class="fas fa-envelope" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="email" placeholder="seu@email.com" value="{{ r.email }}" onChange="{{ r.setEmail }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+        </div>
+        <div style="display:flex;gap:12px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.16);border-radius:16px;padding:14px 16px">
+          <i class="fas fa-shield-halved" style="font-size:14px;color:#60a5fa;margin-top:2px"></i>
+          <p style="margin:0;font-size:12.5px;color:#9ca3af;line-height:1.5">Enviaremos um código de confirmação. Seu e-mail nunca aparece no perfil público.</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ r.s3 }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 8px 0 16px;gap:12px">
+          <i class="fas fa-lock" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="{{ r.passType }}" placeholder="Senha" value="{{ r.pass }}" onChange="{{ r.setPass }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+          <button type="button" onClick="{{ r.toggleEye }}" style="width:40px;height:40px;background:none;border:none;color:#6b7280;font-size:15px;cursor:pointer"><i class="{{ r.eyeIcon }}"></i></button>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:0 2px">
+          <div style="flex:1;display:flex;gap:5px">
+            <div style="flex:1;height:4px;border-radius:2px;background:{{ r.pw1 }}"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:{{ r.pw2 }}"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:{{ r.pw3 }}"></div>
+            <div style="flex:1;height:4px;border-radius:2px;background:{{ r.pw4 }}"></div>
+          </div>
+          <span style="font-size:11.5px;font-weight:600;color:{{ r.pwColor }};min-width:56px;text-align:right">{{ r.pwLabel }}</span>
+        </div>
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:10px;margin-top:2px">
+          <i class="fas fa-lock" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="{{ r.passType }}" placeholder="Confirmar senha" value="{{ r.pass2 }}" onChange="{{ r.setPass2 }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+          <span style="font-size:13px;color:{{ r.matchColor }}"><i class="{{ r.matchIcon }}"></i></span>
+        </div>
+        <p style="margin:6px 2px 0;font-size:12px;color:#6b7280;line-height:1.5">Ao criar a conta você aceita os <a href="#3a" style="color:#60a5fa;text-decoration:none">Termos</a> e a <a href="#3a" style="color:#60a5fa;text-decoration:none">Política de Privacidade</a>.</p>
+      </div>
+    </sc-if>
+
+    <div style="flex:1"></div>
+
+    <sc-if value="{{ r.hasError }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:14px;padding:12px 14px;margin-bottom:12px">
+        <i class="fas fa-circle-exclamation" style="color:#f87171;font-size:14px"></i>
+        <span style="font-size:12.5px;color:#fca5a5">{{ r.error }}</span>
+      </div>
+    </sc-if>
+
+    <button onClick="{{ r.next }}" style="width:100%;height:58px;border:none;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.32);opacity:{{ r.btnOpacity }}">
+      <sc-if value="{{ r.loading }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>
+      {{ r.btnLabel }}
+    </button>
+    <p style="text-align:center;margin:18px 0 0;font-size:14px;color:#9ca3af">Já tem uma conta? <a href="#2a" style="color:#60a5fa;font-weight:600;text-decoration:none">Entrar</a></p>
+  </div>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">“aprovado, segue para Esqueci-senha” · “junta e-mail e senha num passo só” · “tira o medidor de força”</p>
+</section>
+
+
+
+
+<div class="dv-opts" style="position: absolute; left: 1841px; top: -128px">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Topo: feixes prisma + partículas e o logotipo PRISMA em gradiente, como na <a class="dv-oid" href="#1a">1a</a>. Sheet, campos e botão mantidos da <a class="dv-oid" href="#1b">1b</a>, agora na paleta azul do sistema (#3b82f6 → #1d4ed8, links #60a5fa).</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif;display:flex;flex-direction:column">
+  <div style="position:relative;height:330px;flex:none;overflow:hidden">
+    <div style="position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);top:-240px;left:-180px;background:radial-gradient(circle,rgba(0,112,204,.55) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out"></div>
+    <div style="position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);top:-160px;right:-220px;background:radial-gradient(circle,rgba(102,192,244,.5) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+    <div style="position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(90px);bottom:-220px;left:-40px;background:radial-gradient(circle,rgba(16,124,16,.35) 0%,transparent 70%);animation:pFloat 18s infinite ease-in-out;animation-delay:2s"></div>
+    <div style="position:absolute;width:360px;height:360px;border-radius:50%;filter:blur(90px);bottom:-180px;right:-80px;background:radial-gradient(circle,rgba(212,160,23,.32) 0%,transparent 70%);animation:pFloat 22s infinite ease-in-out reverse;animation-delay:3s"></div>
+    <div style="position:absolute;inset:0;background:rgba(10,14,20,.68)"></div>
+    <div style="position:absolute;left:16%;bottom:0;width:3px;height:3px;border-radius:50%;background:rgba(96,165,250,.8);animation:pRise 14s linear infinite"></div>
+    <div style="position:absolute;left:40%;bottom:0;width:3px;height:3px;border-radius:50%;background:rgba(102,192,244,.7);animation:pRise 17s linear infinite;animation-delay:3s"></div>
+    <div style="position:absolute;left:66%;bottom:0;width:3px;height:3px;border-radius:50%;background:rgba(212,160,23,.6);animation:pRise 19s linear infinite;animation-delay:6s"></div>
+    <div style="position:absolute;left:86%;bottom:0;width:3px;height:3px;border-radius:50%;background:rgba(96,165,250,.7);animation:pRise 15s linear infinite;animation-delay:9s"></div>
+
+    <div style="position:absolute;left:0;right:0;top:54px;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 28px;animation:pIn .6s ease both">
+      <h1 style="margin:0;font-size:52px;font-weight:900;letter-spacing:-2.4px;background:linear-gradient(90deg,#0070CC 0%,#66c0f4 28%,#107C10 60%,#D4A017 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">PRISMA</h1>
+      <p style="margin:10px 0 0;font-size:13.5px;color:#9ca3af;letter-spacing:.2px">Unifique suas conquistas em um só lugar</p>
+    </div>
+  </div>
+
+  <div style="flex:1;background:#12161d;border-radius:34px 34px 0 0;border-top:1px solid rgba(96,165,250,.16);box-shadow:0 -24px 60px rgba(0,0,0,.6);padding:22px 24px 46px;display:flex;flex-direction:column;animation:pIn .55s ease both">
+    <div style="height:24px;flex:none"></div>
+    <h2 style="margin:0 0 20px;font-size:21px;font-weight:700;color:#fff;letter-spacing:-.3px">Entrar</h2>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:12px">
+        <i class="fas fa-envelope" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+        <input type="email" placeholder="E-mail" value="{{ d.email }}" onChange="{{ d.setEmail }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+      </div>
+      <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 8px 0 16px;gap:12px">
+        <i class="fas fa-lock" style="font-size:15px;color:#60a5fa;width:18px;text-align:center"></i>
+        <input type="{{ d.passType }}" placeholder="Senha" value="{{ d.pass }}" onChange="{{ d.setPass }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+        <button type="button" onClick="{{ d.toggleEye }}" style="width:40px;height:40px;background:none;border:none;color:#6b7280;font-size:15px;cursor:pointer"><i class="{{ d.eyeIcon }}"></i></button>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 22px">
+      <div style="display:flex;align-items:center;gap:9px;cursor:pointer" onClick="{{ d.toggleRemember }}">
+        <div style="width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:1.5px solid rgba(255,255,255,.2);background:{{ d.boxBg }}"><i class="{{ d.checkIcon }}"></i></div>
+        <span style="font-size:13.5px;color:#d1d5db">Lembrar-me</span>
+      </div>
+      <a href="#2a" style="font-size:13.5px;color:#60a5fa;font-weight:500;text-decoration:none">Esqueci a senha</a>
+    </div>
+
+    <button onClick="{{ d.submit }}" style="width:100%;height:58px;border:none;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.32)">
+      <sc-if value="{{ d.loading }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>
+      {{ d.btnLabel }}
+    </button>
+
+    <div style="flex:1"></div>
+    <p style="text-align:center;margin:18px 0 0;font-size:14px;color:#9ca3af">Não tem uma conta? <a href="#2a" style="color:#60a5fa;font-weight:600;text-decoration:none">Cadastre-se</a></p>
+  </div>
+</div>
+</x-import>
+</div>
+
+</div></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = {
+    a: { email: 'gabriel@prisma.gg', pass: 'senha123', show: false, remember: true, loading: false, done: false },
+    b: { email: '', pass: '', show: false, remember: true, loading: false, done: false },
+    c: { email: '', pass: '', show: false, remember: false, loading: false, done: false },
+    d: { email: '', pass: '', show: false, remember: true, loading: false, done: false },
+  };
+
+  up(k, patch) { this.setState(s => ({ [k]: { ...s[k], ...patch } })); }
+
+  view(k, accent) {
+    const v = this.state[k];
+    return {
+      email: v.email,
+      pass: v.pass,
+      passType: v.show ? 'text' : 'password',
+      eyeIcon: v.show ? 'fas fa-eye-slash' : 'fas fa-eye',
+      remember: v.remember,
+      loading: v.loading,
+      idle: !v.loading && !v.done,
+      btnLabel: v.done ? 'Bem-vindo!' : v.loading ? 'Entrando…' : 'Entrar',
+      switchBg: v.remember ? accent : 'rgba(255,255,255,.14)',
+      switchX: v.remember ? 'translateX(18px)' : 'translateX(0)',
+      boxBg: v.remember ? accent : 'transparent',
+      checkIcon: v.remember ? 'fas fa-check' : '',
+      setEmail: e => this.up(k, { email: e.target.value }),
+      setPass: e => this.up(k, { pass: e.target.value }),
+      toggleEye: () => this.up(k, { show: !v.show }),
+      toggleRemember: () => this.up(k, { remember: !v.remember }),
+      submit: () => {
+        if (v.loading) return;
+        this.up(k, { loading: true, done: false });
+        setTimeout(() => this.up(k, { loading: false, done: true }), 1300);
+        setTimeout(() => this.up(k, { done: false }), 3200);
+      },
+    };
+  }
+
+  reg = { step: 1, name: '', nick: '', email: '', pass: '', pass2: '', show: false, loading: false, error: '' };
+
+  upReg(patch) { this.reg = { ...this.reg, ...patch }; this.forceUpdate(); }
+
+  regView() {
+    const g = this.reg;
+    const on = '#3b82f6', off = 'rgba(255,255,255,.12)';
+    const nickOk = /^[a-z0-9_]{3,}$/.test(g.nick);
+    const emailOk = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(g.email);
+    const score = [g.pass.length >= 6, g.pass.length >= 10, /[A-Z]/.test(g.pass), /[0-9!@#$%^&*]/.test(g.pass)].filter(Boolean).length;
+    const pwColors = ['rgba(255,255,255,.12)', '#ef4444', '#D4A017', '#66c0f4', '#10b981'];
+    const seg = i => (score >= i ? pwColors[score] : 'rgba(255,255,255,.12)');
+    const titles = {
+      1: ['Crie seu perfil', 'Como você quer ser conhecido no Prisma?'],
+      2: ['Seu e-mail', 'Usamos para proteger a conta e recuperar o acesso.'],
+      3: ['Defina uma senha', 'Mínimo de 6 caracteres. Quanto mais forte, melhor.'],
+    };
+    const t = titles[g.step];
+    const valid = g.step === 1 ? (g.name.trim().length >= 3 && nickOk) : g.step === 2 ? emailOk : (score >= 1 && g.pass === g.pass2);
+    return {
+      s1: g.step === 1, s2: g.step === 2, s3: g.step === 3,
+      stepLabel: 'PASSO ' + g.step + ' DE 3',
+      title: t[0], subtitle: t[1],
+      bar1: on, bar2: g.step >= 2 ? on : off, bar3: g.step >= 3 ? on : off,
+      name: g.name, nick: g.nick, email: g.email, pass: g.pass, pass2: g.pass2,
+      passType: g.show ? 'text' : 'password',
+      eyeIcon: g.show ? 'fas fa-eye-slash' : 'fas fa-eye',
+      nickStatus: g.nick.length === 0 ? '' : nickOk ? 'disponível' : 'inválido',
+      nickColor: nickOk ? '#10b981' : '#f87171',
+      pw1: seg(1), pw2: seg(2), pw3: seg(3), pw4: seg(4),
+      pwColor: pwColors[score], pwLabel: g.pass ? ['', 'Fraca', 'Média', 'Boa', 'Forte'][score] : '',
+      matchIcon: g.pass2 ? (g.pass === g.pass2 ? 'fas fa-check' : 'fas fa-xmark') : '',
+      matchColor: g.pass === g.pass2 ? '#10b981' : '#f87171',
+      error: g.error, hasError: !!g.error,
+      loading: g.loading,
+      btnOpacity: valid ? 1 : 0.5,
+      btnLabel: g.loading ? 'Criando conta…' : g.step === 3 ? 'Criar conta' : 'Continuar',
+      setName: e => this.upReg({ name: e.target.value, error: '' }),
+      setNick: e => this.upReg({ nick: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '_'), error: '' }),
+      setEmail: e => this.upReg({ email: e.target.value, error: '' }),
+      setPass: e => this.upReg({ pass: e.target.value, error: '' }),
+      setPass2: e => this.upReg({ pass2: e.target.value, error: '' }),
+      toggleEye: () => this.upReg({ show: !g.show }),
+      back: () => this.upReg({ step: Math.max(1, g.step - 1), error: '' }),
+      next: () => {
+        if (g.loading) return;
+        if (!valid) {
+          const msg = g.step === 1
+            ? (g.name.trim().length < 3 ? 'Informe seu nome completo (mín. 3 caracteres).' : 'Nickname precisa de 3+ caracteres: a-z, 0-9 e _.')
+            : g.step === 2 ? 'Digite um e-mail válido.'
+            : (g.pass.length < 6 ? 'A senha precisa de no mínimo 6 caracteres.' : 'As senhas não coincidem.');
+          this.upReg({ error: msg });
+          return;
+        }
+        if (g.step < 3) { this.upReg({ step: g.step + 1, error: '' }); return; }
+        this.upReg({ loading: true });
+        setTimeout(() => this.upReg({ loading: false, step: 1, name: '', nick: '', email: '', pass: '', pass2: '' }), 1400);
+      },
+    };
+  }
+
+  fp = { step: 1, email: '', digits: ['', '', '', '', '', ''], pass: '', pass2: '', show: false, loading: false, error: '', timer: 0 };
+  fpRefs = [];
+
+  upFp(patch) { this.fp = { ...this.fp, ...patch }; this.forceUpdate(); }
+
+  startTimer() {
+    clearInterval(this._t);
+    this.upFp({ timer: 45 });
+    this._t = setInterval(() => {
+      if (this.fp.timer <= 1) { clearInterval(this._t); this.upFp({ timer: 0 }); }
+      else this.upFp({ timer: this.fp.timer - 1 });
+    }, 1000);
+  }
+
+  componentWillUnmount() { clearInterval(this._t); }
+
+  fpView() {
+    const g = this.fp;
+    const emailOk = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(g.email);
+    const codeOk = g.digits.every(d => d !== '');
+    const passOk = g.pass.length >= 6 && g.pass === g.pass2;
+    const meta = {
+      1: ['fas fa-key', 'Esqueceu a senha?', 'Informe o e-mail da conta e enviaremos um código de verificação.'],
+      2: ['fas fa-shield-halved', 'Verifique o código', 'Enviamos 6 dígitos para ' + (g.email || 'seu e-mail') + '.'],
+      3: ['fas fa-lock-open', 'Nova senha', 'Escolha uma senha com pelo menos 6 caracteres.'],
+      4: ['fas fa-circle-check', 'Tudo certo!', 'Sua senha foi atualizada com sucesso.'],
+    }[g.step];
+    const valid = g.step === 1 ? emailOk : g.step === 2 ? codeOk : g.step === 3 ? passOk : true;
+    const setDigit = i => e => {
+      const v = e.target.value.replace(/\D/g, '').slice(-1);
+      const digits = g.digits.slice();
+      digits[i] = v;
+      this.upFp({ digits, error: '' });
+      const nx = this.fpRefs[v ? i + 1 : i - 1];
+      if (v && nx && nx.focus) nx.focus();
+    };
+    const out = {
+      s1: g.step === 1, s2: g.step === 2, s3: g.step === 3, s4: g.step === 4,
+      heroIcon: meta[0], title: meta[1], subtitle: meta[2],
+      email: g.email, pass: g.pass, pass2: g.pass2,
+      passType: g.show ? 'text' : 'password',
+      eyeIcon: g.show ? 'fas fa-eye-slash' : 'fas fa-eye',
+      matchIcon: g.pass2 ? (g.pass === g.pass2 ? 'fas fa-check' : 'fas fa-xmark') : '',
+      matchColor: g.pass === g.pass2 ? '#10b981' : '#f87171',
+      resendLabel: g.timer > 0 ? 'Reenviar em 0:' + String(g.timer).padStart(2, '0') : 'Reenviar código',
+      resendColor: g.timer > 0 ? '#6b7280' : '#60a5fa',
+      error: g.error, hasError: !!g.error, loading: g.loading,
+      btnOpacity: valid ? 1 : 0.5,
+      btnLabel: g.loading ? 'Aguarde…' : g.step === 1 ? 'Enviar código' : g.step === 2 ? 'Verificar' : g.step === 3 ? 'Redefinir senha' : 'Voltar para o login',
+      setEmail: e => this.upFp({ email: e.target.value, error: '' }),
+      setPass: e => this.upFp({ pass: e.target.value, error: '' }),
+      setPass2: e => this.upFp({ pass2: e.target.value, error: '' }),
+      toggleEye: () => this.upFp({ show: !g.show }),
+      resend: () => { if (g.timer === 0) this.startTimer(); },
+      back: () => { if (g.step === 1) return; this.upFp({ step: g.step - 1, error: '' }); },
+      next: () => {
+        if (g.loading) return;
+        if (!valid) {
+          this.upFp({ error: g.step === 1 ? 'Digite um e-mail válido.' : g.step === 2 ? 'Preencha os 6 dígitos do código.' : (g.pass.length < 6 ? 'A senha precisa de no mínimo 6 caracteres.' : 'As senhas não coincidem.') });
+          return;
+        }
+        if (g.step === 4) { this.upFp({ step: 1, email: '', digits: ['', '', '', '', '', ''], pass: '', pass2: '' }); return; }
+        this.upFp({ loading: true });
+        setTimeout(() => {
+          this.upFp({ loading: false, step: g.step + 1, error: '' });
+          if (g.step === 1) this.startTimer();
+        }, 1100);
+      },
+    };
+    g.digits.forEach((d, i) => { out['d' + i] = d; out['setD' + i] = setDigit(i); out['ref' + i] = el => { this.fpRefs[i] = el; }; });
+    return out;
+  }
+
+  plat = { steam: 'on', ps: 'off', xbox: 'off', retro: 'off', finishing: false, modal: null, modalLoading: false, copied: false,
+    form: { steam: { a: '', b: '' }, ps: { a: '', b: '' }, retro: { a: '', b: '' } } };
+
+  modalMeta = {
+    steam: { name: 'Steam', icon: 'fab fa-steam', color: '#66c0f4', iconBg: 'rgba(102,192,244,.14)', code: null,
+      f1: ['Steam Web API Key', 'Sua chave de API da Steam'], f2: null },
+    ps: { name: 'PlayStation', icon: 'fab fa-playstation', color: '#4a9eea', iconBg: 'rgba(0,112,204,.18)', code: 'PRISMA-Z37U',
+      f1: ['PSN ID', 'seu_username_psn'], f2: ['Token de Acesso', 'Seu token de acesso da PSN'] },
+    retro: { name: 'RetroAchievements', icon: 'fas fa-trophy', color: '#D4A017', iconBg: 'rgba(212,160,23,.16)', code: 'PRISMA-4Y82',
+      f1: ['Username', 'Seu usuário do RetroAchievements'], f2: ['API Key', 'Sua chave de API'] },
+  };
+
+  setForm(k, field, val) {
+    const form = { ...this.plat.form, [k]: { ...this.plat.form[k], [field]: val } };
+    this.upPlat({ form });
+  }
+
+  modalVals() {
+    const k = this.plat.modal;
+    const out = { modalOpen: !!k, modalSteam: k === 'steam', modalPs: k === 'ps', modalRetro: k === 'retro',
+      closeModal: () => this.upPlat({ modal: null, modalLoading: false, copied: false }) };
+    if (!k) return out;
+    const m = this.modalMeta[k], v = this.plat.form[k];
+    const ready = m.f2 ? (v.a.trim() && v.b.trim()) : !!v.a.trim();
+    return Object.assign(out, {
+      modalName: m.name, modalIcon: m.icon, modalColor: m.color, modalIconBg: m.iconBg,
+      modalHasCode: !!m.code, modalCode: m.code, modalHasF2: !!m.f2,
+      copyIcon: this.plat.copied ? 'fas fa-check' : 'fas fa-copy',
+      copyCode: () => { this.upPlat({ copied: true }); setTimeout(() => this.upPlat({ copied: false }), 1800); },
+      f1Label: m.f1[0], f1Ph: m.f1[1], f1: v.a, setF1: e => this.setForm(k, 'a', e.target.value),
+      f2Label: m.f2 ? m.f2[0] : '', f2Ph: m.f2 ? m.f2[1] : '', f2: v.b, setF2: e => this.setForm(k, 'b', e.target.value),
+      modalLoading: this.plat.modalLoading,
+      modalBtnOpacity: ready ? 1 : 0.5,
+      modalBtnLabel: this.plat.modalLoading ? 'Vinculando…' : 'Vincular Conta',
+      submitModal: () => {
+        if (!ready || this.plat.modalLoading) return;
+        this.upPlat({ modalLoading: true, [k]: 'loading' });
+        setTimeout(() => this.upPlat({ modalLoading: false, modal: null, [k]: 'on' }), 1400);
+      },
+    });
+  }
+
+  upPlat(patch) { this.plat = { ...this.plat, ...patch }; this.forceUpdate(); }
+
+  platView() {
+    const g = this.plat;
+    const handles = { steam: '@gabriel_dev', ps: 'GabrielPS_BR', xbox: 'GabrielX360', retro: 'gabrielretro' };
+    const idle = { steam: 'Vincule sua biblioteca Steam', ps: 'Conecte sua conta PSN', xbox: 'Conecte sua conta Xbox', retro: 'Conquistas retrô' };
+    const colors = { steam: '#66c0f4', ps: '#4a9eea', xbox: '#4caf50', retro: '#D4A017' };
+    const out = {};
+    let n = 0;
+    ['steam', 'ps', 'xbox', 'retro'].forEach(k => {
+      const st = g[k];
+      const on = st === 'on';
+      if (on) n++;
+      out[k + 'Desc'] = on ? 'Conectado · ' + handles[k] : st === 'loading' ? 'Abrindo autenticação…' : idle[k];
+      out[k + 'Border'] = on ? 'rgba(16,185,129,.35)' : 'rgba(255,255,255,.07)';
+      out[k + 'Bar'] = on ? colors[k] : 'rgba(255,255,255,.12)';
+      out[k + 'BtnBg'] = on ? 'rgba(16,185,129,.12)' : 'rgba(96,165,250,.14)';
+      out[k + 'BtnColor'] = on ? '#10b981' : '#93c5fd';
+      out[k + 'BtnBorder'] = on ? 'rgba(16,185,129,.4)' : 'rgba(96,165,250,.28)';
+      out[k + 'BtnIcon'] = st === 'loading' ? 'fas fa-circle-notch fa-spin' : on ? 'fas fa-check' : 'fas fa-link';
+      out[k + 'BtnLabel'] = st === 'loading' || on ? '' : 'Conectar';
+      out[k + 'BtnPad'] = st === 'loading' || on ? '0 11px' : '0 14px';
+      out['glow' + k.charAt(0).toUpperCase() + k.slice(1)] = on ? 1 : 0.12;
+      const tapKey = 'tap' + k.charAt(0).toUpperCase() + k.slice(1);
+      out[tapKey] = () => {
+        if (this.plat[k] === 'loading') return;
+        if (this.plat[k] === 'on') { this.upPlat({ [k]: 'off' }); return; }
+        if (k === 'xbox') { this.upPlat({ xbox: 'loading' }); setTimeout(() => this.upPlat({ xbox: 'on' }), 1300); return; }
+        this.upPlat({ modal: k });
+      };
+    });
+    out.counter = n === 0 ? 'Nenhuma conta vinculada' : n + ' de 4 contas vinculadas';
+    out.finishing = g.finishing;
+    out.finishOpacity = n > 0 ? 1 : 0.5;
+    out.finishLabel = g.finishing ? 'Sincronizando…' : n > 0 ? 'Concluir e sincronizar' : 'Vincule ao menos uma conta';
+    Object.assign(out, this.modalVals());
+    out.xboxDesc = g.xbox === 'on' ? out.xboxDesc : g.xbox === 'loading' ? 'Entrando via OAuth…' : 'Login com OAuth Microsoft';
+    out.finish = () => {
+      if (g.finishing || n === 0) return;
+      this.upPlat({ finishing: true });
+      setTimeout(() => this.upPlat({ finishing: false }), 1600);
+    };
+    return out;
+  }
+
+  renderVals() {
+    return {
+      p: this.platView(),
+      f: this.fpView(),
+      r: this.regView(),
+      a: this.view('a', '#3b82f6'),
+      b: this.view('b', '#66c0f4'),
+      c: this.view('c', '#66c0f4'),
+      d: this.view('d', '#3b82f6'),
+    };
+  }
+}
+</script>
+</body>
+</html>
