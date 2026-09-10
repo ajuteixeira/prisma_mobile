@@ -18,6 +18,8 @@ export const COLORS = {
   faint: "#6b7280",
   /** Links e ícones dos campos. */
   accent: "#60a5fa",
+  /** Texto e ícones sobre as superfícies azuis translúcidas. */
+  accentSoft: "#93c5fd",
   /** Início do gradiente do botão primário. */
   brand: "#3b82f6",
   /** Fim do gradiente do botão primário. */
@@ -25,6 +27,8 @@ export const COLORS = {
   success: "#10b981",
   danger: "#f87171",
   dangerText: "#fca5a5",
+  /** Trilho neutro das barras de progresso e réguas. */
+  track: "rgba(255, 255, 255, 0.12)",
 } as const;
 
 /** Gradiente do botão primário (135deg no protótipo). */
@@ -35,6 +39,8 @@ export const BRAND_GRADIENT = [COLORS.brand, COLORS.brandDark] as const;
  * a intensidade reproduz o peso definido no protótipo.
  */
 export type PrismaBeam = {
+  /** Identificador estável do feixe (usado como key na lista). */
+  id: string;
   /** Canal RGB da cor, sem alpha, para compor as camadas do brilho. */
   rgb: string;
   /** Opacidade acumulada no centro do feixe. */
@@ -44,6 +50,8 @@ export type PrismaBeam = {
   bottom?: number;
   left?: number;
   right?: number;
+  /** Opacidade do feixe inteiro — apaga quando a plataforma não está vinculada. */
+  opacity?: number;
   /** Deslocamento da animação de flutuação. */
   drift: { x: number; y: number };
   duration: number;
@@ -52,7 +60,8 @@ export type PrismaBeam = {
 
 export const PRISMA_BEAMS: PrismaBeam[] = [
   {
-    rgb: "0, 112, 204", // PlayStation
+    id: "playstation",
+    rgb: "0, 112, 204",
     intensity: 0.5,
     size: 480,
     top: -260,
@@ -62,7 +71,8 @@ export const PRISMA_BEAMS: PrismaBeam[] = [
     delay: 0,
   },
   {
-    rgb: "102, 192, 244", // Steam
+    id: "steam",
+    rgb: "102, 192, 244",
     intensity: 0.45,
     size: 480,
     top: -200,
@@ -72,7 +82,8 @@ export const PRISMA_BEAMS: PrismaBeam[] = [
     delay: 1000,
   },
   {
-    rgb: "16, 124, 16", // Xbox
+    id: "xbox",
+    rgb: "16, 124, 16",
     intensity: 0.26,
     size: 340,
     bottom: -190,
@@ -88,3 +99,77 @@ export const PRISMA_SCRIM = "rgba(10, 14, 20, 0.68)";
 
 /** Altura da área de topo (feixes + título) definida no protótipo. */
 export const AUTH_HERO_HEIGHT = 250;
+
+/**
+ * Régua de força da senha (artboard 3a): o índice é a pontuação de 0 a 4 —
+ * um ponto por critério atendido (6+ caracteres, 10+, maiúscula, número/símbolo).
+ */
+export const PASSWORD_STRENGTH_COLORS = [
+  COLORS.track,
+  "#ef4444",
+  "#d4a017",
+  "#66c0f4",
+  COLORS.success,
+] as const;
+
+export const PASSWORD_STRENGTH_LABELS = ["", "Fraca", "Média", "Boa", "Forte"] as const;
+
+/** Altura da área de topo da tela de vinculação (artboard 5a). */
+export const CONNECT_HERO_HEIGHT = 236;
+
+/** O véu de 5a é um pouco mais leve: os quatro feixes precisam aparecer. */
+export const CONNECT_SCRIM = "rgba(10, 14, 20, 0.66)";
+
+/**
+ * Um feixe por plataforma. Na tela de vinculação cada um acende conforme a
+ * conta correspondente é conectada — daí o `id` casar com o slug da API.
+ */
+export const CONNECT_BEAMS: PrismaBeam[] = [
+  {
+    id: "playstation",
+    rgb: "0, 112, 204",
+    intensity: 0.45,
+    size: 460,
+    top: -250,
+    left: -150,
+    drift: { x: 26, y: -18 },
+    duration: 20000,
+    delay: 0,
+  },
+  {
+    id: "steam",
+    rgb: "102, 192, 244",
+    intensity: 0.45,
+    size: 460,
+    top: -200,
+    right: -190,
+    drift: { x: -22, y: 20 },
+    duration: 25000,
+    delay: 1000,
+  },
+  {
+    id: "xbox",
+    rgb: "16, 124, 16",
+    intensity: 0.4,
+    size: 330,
+    bottom: -180,
+    left: 10,
+    drift: { x: 18, y: 14 },
+    duration: 22000,
+    delay: 3000,
+  },
+  {
+    id: "retroachievements",
+    rgb: "212, 160, 23",
+    intensity: 0.4,
+    size: 330,
+    bottom: -170,
+    right: -40,
+    drift: { x: -16, y: 16 },
+    duration: 24000,
+    delay: 2000,
+  },
+];
+
+/** Opacidade do feixe de uma plataforma ainda não vinculada. */
+export const BEAM_OFF_OPACITY = 0.12;
