@@ -22,16 +22,23 @@ const TONES: Record<CalloutTone, { icon: IconName; color: string; container: str
 
 type CalloutProps = {
   tone?: CalloutTone;
+  /** Substitui o ícone padrão do tom, sem mudar as cores. */
+  icon?: IconName;
   children: string;
 };
 
 /** Caixa de aviso — informativa (azul) ou de erro (vermelha). */
-export const Callout = memo(({ tone = "info", children }: CalloutProps) => {
+export const Callout = memo(({ tone = "info", icon, children }: CalloutProps) => {
   const style = TONES[tone];
 
   return (
     <View className={`flex-row ${style.container}`}>
-      <Icon name={style.icon} size={14} color={style.color} style={tone === "info" ? { marginTop: 2 } : undefined} />
+      <Icon
+        name={icon ?? style.icon}
+        size={14}
+        color={style.color}
+        style={tone === "info" ? { marginTop: 2 } : undefined}
+      />
       <Text className={`flex-1 ${style.text}`}>{children}</Text>
     </View>
   );
