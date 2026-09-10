@@ -19,6 +19,16 @@ export const ICONS = {
   checkCircle: { ios: "checkmark.circle.fill", android: "check_circle", web: "check_circle" },
   info: { ios: "info.circle.fill", android: "info", web: "info" },
   alert: { ios: "exclamationmark.circle.fill", android: "error", web: "error" },
+  user: { ios: "person.fill", android: "person", web: "person" },
+  at: { ios: "at", android: "alternate_email", web: "alternate_email" },
+  shield: { ios: "checkmark.shield.fill", android: "shield", web: "shield" },
+  link: { ios: "link", android: "link", web: "link" },
+  close: { ios: "xmark", android: "close", web: "close" },
+  copy: { ios: "doc.on.doc.fill", android: "content_copy", web: "content_copy" },
+  trophy: { ios: "trophy.fill", android: "emoji_events", web: "emoji_events" },
+  gamepad: { ios: "gamecontroller.fill", android: "sports_esports", web: "sports_esports" },
+  joystick: { ios: "arcade.stick", android: "videogame_asset", web: "videogame_asset" },
+  console: { ios: "gamecontroller", android: "stadia_controller", web: "stadia_controller" },
 } as const satisfies Record<string, SymbolName>;
 
 export type IconName = keyof typeof ICONS;

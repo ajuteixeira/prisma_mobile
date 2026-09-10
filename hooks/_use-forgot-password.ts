@@ -5,7 +5,7 @@ import { formatCountdown, useCountdown } from "./_use-countdown";
 export type ForgotPasswordStep = "email" | "code" | "password" | "success";
 
 export const CODE_LENGTH = 6;
-const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 6;
 const RESEND_SECONDS = 60;
 /** Latência simulada enquanto a integração com a API não existe. */
 const REQUEST_DELAY = 1200;

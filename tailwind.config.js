@@ -47,6 +47,19 @@ module.exports = {
           "success-border": "rgba(16, 185, 129, 0.40)",
           "ghost-bg": "rgba(255, 255, 255, 0.06)",
           "ghost-border": "rgba(255, 255, 255, 0.08)",
+          // Trilho neutro de barras de progresso e réguas.
+          track: "rgba(255, 255, 255, 0.12)",
+          // Estados dos cards de plataforma (artboard 5a).
+          "success-border-soft": "rgba(16, 185, 129, 0.35)",
+          "accent-bg": "rgba(96, 165, 250, 0.14)",
+          "accent-border": "rgba(96, 165, 250, 0.28)",
+          "accent-soft": "#93c5fd",
+          // Modal de credenciais.
+          overlay: "rgba(4, 7, 11, 0.72)",
+          elevated: "#141a23",
+          sunken: "rgba(8, 12, 18, 0.85)",
+          "hint-bg": "rgba(59, 130, 246, 0.09)",
+          "hint-title": "#dbeafe",
         },
         primary: {
           0: "rgb(var(--color-primary-0)/<alpha-value>)",
