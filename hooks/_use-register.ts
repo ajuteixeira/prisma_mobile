@@ -43,6 +43,17 @@ const FIELD_STEP: Record<string, RegisterStep> = {
   password: "password",
 };
 
+/** Campo cuja disponibilidade é conferida na API antes de sair de cada passo. */
+const UNIQUE_FIELD: Partial<Record<RegisterStep, "username" | "email">> = {
+  identity: "username",
+  email: "email",
+};
+
+const TAKEN_MESSAGE = {
+  username: "Este nickname já está em uso, escolha outro.",
+  email: "Este e-mail já está em uso, escolha outro.",
+};
+
 const FIELD_LABEL: Record<string, string> = {
   full_name: "Nome",
   username: "Nickname",
@@ -93,6 +104,8 @@ export const useRegister = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  /** Conferindo na API se o nickname/e-mail do passo atual está livre. */
+  const [checking, setChecking] = useState(false);
 
   /** Evita `setState` depois que a tela saiu da pilha no meio da requisição. */
   const mounted = useRef(true);
@@ -182,8 +195,31 @@ export const useRegister = () => {
     else router.replace("/");
   }, [router]);
 
+  /** Só avança se o nickname/e-mail do passo ainda não estiver em uso. */
+  const advance = useCallback(async () => {
+    const field = UNIQUE_FIELD[step];
+    const next = STEPS[stepIndex + 1];
+    if (!field) {
+      setStep(next);
+      return;
+    }
+
+    setChecking(true);
+    try {
+      const value = field === "username" ? username.trim() : email.trim();
+      const result = await authService.availability({ [field]: value });
+      if (!mounted.current) return;
+      if (result[field] === false) setError(TAKEN_MESSAGE[field]);
+      else setStep(next);
+    } catch (requestError) {
+      if (mounted.current) setError(describeRegisterError(requestError).message);
+    } finally {
+      if (mounted.current) setChecking(false);
+    }
+  }, [email, step, stepIndex, username]);
+
   const submit = useCallback(() => {
-    if (loading) return;
+    if (loading || checking) return;
 
     const message = validate();
     if (message) {
@@ -192,7 +228,7 @@ export const useRegister = () => {
     }
 
     if (!isLastStep) {
-      setStep(STEPS[stepIndex + 1]);
+      advance();
       return;
     }
 
@@ -205,6 +241,8 @@ export const useRegister = () => {
 
     runRequest(payload);
   }, [
+    advance,
+    checking,
     email,
     fullName,
     isLastStep,
@@ -217,23 +255,23 @@ export const useRegister = () => {
   ]);
 
   const goBack = useCallback(() => {
-    if (loading) return;
+    if (loading || checking) return;
     if (stepIndex === 0) {
       leaveToSignIn();
       return;
     }
     setError(null);
     setStep(STEPS[stepIndex - 1]);
-  }, [leaveToSignIn, loading, stepIndex]);
+  }, [checking, leaveToSignIn, loading, stepIndex]);
 
   return {
     step,
     title: COPY[step].title,
     subtitle: COPY[step].subtitle,
-    buttonLabel: loading ? "Criando conta…" : COPY[step].button,
+    buttonLabel: loading ? "Criando conta…" : checking ? "Verificando…" : COPY[step].button,
     stepLabel: `PASSO ${stepIndex + 1} DE ${STEPS.length}`,
     progress: { total: STEPS.length, current: stepIndex + 1 },
-    loading,
+    loading: loading || checking,
     error,
     /** Passo incompleto só esmaece o botão: o toque revela o erro. */
     dimmed: validate() !== null,
@@ -242,8 +280,6 @@ export const useRegister = () => {
     setFullName: edit(setFullName),
     username,
     setUsername: changeUsername,
-    usernameStatus: username.length === 0 ? "" : usernameValid ? "disponível" : "inválido",
-    usernameStatusColor: usernameValid ? COLORS.success : COLORS.danger,
 
     email,
     setEmail: edit(setEmail),
