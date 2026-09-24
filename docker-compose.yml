@@ -1,0 +1,37 @@
+services:
+  app:
+    build: .
+    container_name: prisma_mobile_expo
+    # TTY é o que permite ao Expo CLI desenhar o QR code no terminal.
+    tty: true
+    stdin_open: true
+    environment:
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: 0.0.0.0
+      CHOKIDAR_USEPOLLING: "1"
+      # IP da máquina host na LAN — é o endereço que o Expo Go usa para
+      # alcançar o Metro. Se trocar de rede, passe o IP novo ao subir:
+      #   EXPO_LAN_IP=$(ip route get 1 | awk '{print $7}') docker compose up
+      REACT_NATIVE_PACKAGER_HOSTNAME: ${EXPO_LAN_IP:-10.80.79.145}
+      # Use EXPO_USE_TUNNEL=1 quando a LAN falhar (URL pública via ngrok).
+      EXPO_USE_TUNNEL: ${EXPO_USE_TUNNEL:-0}
+      # Evita prompt interativo de login quando EXPO_USE_TUNNEL=1.
+      EXPO_TOKEN: ${EXPO_TOKEN:-}
+    command: >-
+      sh -c 'if [ "$$EXPO_USE_TUNNEL" = "1" ]; then
+        echo "Expo: usando tunnel (ngrok)";
+        bunx expo start --tunnel --port 8081;
+      else
+        echo "Expo: usando LAN em $$REACT_NATIVE_PACKAGER_HOSTNAME";
+        bunx expo start --host lan --port 8081;
+      fi'
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    volumes:
+      - .:/app
+      # Impede que o node_modules do host sobrescreva o do container.
+      - /app/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
