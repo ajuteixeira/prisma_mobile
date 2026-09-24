@@ -101,6 +101,74 @@ export const PRISMA_SCRIM = "rgba(10, 14, 20, 0.68)";
 export const AUTH_HERO_HEIGHT = 250;
 
 /**
+ * Topo do login (artboard 2a): mais alto que o dos fluxos, porque carrega o
+ * logotipo. Os 330px do protótipo incluem os 54px da barra de status.
+ */
+export const LOGIN_HERO_HEIGHT = 276;
+
+/** O login acende as quatro plataformas, com os pesos do protótipo 2a. */
+export const LOGIN_BEAMS: PrismaBeam[] = [
+  {
+    id: "playstation",
+    rgb: "0, 112, 204",
+    intensity: 0.55,
+    size: 520,
+    top: -240,
+    left: -180,
+    drift: { x: 26, y: -18 },
+    duration: 20000,
+    delay: 0,
+  },
+  {
+    id: "steam",
+    rgb: "102, 192, 244",
+    intensity: 0.5,
+    size: 520,
+    top: -160,
+    right: -220,
+    drift: { x: -22, y: 20 },
+    duration: 25000,
+    delay: 1000,
+  },
+  {
+    id: "xbox",
+    rgb: "16, 124, 16",
+    intensity: 0.35,
+    size: 420,
+    bottom: -220,
+    left: -40,
+    drift: { x: 18, y: 14 },
+    duration: 18000,
+    delay: 2000,
+  },
+  {
+    id: "retroachievements",
+    rgb: "212, 160, 23",
+    intensity: 0.32,
+    size: 360,
+    bottom: -180,
+    right: -80,
+    drift: { x: -16, y: 16 },
+    duration: 22000,
+    delay: 3000,
+  },
+];
+
+/**
+ * Cores do logotipo PRISMA, uma por letra. O protótipo pinta a palavra com um
+ * gradiente (#0070CC → #66c0f4 → #107C10 → #D4A017); sem máscara de texto no
+ * React Native, cada letra recebe a cor do gradiente na sua posição.
+ */
+export const PRISMA_LOGO_COLORS = [
+  "#0070cc",
+  "#4aa6e8",
+  "#5aae9a",
+  "#15801a",
+  "#6e8e14",
+  "#d4a017",
+] as const;
+
+/**
  * Régua de força da senha (artboard 3a): o índice é a pontuação de 0 a 4 —
  * um ponto por critério atendido (6+ caracteres, 10+, maiúscula, número/símbolo).
  */

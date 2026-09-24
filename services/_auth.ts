@@ -24,6 +24,16 @@ export type AuthResponse = {
 export const register = (payload: RegisterPayload) =>
   apiRequest<AuthResponse>("/api/auth/register", { body: payload });
 
+/** Corpo de `POST /api/auth/login` — o login é por e-mail e senha (RF03). */
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+/** Credenciais erradas voltam `401`; a sessão tem o mesmo formato do cadastro. */
+export const login = (payload: LoginPayload) =>
+  apiRequest<AuthResponse>("/api/auth/login", { body: payload });
+
 /** Campos conferidos por `POST /api/auth/availability`; `true` = disponível. */
 export type Availability = { username?: boolean; email?: boolean };
 
