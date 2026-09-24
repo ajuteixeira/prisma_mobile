@@ -9,7 +9,7 @@ describe("authService.logout", () => {
 
   it("envia POST /api/auth/logout com Authorization Bearer", async () => {
     const fetchSpy = jest
-      .spyOn(global, "fetch")
+      .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response("{}", { status: 200 }));
 
     await authService.logout("meu-token");
@@ -22,14 +22,14 @@ describe("authService.logout", () => {
   });
 
   it("resolve quando o servidor responde 204 sem corpo", async () => {
-    jest.spyOn(global, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
+    jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
 
     await expect(authService.logout("token")).resolves.toBeNull();
   });
 
   it("lança ApiError com a mensagem do corpo quando a resposta é de erro", async () => {
     jest
-      .spyOn(global, "fetch")
+      .spyOn(globalThis, "fetch")
       .mockResolvedValue(
         new Response(JSON.stringify({ error: "Token inválido" }), { status: 401 }),
       );
