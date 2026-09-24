@@ -1,5 +1,5 @@
 import { ApiError, apiRequest } from "@/services";
-import { fetchBody, mockFetch, mockFetchNetworkError } from "@/utils/tests";
+import { fetchBody, mockFetch, mockFetchNetworkError } from "@/__tests__/utils";
 
 describe("apiRequest", () => {
   it("faz GET sem corpo e devolve o JSON", async () => {

@@ -1,5 +1,5 @@
 import ForgotPasswordScreen from "@/app/(auth)/forgot-password";
-import { fetchBody, fireEvent, mockFetch, renderRouter, screen } from "@/utils/tests";
+import { fetchBody, fireEvent, mockFetch, renderRouter, screen } from "@/__tests__/utils";
 
 const renderScreen = () =>
   renderRouter(
