@@ -30,6 +30,420 @@ a{color:#2a78d6}a:hover{color:#1a5aa8}
 @keyframes pSpin{to{transform:rotate(360deg)}}
 </style></helmet>
 
+<section class="dv-turn" id="t6" style="position: absolute; left: 2398px; top: 1010px; width: max-content">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">App logado — Perfil, Ranking, Seguidores e Configurações, com tab bar flutuante</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="6a">
+<div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Perfil — avatar com anel do espectro, stats, distribuição de troféus, conquistas fixadas e jogos recentes em cards verticais (a tabela do web vira lista). Role a tela.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif">
+  <div style="position:absolute;inset:0;overflow:auto;scrollbar-width:none;padding:58px 20px 120px;box-sizing:border-box">
+    <div style="position:absolute;top:0;left:0;right:0;height:360px;overflow:hidden;pointer-events:none">
+      <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-270px;left:-170px;background:radial-gradient(circle,rgba(0,112,204,.5) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out"></div>
+      <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-220px;right:-200px;background:radial-gradient(circle,rgba(102,192,244,.45) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+      <div style="position:absolute;width:320px;height:320px;border-radius:50%;filter:blur(90px);top:80px;left:30px;background:radial-gradient(circle,rgba(212,160,23,.2) 0%,transparent 70%);animation:pFloat 22s infinite ease-in-out"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,20,.55) 0%,#0a0e14 100%)"></div>
+    </div>
+
+    <div style="position:relative">
+      <div style="display:flex;align-items:center;justify-content:space-between;height:48px">
+        <span style="font-size:17px;font-weight:700;color:#f4f6fa">Perfil</span>
+        <button style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#e5e7eb;font-size:15px;cursor:pointer"><i class="fas fa-share-nodes"></i></button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:10px">
+        <div style="position:relative;width:98px;height:98px;border-radius:50%;padding:3px;box-sizing:border-box;background:conic-gradient(#0070CC,#66c0f4,#107C10,#D4A017,#0070CC)">
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Carly&amp;backgroundColor=c0aede" alt="Carly" style="width:100%;height:100%;border-radius:50%;border:3px solid #0a0e14;box-sizing:border-box;display:block;background:#c0aede">
+          <div style="position:absolute;right:6px;bottom:6px;width:16px;height:16px;border-radius:50%;background:#10b981;border:3px solid #0a0e14"></div>
+        </div>
+        <h2 style="margin:14px 0 0;font-size:24px;font-weight:800;letter-spacing:-.6px;color:#f4f6fa">@carly</h2>
+        <div style="display:flex;gap:18px;margin-top:8px">
+          <a href="#6c" style="font-size:13.5px;color:#9ca3af;text-decoration:none"><strong style="color:#f4f6fa">89</strong> Seguidores</a>
+          <a href="#6c" style="font-size:13.5px;color:#9ca3af;text-decoration:none"><strong style="color:#f4f6fa">23</strong> Seguindo</a>
+        </div>
+        <button style="margin-top:16px;height:42px;padding:0 22px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#e5e7eb;font-size:14px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;gap:8px"><i class="fas fa-pen" style="font-size:12px"></i>Editar perfil</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:24px">
+        <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px 12px">
+          <i class="fas fa-trophy" style="font-size:14px;color:#D4A017"></i>
+          <p style="margin:10px 0 0;font-size:20px;font-weight:800;color:#f4f6fa;letter-spacing:-.4px">2.847</p>
+          <p style="margin:2px 0 0;font-size:11.5px;color:#9ca3af">Conquistas</p>
+        </div>
+        <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px 12px">
+          <i class="fas fa-chart-pie" style="font-size:14px;color:#60a5fa"></i>
+          <p style="margin:10px 0 0;font-size:20px;font-weight:800;color:#f4f6fa;letter-spacing:-.4px">34%</p>
+          <p style="margin:2px 0 0;font-size:11.5px;color:#9ca3af">Média conclusão</p>
+        </div>
+        <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:14px 12px">
+          <i class="fas fa-crown" style="font-size:14px;color:#10b981"></i>
+          <p style="margin:10px 0 0;font-size:20px;font-weight:800;color:#f4f6fa;letter-spacing:-.4px">8</p>
+          <p style="margin:2px 0 0;font-size:11.5px;color:#9ca3af">Jogos perfeitos</p>
+        </div>
+      </div>
+
+      <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:16px;margin-top:12px">
+        <p style="margin:0 0 12px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">TROFÉUS POR PLATAFORMA</p>
+        <div style="display:flex;height:10px;border-radius:99px;overflow:hidden;gap:2px">
+          <div style="width:60%;background:#66c0f4"></div>
+          <div style="width:20%;background:#0070CC"></div>
+          <div style="width:10%;background:#107C10"></div>
+          <div style="width:10%;background:#D4A017"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:12px">
+          <div style="display:flex;align-items:center;gap:6px"><i class="fab fa-steam" style="font-size:13px;color:#66c0f4"></i><span style="font-size:12.5px;font-weight:700;color:#e5e7eb">60%</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><i class="fab fa-playstation" style="font-size:13px;color:#4a9eea"></i><span style="font-size:12.5px;font-weight:700;color:#e5e7eb">20%</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><i class="fab fa-xbox" style="font-size:13px;color:#4caf50"></i><span style="font-size:12.5px;font-weight:700;color:#e5e7eb">10%</span></div>
+          <div style="display:flex;align-items:center;gap:6px"><i class="fas fa-trophy" style="font-size:12px;color:#D4A017"></i><span style="font-size:12.5px;font-weight:700;color:#e5e7eb">10%</span></div>
+        </div>
+      </div>
+
+      <p style="margin:26px 0 12px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">CONQUISTAS FIXADAS</p>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <div style="width:100%;aspect-ratio:1;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#f87171;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.22)"><i class="fas fa-crosshairs"></i></div>
+          <span style="font-size:11px;line-height:1.25;color:#cbd5e1">Mestre Atirador</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <div style="width:100%;aspect-ratio:1;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#c4b5fd;background:rgba(196,181,253,.1);border:1px solid rgba(196,181,253,.22)"><i class="fas fa-ghost"></i></div>
+          <span style="font-size:11px;line-height:1.25;color:#cbd5e1">Fantasma</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <div style="width:100%;aspect-ratio:1;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#66c0f4;background:rgba(102,192,244,.1);border:1px solid rgba(102,192,244,.22)"><i class="fas fa-bolt"></i></div>
+          <span style="font-size:11px;line-height:1.25;color:#cbd5e1">Velocidade da Luz</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center">
+          <div style="width:100%;aspect-ratio:1;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#D4A017;background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.24)"><i class="fas fa-trophy"></i></div>
+          <span style="font-size:11px;line-height:1.25;color:#cbd5e1">Perfeição</span>
+        </div>
+      </div>
+
+      <p style="margin:26px 0 12px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">JOGADO RECENTEMENTE</p>
+      <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:22px;overflow:hidden">
+        <div style="position:relative;height:130px;background:#1b2230 url('https://cdn.cloudflare.steamstatic.com/steam/apps/730/header.jpg') center/cover">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,22,29,0) 30%,#12161d 100%)"></div>
+          <div style="position:absolute;top:12px;left:12px;display:flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:99px;background:rgba(10,14,20,.7);backdrop-filter:blur(8px)"><i class="fab fa-steam" style="font-size:11px;color:#66c0f4"></i><span style="font-size:11px;font-weight:600;color:#e5e7eb">Steam</span></div>
+        </div>
+        <div style="padding:0 16px 16px;margin-top:-18px;position:relative">
+          <h3 style="margin:0;font-size:17px;font-weight:700;color:#f4f6fa">Counter-Strike: Global Offensive</h3>
+          <p style="margin:4px 0 0;font-size:12.5px;color:#9ca3af">845 h registradas · jogado em 28 de out.</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+            <span style="font-size:12px;color:#9ca3af">Conquistas</span>
+            <span style="font-size:12px;font-weight:600;color:#e5e7eb">142 de 167 · 85%</span>
+          </div>
+          <div style="height:6px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden"><div style="width:85%;height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#60a5fa)"></div></div>
+        </div>
+      </div>
+
+      <p style="margin:26px 0 12px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">JOGOS RECENTES</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ pr.games }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:13px;background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:12px">
+            <img src="{{ g.img }}" alt="{{ g.name }}" style="width:52px;height:52px;border-radius:13px;object-fit:cover;flex:none;background:#1b2230">
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font-size:15px;font-weight:700;color:#f4f6fa">{{ g.name }}</span>
+                <span style="font-size:13px;font-weight:700;color:#60a5fa">{{ g.pct }}</span>
+              </div>
+              <p style="margin:3px 0 0;font-size:12px;color:#9ca3af">{{ g.meta }}</p>
+              <div style="height:5px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden"><div style="height:100%;border-radius:99px;background:#3b82f6;width:{{ g.pct }}"></div></div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;bottom:26px;height:66px;border-radius:24px;background:rgba(18,22,29,.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 40px rgba(0,0,0,.5);display:flex;align-items:center;z-index:5">
+    <a href="#6a" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#60a5fa"><i class="fas fa-user" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Perfil</span></a>
+    <a href="#6b" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-trophy" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ranking</span></a>
+    <a href="#6c" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-users" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Seguidores</span></a>
+    <a href="#6d" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-gear" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ajustes</span></a>
+  </div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="6b">
+<div class="dv-olabel"><a class="dv-oid" href="#6b">6b</a>Ranking — pódio para o top 3, lista compacta abaixo e sua posição fixa acima da tab bar. Filtros por plataforma e busca funcionam (troque para Retro, busque “nova”).</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif">
+  <div style="position:absolute;top:0;left:0;right:0;height:380px;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-270px;left:-120px;background:radial-gradient(circle,rgba(212,160,23,.35) 0%,transparent 70%);animation:pFloat 22s infinite ease-in-out"></div>
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-240px;right:-200px;background:radial-gradient(circle,rgba(59,130,246,.45) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,20,.5) 0%,#0a0e14 100%)"></div>
+  </div>
+  <div style="position:absolute;inset:0;overflow:auto;scrollbar-width:none;padding:58px 20px 180px;box-sizing:border-box">
+    <div style="position:relative">
+      <div style="height:48px;display:flex;align-items:center"><span style="font:600 11.5px/1 ui-monospace,Menlo,monospace;letter-spacing:2px;color:#60a5fa">RANKING GERAL</span></div>
+      <h1 style="margin:2px 0 0;font-size:30px;font-weight:800;letter-spacing:-1.2px;color:#f4f6fa">Top jogadores</h1>
+      <p style="margin:6px 0 0;font-size:13.5px;color:#9ca3af">Você contra quem você segue.</p>
+
+      <div style="position:relative;display:flex;gap:10px;margin-top:18px;z-index:4">
+        <div style="flex:1;min-width:0;display:flex;align-items:center;height:50px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:12px">
+          <i class="fas fa-magnifying-glass" style="font-size:14px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="text" placeholder="Buscar jogador" value="{{ rk.query }}" onChange="{{ rk.setQuery }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+        </div>
+        <button onClick="{{ rk.toggleMenu }}" style="flex:none;height:50px;padding:0 14px;border-radius:16px;display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;background:rgba(255,255,255,.045);color:#e5e7eb;border:1px solid {{ rk.selBorder }}">
+          <i class="{{ rk.curIcon }}" style="font-size:14px;color:{{ rk.curColor }}"></i>{{ rk.curLabel }}<i class="fas fa-chevron-down" style="font-size:11px;color:#6b7280;transition:transform .2s ease;transform:{{ rk.chevron }}"></i>
+        </button>
+
+        <sc-if value="{{ rk.menuOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;right:0;top:58px;width:220px;background:#1a1f29;border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.6);padding:6px;animation:pIn .2s ease both">
+            <sc-for list="{{ rk.filters }}" as="ft" hint-placeholder-count="5">
+              <button onClick="{{ ft.pick }}" style="width:100%;height:46px;padding:0 12px;border:none;border-radius:12px;display:flex;align-items:center;gap:12px;font-size:14.5px;font-weight:500;font-family:Inter,sans-serif;cursor:pointer;text-align:left;background:{{ ft.bg }};color:#e5e7eb">
+                <i class="{{ ft.icon }}" style="width:18px;text-align:center;font-size:14px;color:{{ ft.iconColor }}"></i>
+                <span style="flex:1">{{ ft.label }}</span>
+                <i class="{{ ft.check }}" style="font-size:12px;color:#60a5fa"></i>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ rk.showPodium }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:8px;margin-top:26px">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+            <img src="{{ rk.p2.avatar }}" alt="" style="width:58px;height:58px;border-radius:50%;border:3px solid #cbd5e1;background:#1b2230">
+            <span style="margin-top:8px;font-size:12.5px;font-weight:700;color:#f4f6fa;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ rk.p2.name }}</span>
+            <span style="margin-top:2px;font-size:11.5px;color:#9ca3af">{{ rk.p2.pts }}</span>
+            <div style="width:100%;height:64px;margin-top:10px;border-radius:14px 14px 0 0;background:linear-gradient(180deg,rgba(203,213,225,.22),rgba(203,213,225,.03));display:flex;justify-content:center;padding-top:10px;box-sizing:border-box;font-size:20px;font-weight:800;color:#cbd5e1">2</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+            <i class="fas fa-crown" style="font-size:16px;color:#D4A017;margin-bottom:6px"></i>
+            <img src="{{ rk.p1.avatar }}" alt="" style="width:74px;height:74px;border-radius:50%;border:3px solid #D4A017;background:#1b2230;box-shadow:0 0 30px rgba(212,160,23,.35)">
+            <span style="margin-top:8px;font-size:13px;font-weight:700;color:#f4f6fa;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ rk.p1.name }}</span>
+            <span style="margin-top:2px;font-size:11.5px;color:#fcd34d">{{ rk.p1.pts }}</span>
+            <div style="width:100%;height:92px;margin-top:10px;border-radius:14px 14px 0 0;background:linear-gradient(180deg,rgba(212,160,23,.3),rgba(212,160,23,.03));display:flex;justify-content:center;padding-top:10px;box-sizing:border-box;font-size:24px;font-weight:800;color:#D4A017">1</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+            <img src="{{ rk.p3.avatar }}" alt="" style="width:58px;height:58px;border-radius:50%;border:3px solid #c2733f;background:#1b2230">
+            <span style="margin-top:8px;font-size:12.5px;font-weight:700;color:#f4f6fa;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ rk.p3.name }}</span>
+            <span style="margin-top:2px;font-size:11.5px;color:#9ca3af">{{ rk.p3.pts }}</span>
+            <div style="width:100%;height:48px;margin-top:10px;border-radius:14px 14px 0 0;background:linear-gradient(180deg,rgba(194,115,63,.26),rgba(194,115,63,.03));display:flex;justify-content:center;padding-top:8px;box-sizing:border-box;font-size:18px;font-weight:800;color:#e0915a">3</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">
+        <sc-for list="{{ rk.rows }}" as="row" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;gap:12px;border-radius:16px;padding:10px 14px 10px 12px;background:{{ row.bg }};border:1px solid {{ row.border }}">
+            <span style="width:24px;flex:none;text-align:center;font-size:14px;font-weight:700;color:#9ca3af">{{ row.pos }}</span>
+            <img src="{{ row.avatar }}" alt="" style="width:40px;height:40px;border-radius:50%;flex:none;background:#1b2230">
+            <div style="flex:1;min-width:0">
+              <p style="margin:0;font-size:14.5px;font-weight:700;color:#f4f6fa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ row.name }}</p>
+              <div style="display:flex;gap:7px;margin-top:4px">
+                <sc-for list="{{ row.plats }}" as="pl" hint-placeholder-count="2"><i class="{{ pl.icon }}" style="font-size:11px;color:{{ pl.color }}"></i></sc-for>
+              </div>
+            </div>
+            <div style="text-align:right;flex:none">
+              <p style="margin:0;font-size:14px;font-weight:700;color:#f4f6fa">{{ row.pts }}</p>
+              <p style="margin:2px 0 0;font-size:11px;color:#6b7280">{{ row.ach }}</p>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ rk.empty }}" hint-placeholder-val="{{ false }}">
+          <p style="margin:30px 0 0;text-align:center;font-size:13.5px;color:#6b7280">Nenhum jogador encontrado.</p>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;bottom:102px;height:54px;border-radius:18px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.35);display:flex;align-items:center;gap:12px;padding:0 16px 0 10px;z-index:5">
+    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Carly&amp;backgroundColor=c0aede" alt="" style="width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,.6);background:#c0aede">
+    <div style="flex:1;min-width:0">
+      <p style="margin:0;font-size:11px;font-weight:600;letter-spacing:.8px;color:rgba(255,255,255,.75)">SUA POSIÇÃO</p>
+      <p style="margin:2px 0 0;font-size:14.5px;font-weight:700;color:#fff">{{ rk.mePos }} · @carly</p>
+    </div>
+    <span style="font-size:14px;font-weight:700;color:#fff">{{ rk.mePts }}</span>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;bottom:26px;height:66px;border-radius:24px;background:rgba(18,22,29,.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 40px rgba(0,0,0,.5);display:flex;align-items:center;z-index:5">
+    <a href="#6a" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-user" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Perfil</span></a>
+    <a href="#6b" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#60a5fa"><i class="fas fa-trophy" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ranking</span></a>
+    <a href="#6c" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-users" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Seguidores</span></a>
+    <a href="#6d" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-gear" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ajustes</span></a>
+  </div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="6c">
+<div class="dv-olabel"><a class="dv-oid" href="#6c">6c</a>Seguidores — as 3 abas do web viram um segmented control. Lista em linhas (cabe mais gente que a grade), Seguir/Seguindo alterna na hora e atualiza a aba Seguindo; Pesquisar filtra ao digitar.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif">
+  <div style="position:absolute;top:0;left:0;right:0;height:340px;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-280px;left:-160px;background:radial-gradient(circle,rgba(16,124,16,.35) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out"></div>
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-240px;right:-200px;background:radial-gradient(circle,rgba(102,192,244,.42) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,20,.5) 0%,#0a0e14 100%)"></div>
+  </div>
+  <div style="position:absolute;inset:0;overflow:auto;scrollbar-width:none;padding:58px 20px 120px;box-sizing:border-box">
+    <div style="position:relative">
+      <div style="height:48px;display:flex;align-items:center"><span style="font:600 11.5px/1 ui-monospace,Menlo,monospace;letter-spacing:2px;color:#60a5fa">SOCIAL</span></div>
+      <h1 style="margin:2px 0 0;font-size:30px;font-weight:800;letter-spacing:-1.2px;color:#f4f6fa">{{ fl.title }}</h1>
+
+      <div style="display:flex;padding:4px;margin-top:18px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;gap:4px">
+        <sc-for list="{{ fl.tabs }}" as="tb" hint-placeholder-count="3">
+          <button onClick="{{ tb.pick }}" style="flex:1;height:40px;border-radius:12px;border:none;font-size:13.5px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:{{ tb.bg }};color:{{ tb.color }};box-shadow:{{ tb.shadow }}">{{ tb.label }}<span style="font-size:11.5px;opacity:.7">{{ tb.count }}</span></button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ fl.isSearch }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;height:50px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:0 16px;gap:12px;margin-top:12px">
+          <i class="fas fa-magnifying-glass" style="font-size:14px;color:#60a5fa;width:18px;text-align:center"></i>
+          <input type="text" placeholder="Buscar por nome ou @usuário" value="{{ fl.query }}" onChange="{{ fl.setQuery }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-family:Inter,sans-serif">
+        </div>
+      </sc-if>
+
+      <p style="margin:22px 0 10px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">{{ fl.sectionLabel }}</p>
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ fl.list }}" as="u" hint-placeholder-count="6">
+          <div style="display:flex;align-items:center;gap:13px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+            <img src="{{ u.avatar }}" alt="" style="width:48px;height:48px;border-radius:50%;flex:none;background:#1b2230">
+            <div style="flex:1;min-width:0">
+              <p style="margin:0;font-size:15px;font-weight:700;color:#f4f6fa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ u.name }}</p>
+              <p style="margin:2px 0 0;font-size:12.5px;color:#9ca3af">{{ u.handle }}</p>
+            </div>
+            <button onClick="{{ u.toggle }}" style="flex:none;height:36px;min-width:96px;padding:0 14px;border-radius:12px;font-size:13px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer;background:{{ u.bg }};color:{{ u.color }};border:1px solid {{ u.border }}">{{ u.label }}</button>
+          </div>
+        </sc-for>
+        <sc-if value="{{ fl.empty }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 20px 0">
+            <i class="fas fa-user-slash" style="font-size:26px;color:#4b5563"></i>
+            <p style="margin:12px 0 0;font-size:13.5px;color:#6b7280">{{ fl.emptyText }}</p>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;bottom:26px;height:66px;border-radius:24px;background:rgba(18,22,29,.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 40px rgba(0,0,0,.5);display:flex;align-items:center;z-index:5">
+    <a href="#6a" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-user" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Perfil</span></a>
+    <a href="#6b" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-trophy" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ranking</span></a>
+    <a href="#6c" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#60a5fa"><i class="fas fa-users" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Seguidores</span></a>
+    <a href="#6d" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-gear" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ajustes</span></a>
+  </div>
+</div>
+</x-import>
+</div>
+
+<div class="dv-opt" id="6d">
+<div class="dv-olabel"><a class="dv-oid" href="#6d">6d</a>Configurações — lista agrupada estilo iOS. Sair e Excluir abrem bottom sheets no mesmo padrão do login; excluir exige digitar EXCLUIR. Contas vinculadas e Alterar senha reaproveitam as telas <a class="dv-oid" href="#5a">5a</a> e <a class="dv-oid" href="#4a">4a</a>.</div>
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+<div style="position:absolute;inset:0;background:#0a0e14;overflow:hidden;font-family:Inter,sans-serif">
+  <div style="position:absolute;top:0;left:0;right:0;height:320px;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(90px);top:-290px;left:-140px;background:radial-gradient(circle,rgba(0,112,204,.45) 0%,transparent 70%);animation:pFloat 20s infinite ease-in-out"></div>
+    <div style="position:absolute;width:420px;height:420px;border-radius:50%;filter:blur(90px);top:-260px;right:-200px;background:radial-gradient(circle,rgba(102,192,244,.35) 0%,transparent 70%);animation:pFloat 25s infinite ease-in-out reverse"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,20,.5) 0%,#0a0e14 100%)"></div>
+  </div>
+  <div style="position:absolute;inset:0;overflow:auto;scrollbar-width:none;padding:58px 20px 120px;box-sizing:border-box">
+    <div style="position:relative">
+      <div style="height:48px"></div>
+      <h1 style="margin:2px 0 0;font-size:30px;font-weight:800;letter-spacing:-1.2px;color:#f4f6fa">Configurações</h1>
+
+      <a href="#6a" style="display:flex;align-items:center;gap:14px;margin-top:20px;background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:14px 16px;text-decoration:none">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Carly&amp;backgroundColor=c0aede" alt="" style="width:52px;height:52px;border-radius:50%;background:#c0aede">
+        <div style="flex:1;min-width:0">
+          <p style="margin:0;font-size:16px;font-weight:700;color:#f4f6fa">@carly</p>
+          <p style="margin:3px 0 0;font-size:12.5px;color:#9ca3af">carly@prisma.gg</p>
+        </div>
+        <i class="fas fa-chevron-right" style="font-size:12px;color:#4b5563"></i>
+      </a>
+
+      <p style="margin:24px 4px 10px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">CONTA</p>
+      <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:20px;overflow:hidden">
+        <a href="#5a" style="display:flex;align-items:center;gap:14px;padding:0 16px;height:58px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05)">
+          <div style="width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(96,165,250,.14);color:#60a5fa;font-size:13px"><i class="fas fa-link"></i></div>
+          <span style="flex:1;font-size:15px;font-weight:500;color:#e5e7eb">Contas vinculadas</span>
+          <span style="font-size:13px;color:#6b7280">{{ st.linked }}</span>
+          <i class="fas fa-chevron-right" style="font-size:12px;color:#4b5563"></i>
+        </a>
+        <a href="#4a" style="display:flex;align-items:center;gap:14px;padding:0 16px;height:58px;text-decoration:none">
+          <div style="width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(96,165,250,.14);color:#60a5fa;font-size:13px"><i class="fas fa-key"></i></div>
+          <span style="flex:1;font-size:15px;font-weight:500;color:#e5e7eb">Alterar senha</span>
+          <i class="fas fa-chevron-right" style="font-size:12px;color:#4b5563"></i>
+        </a>
+      </div>
+
+      <p style="margin:24px 4px 10px;font-size:12px;font-weight:600;letter-spacing:1px;color:#9ca3af">SESSÃO</p>
+      <div style="background:#12161d;border:1px solid rgba(255,255,255,.06);border-radius:20px;overflow:hidden">
+        <button onClick="{{ st.openLogout }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;font-family:Inter,sans-serif">
+          <div style="width:32px;height:32px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(251,191,36,.14);color:#fbbf24;font-size:13px"><i class="fas fa-arrow-right-from-bracket"></i></div>
+          <div style="flex:1;min-width:0">
+            <p style="margin:0;font-size:15px;font-weight:500;color:#e5e7eb">Sair da conta</p>
+            <p style="margin:3px 0 0;font-size:12px;color:#6b7280;line-height:1.4">Encerra a sessão em todos os dispositivos.</p>
+          </div>
+          <i class="fas fa-chevron-right" style="font-size:12px;color:#4b5563"></i>
+        </button>
+      </div>
+
+      <p style="margin:24px 4px 10px;font-size:12px;font-weight:600;letter-spacing:1px;color:#f87171">ZONA DE PERIGO</p>
+      <div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:20px;overflow:hidden">
+        <button onClick="{{ st.openDelete }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;font-family:Inter,sans-serif">
+          <div style="width:32px;height:32px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(239,68,68,.16);color:#f87171;font-size:13px"><i class="fas fa-trash-can"></i></div>
+          <div style="flex:1;min-width:0">
+            <p style="margin:0;font-size:15px;font-weight:600;color:#fca5a5">Excluir conta permanentemente</p>
+            <p style="margin:3px 0 0;font-size:12px;color:#9ca3af;line-height:1.4">Apaga dados, conquistas e progresso. Irreversível.</p>
+          </div>
+          <i class="fas fa-chevron-right" style="font-size:12px;color:#7f1d1d"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:14px;right:14px;bottom:26px;height:66px;border-radius:24px;background:rgba(18,22,29,.88);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);box-shadow:0 14px 40px rgba(0,0,0,.5);display:flex;align-items:center;z-index:5">
+    <a href="#6a" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-user" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Perfil</span></a>
+    <a href="#6b" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-trophy" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ranking</span></a>
+    <a href="#6c" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#6b7280"><i class="fas fa-users" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Seguidores</span></a>
+    <a href="#6d" style="flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-decoration:none;color:#60a5fa"><i class="fas fa-gear" style="font-size:18px"></i><span style="font-size:10.5px;font-weight:600">Ajustes</span></a>
+  </div>
+
+  <sc-if value="{{ st.sheetOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ st.close }}" style="position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(3px);z-index:10"></div>
+    <div style="position:absolute;left:0;right:0;bottom:0;z-index:11;background:#12161d;border-radius:34px 34px 0 0;border-top:1px solid rgba(96,165,250,.16);box-shadow:0 -24px 60px rgba(0,0,0,.6);padding:30px 24px 46px;animation:pIn .3s ease both">
+      <sc-if value="{{ st.isLogout }}" hint-placeholder-val="{{ false }}">
+        <div style="width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(251,191,36,.14);color:#fbbf24"><i class="fas fa-arrow-right-from-bracket"></i></div>
+        <h2 style="margin:18px 0 0;font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px">Sair da conta?</h2>
+        <p style="margin:8px 0 24px;font-size:13.5px;color:#9ca3af;line-height:1.5">Sua sessão será encerrada em todos os dispositivos. Você precisará entrar novamente.</p>
+        <button onClick="{{ st.confirmLogout }}" style="width:100%;height:58px;border:none;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.32)">
+          <sc-if value="{{ st.loading }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>{{ st.logoutLabel }}
+        </button>
+        <button onClick="{{ st.close }}" style="width:100%;height:52px;margin-top:10px;border:none;background:none;color:#9ca3af;font-size:15px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer">Cancelar</button>
+      </sc-if>
+
+      <sc-if value="{{ st.isDelete }}" hint-placeholder-val="{{ false }}">
+        <div style="width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(239,68,68,.14);color:#f87171"><i class="fas fa-triangle-exclamation"></i></div>
+        <h2 style="margin:18px 0 0;font-size:22px;font-weight:700;color:#fff;letter-spacing:-.3px">Excluir sua conta?</h2>
+        <p style="margin:8px 0 18px;font-size:13.5px;color:#9ca3af;line-height:1.5">Todos os seus dados, conquistas e progresso serão apagados para sempre. Digite <strong style="color:#fca5a5">EXCLUIR</strong> para confirmar.</p>
+        <div style="display:flex;align-items:center;height:58px;background:rgba(255,255,255,.045);border:1px solid {{ st.inputBorder }};border-radius:16px;padding:0 16px;gap:12px">
+          <i class="fas fa-keyboard" style="font-size:15px;color:#f87171;width:18px;text-align:center"></i>
+          <input type="text" placeholder="EXCLUIR" value="{{ st.confirmText }}" onChange="{{ st.setConfirm }}" style="flex:1;min-width:0;background:none;border:none;outline:none;color:#e5e7eb;font-size:16px;font-weight:700;letter-spacing:1px;font-family:Inter,sans-serif">
+        </div>
+        <button onClick="{{ st.confirmDelete }}" style="width:100%;height:58px;margin-top:16px;border:none;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;font-family:Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#dc2626 0%,#991b1b 100%);box-shadow:0 12px 30px rgba(220,38,38,.28);opacity:{{ st.deleteOpacity }}">
+          <sc-if value="{{ st.loading }}" hint-placeholder-val="{{ false }}"><i class="fas fa-circle-notch" style="animation:pSpin .8s linear infinite"></i></sc-if>{{ st.deleteLabel }}
+        </button>
+        <button onClick="{{ st.close }}" style="width:100%;height:52px;margin-top:10px;border:none;background:none;color:#9ca3af;font-size:15px;font-weight:600;font-family:Inter,sans-serif;cursor:pointer">Cancelar</button>
+      </sc-if>
+
+      <sc-if value="{{ st.isDone }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+          <div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;color:#10b981;background:rgba(16,185,129,.12);border:1.5px solid rgba(16,185,129,.4)"><i class="fas fa-check"></i></div>
+          <h2 style="margin:18px 0 0;font-size:21px;font-weight:700;color:#fff">{{ st.doneTitle }}</h2>
+          <p style="margin:8px 0 24px;font-size:13.5px;color:#9ca3af;line-height:1.5">{{ st.doneText }}</p>
+        </div>
+        <a href="#2a" onClick="{{ st.close }}" style="width:100%;height:58px;border-radius:18px;color:#fff;font-size:16.5px;font-weight:700;text-decoration:none;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%);box-shadow:0 12px 30px rgba(59,130,246,.32)">{{ st.doneCta }}</a>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-import>
+</div>
+
+</div>
+<p class="dv-next">“troca a tab bar por uma fixa padrão iOS” · “perfil de outro usuário com botão Seguir” · “faz o Dashboard”</p>
+</section>
+
 <section class="dv-turn" id="t5" style="position: absolute; left: 3438px; top: -188px">
 <div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Vincular Contas — passo do onboarding, com pular</span></div>
 <div class="dv-opts">
@@ -67,7 +481,7 @@ a{color:#2a78d6}a:hover{color:#1a5aa8}
       </div>
     </div>
 
-    <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:2px 4px">
+    <div style="flex:1;min-height:0;overflow:auto;scrollbar-width:none;display:flex;flex-direction:column;gap:10px;margin:0 -4px;padding:2px 4px">
       <div style="display:flex;align-items:center;gap:13px;background:rgba(255,255,255,.045);border:1px solid {{ p.steamBorder }};border-radius:18px;padding:14px 14px 14px 16px">
         <div style="width:44px;height:44px;flex:none;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;color:#66c0f4;background:rgba(102,192,244,.14)"><i class="fab fa-steam"></i></div>
         <div style="flex:1;min-width:0">
@@ -137,7 +551,7 @@ a{color:#2a78d6}a:hover{color:#1a5aa8}
         <button onClick="{{ p.closeModal }}" style="width:34px;height:34px;flex:none;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:#9ca3af;font-size:14px;cursor:pointer"><i class="fas fa-xmark"></i></button>
       </div>
 
-      <div style="flex:1;min-height:0;overflow:auto;padding:18px 22px 8px;display:flex;flex-direction:column;gap:12px">
+      <div style="flex:1;min-height:0;overflow:auto;scrollbar-width:none;padding:18px 22px 8px;display:flex;flex-direction:column;gap:12px">
         <sc-if value="{{ p.modalSteam }}" hint-placeholder-val="{{ false }}">
           <div style="background:rgba(59,130,246,.09);border-left:3px solid #3b82f6;border-radius:0 14px 14px 0;padding:13px 15px">
             <p style="margin:0;font-size:13px;font-weight:700;color:#dbeafe">1) Gere sua Steam Web API Key</p>
@@ -756,8 +1170,166 @@ class Component extends DCLogic {
     return out;
   }
 
+  av(seed, bg) { return 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + seed + '&backgroundColor=' + (bg || 'b6e3f4'); }
+
+  profView() {
+    return {
+      games: [
+        { name: 'Valorant', img: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=120&h=120&fit=crop', pct: '62%', meta: '31/50 conquistas · 234 h · Steam' },
+        { name: 'Apex Legends', img: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?w=120&h=120&fit=crop', pct: '48%', meta: '48/100 conquistas · 156 h · Steam' },
+        { name: 'CS:GO', img: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=120&h=120&fit=crop', pct: '85%', meta: '142/167 conquistas · 845 h · Steam' },
+      ],
+    };
+  }
+
+  rkS = { filter: 'all', query: '' };
+  upRk(p) { this.rkS = { ...this.rkS, ...p }; this.forceUpdate(); }
+
+  rankView() {
+    const P = [
+      { n: 'SombraNoturna88', seed: 'Sombra', ps: 420000, xb: 0, st: 567654, re: 0 },
+      { n: 'MestreArcanoX', seed: 'Arcano', ps: 0, xb: 512300, st: 301200, re: 45000 },
+      { n: 'cipher.pro', seed: 'Cypher', ps: 0, xb: 0, st: 612000, re: 88000 },
+      { n: 'nova.star', seed: 'Nova', ps: 388000, xb: 120500, st: 190000, re: 0 },
+      { n: 'carly', seed: 'Carly', bg: 'c0aede', me: true, ps: 98000, xb: 49000, st: 294000, re: 49000 },
+      { n: 'code.mage', seed: 'Tech', ps: 150000, xb: 210000, st: 0, re: 122000 },
+      { n: '8bit.queen', seed: 'Pixel', ps: 0, xb: 0, st: 98000, re: 301000 },
+      { n: 'blood.wing', seed: 'Crimson', ps: 260000, xb: 0, st: 80000, re: 0 },
+    ];
+    const plat = { ps: ['fab fa-playstation', '#4a9eea'], xb: ['fab fa-xbox', '#4caf50'], st: ['fab fa-steam', '#66c0f4'], re: ['fas fa-trophy', '#D4A017'] };
+    const g = this.rkS;
+    const key = { all: null, psn: 'ps', xbox: 'xb', steam: 'st', retro: 're' }[g.filter];
+    const fmt = n => n.toLocaleString('pt-BR');
+    const ranked = P.map(p => ({ ...p, score: key ? p[key] : p.ps + p.xb + p.st + p.re }))
+      .filter(p => p.score > 0).sort((a, b) => b.score - a.score)
+      .map((p, i) => ({
+        pos: i + 1, name: p.n, avatar: this.av(p.seed, p.bg), pts: fmt(p.score), ach: fmt(Math.round(p.score / 790)) + ' conquistas',
+        plats: Object.keys(plat).filter(k => p[k] > 0).map(k => ({ icon: plat[k][0], color: plat[k][1] })),
+        bg: p.me ? 'rgba(59,130,246,.12)' : '#12161d', border: p.me ? 'rgba(59,130,246,.45)' : 'rgba(255,255,255,.06)', me: p.me,
+      }));
+    const q = g.query.trim().toLowerCase();
+    const showPodium = !q && ranked.length >= 3;
+    const rows = q ? ranked.filter(r => r.name.toLowerCase().includes(q)) : ranked.slice(3);
+    const me = ranked.find(r => r.me);
+    const F = [['all', 'Todas', 'fas fa-trophy', '#60a5fa'], ['psn', 'PSN', 'fab fa-playstation', '#4a9eea'], ['xbox', 'Xbox', 'fab fa-xbox', '#4caf50'], ['steam', 'Steam', 'fab fa-steam', '#66c0f4'], ['retro', 'Retro', 'fas fa-gamepad', '#D4A017']];
+    const cur = F.find(f => f[0] === g.filter);
+    return {
+      query: g.query,
+      setQuery: e => this.upRk({ query: e.target.value }),
+      menuOpen: !!g.menu,
+      toggleMenu: () => this.upRk({ menu: !g.menu }),
+      curLabel: cur[1], curIcon: cur[2], curColor: cur[3],
+      chevron: g.menu ? 'rotate(180deg)' : 'rotate(0)',
+      selBorder: g.menu ? 'rgba(59,130,246,.6)' : 'rgba(255,255,255,.07)',
+      filters: F.map(([id, label, icon, iconColor]) => ({
+        label, icon, iconColor, pick: () => this.upRk({ filter: id, menu: false }),
+        bg: g.filter === id ? 'rgba(59,130,246,.14)' : 'transparent',
+        check: g.filter === id ? 'fas fa-check' : '',
+      })),
+      showPodium, p1: ranked[0] || {}, p2: ranked[1] || {}, p3: ranked[2] || {},
+      rows, empty: rows.length === 0 && !!q,
+      mePos: me ? me.pos + 'º' : '—', mePts: me ? me.pts : '0',
+    };
+  }
+
+  flS = {
+    tab: 'followers', query: '',
+    following: new Set(['cipher.pro', 'nova.star', 'code.mage', '8bit.queen', 'blood.wing']),
+  };
+  upFl(p) { this.flS = { ...this.flS, ...p }; this.forceUpdate(); }
+
+  followView() {
+    const followers = [
+      ['Cypher Blade', 'cipher.pro', 'Cypher'], ['MysticShadow', 'shadow.caster', 'Mystic'], ['Nova Burst', 'nova.star', 'Nova'],
+      ['PyroPhoenix', 'phoenix.ignite', 'Pyro'], ['GalacticHunter', 'star.chaser', 'Galactic'], ['Tech Sorcerer', 'code.mage', 'Tech'],
+      ['AquaDiva', 'ocean.song', 'Aqua'], ['GrimReaper', 'dark.harvester', 'Grim'], ['PixelPrincess', '8bit.queen', 'Pixel'],
+      ['VoltageWarrior', 'shock.wave', 'Voltage'], ['CrimsonValkyrie', 'blood.wing', 'Crimson'], ['ChronoSage', 'time.bender', 'Chrono'],
+    ];
+    const extra = [['SombraNoturna88', 'sombra88', 'Sombra'], ['MestreArcanoX', 'arcano.x', 'Arcano'], ['LunaByte', 'luna.byte', 'Luna'], ['RetroKing', 'retro.king', 'Retro']];
+    const g = this.flS;
+    const all = followers.concat(extra);
+    const mk = ([name, h, seed]) => {
+      const on = g.following.has(h);
+      return {
+        name, handle: '@' + h, avatar: this.av(seed),
+        label: on ? 'Seguindo' : 'Seguir',
+        bg: on ? 'transparent' : 'linear-gradient(135deg,#3b82f6,#1d4ed8)',
+        color: on ? '#cbd5e1' : '#fff',
+        border: on ? 'rgba(255,255,255,.16)' : 'rgba(59,130,246,.6)',
+        toggle: () => {
+          const s = new Set(g.following);
+          on ? s.delete(h) : s.add(h);
+          this.upFl({ following: s });
+        },
+      };
+    };
+    const q = g.query.trim().toLowerCase();
+    let list, section, emptyText = '';
+    if (g.tab === 'followers') { list = followers.map(mk); section = 'QUEM SEGUE VOCÊ'; }
+    else if (g.tab === 'following') { list = all.filter(u => g.following.has(u[1])).map(mk); section = 'VOCÊ SEGUE'; emptyText = 'Você ainda não segue ninguém.'; }
+    else {
+      list = (q ? all.filter(u => (u[0] + ' ' + u[1]).toLowerCase().includes(q)) : extra).map(mk);
+      section = q ? 'RESULTADOS' : 'SUGESTÕES PARA VOCÊ';
+      emptyText = 'Ninguém encontrado para “' + g.query + '”.';
+    }
+    const tabs = [['followers', 'Seguidores', followers.length], ['following', 'Seguindo', g.following.size], ['search', 'Pesquisar', '']];
+    return {
+      title: { followers: 'Seguidores', following: 'Seguindo', search: 'Pesquisar' }[g.tab],
+      tabs: tabs.map(([id, label, count]) => ({
+        label, count, pick: () => this.upFl({ tab: id }),
+        bg: g.tab === id ? '#1f2633' : 'transparent',
+        color: g.tab === id ? '#f4f6fa' : '#9ca3af',
+        shadow: g.tab === id ? '0 2px 10px rgba(0,0,0,.35)' : 'none',
+      })),
+      isSearch: g.tab === 'search', query: g.query,
+      setQuery: e => this.upFl({ query: e.target.value }),
+      sectionLabel: section, list, empty: list.length === 0, emptyText,
+    };
+  }
+
+  stS = { sheet: null, confirm: '', loading: false, done: null };
+  upSt(p) { this.stS = { ...this.stS, ...p }; this.forceUpdate(); }
+
+  settingsView() {
+    const g = this.stS;
+    const n = ['steam', 'ps', 'xbox', 'retro'].filter(k => this.plat[k] === 'on').length;
+    const ok = g.confirm.trim().toUpperCase() === 'EXCLUIR';
+    return {
+      linked: n + ' de 4',
+      sheetOpen: !!g.sheet,
+      isLogout: g.sheet === 'logout', isDelete: g.sheet === 'delete', isDone: g.sheet === 'done',
+      loading: g.loading,
+      logoutLabel: g.loading ? 'Saindo…' : 'Sair',
+      deleteLabel: g.loading ? 'Excluindo…' : 'Excluir permanentemente',
+      deleteOpacity: ok ? 1 : 0.45,
+      inputBorder: ok ? 'rgba(239,68,68,.6)' : 'rgba(255,255,255,.07)',
+      confirmText: g.confirm,
+      doneTitle: g.done === 'delete' ? 'Conta excluída' : 'Sessão encerrada',
+      doneText: g.done === 'delete' ? 'Sua conta foi removida permanentemente. Esperamos ver você de novo.' : 'Você saiu do Prisma em todos os dispositivos.',
+      doneCta: g.done === 'delete' ? 'Voltar ao início' : 'Entrar novamente',
+      setConfirm: e => this.upSt({ confirm: e.target.value }),
+      openLogout: () => this.upSt({ sheet: 'logout' }),
+      openDelete: () => this.upSt({ sheet: 'delete', confirm: '' }),
+      close: () => { if (!g.loading) this.upSt({ sheet: null, confirm: '' }); },
+      confirmLogout: () => {
+        if (g.loading) return;
+        this.upSt({ loading: true });
+        setTimeout(() => this.upSt({ loading: false, sheet: 'done', done: 'logout' }), 1100);
+      },
+      confirmDelete: () => {
+        if (g.loading || !ok) return;
+        this.upSt({ loading: true });
+        setTimeout(() => this.upSt({ loading: false, sheet: 'done', done: 'delete', confirm: '' }), 1300);
+      },
+    };
+  }
+
   renderVals() {
     return {
+      pr: this.profView(),
+      rk: this.rankView(),
+      fl: this.followView(),
+      st: this.settingsView(),
       p: this.platView(),
       f: this.fpView(),
       r: this.regView(),
