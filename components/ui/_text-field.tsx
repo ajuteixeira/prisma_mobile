@@ -1,9 +1,11 @@
 import { COLORS } from "@/constants";
-import { memo, useState, type ReactNode } from "react";
+import { memo, useState, type ReactNode, type Ref } from "react";
 import { TextInput, View, type TextInputProps } from "react-native";
 import { Icon, type IconName } from "./_icon";
 
 type TextFieldProps = TextInputProps & {
+  /** Repassado ao `TextInput`, para mover o foco entre campos. */
+  ref?: Ref<TextInput>;
   /** Ícone à esquerda do campo. */
   icon?: IconName;
   /** Slot à direita — botão de olho, indicador de validação, etc. */
