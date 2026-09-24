@@ -1,5 +1,5 @@
 import { EmailStep } from "@/components/auth";
-import { fireEvent, render, screen } from "@/utils/tests";
+import { fireEvent, render, screen } from "@/__tests__/utils";
 
 describe("EmailStep", () => {
   it("repassa o que é digitado e o envio pelo teclado", async () => {
