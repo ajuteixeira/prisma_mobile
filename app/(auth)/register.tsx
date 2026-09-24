@@ -52,8 +52,6 @@ export default function RegisterScreen() {
                     onChangeFullName={flow.setFullName}
                     username={flow.username}
                     onChangeUsername={flow.setUsername}
-                    usernameStatus={flow.usernameStatus}
-                    usernameStatusColor={flow.usernameStatusColor}
                     onSubmit={flow.submit}
                   />
                 ) : null}

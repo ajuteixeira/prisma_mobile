@@ -7,9 +7,6 @@ type IdentityStepProps = {
   onChangeFullName: (fullName: string) => void;
   username: string;
   onChangeUsername: (username: string) => void;
-  /** Vazio enquanto o campo não foi tocado. */
-  usernameStatus: string;
-  usernameStatusColor: string;
   onSubmit: () => void;
 };
 
@@ -20,8 +17,6 @@ export const IdentityStep = memo(
     onChangeFullName,
     username,
     onChangeUsername,
-    usernameStatus,
-    usernameStatusColor,
     onSubmit,
   }: IdentityStepProps) => (
     <View className="gap-3">
@@ -48,14 +43,6 @@ export const IdentityStep = memo(
         textContentType="username"
         returnKeyType="next"
         onSubmitEditing={onSubmit}
-        trailing={
-          <Text
-            className="pr-2 text-[12.5px] font-semibold"
-            style={{ color: usernameStatusColor }}
-          >
-            {usernameStatus}
-          </Text>
-        }
       />
 
       <Text className="mx-0.5 mt-0.5 text-xs leading-[18px] text-prisma-faint">

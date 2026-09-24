@@ -6,7 +6,9 @@ export type PlatformSlug = "steam" | "playstation" | "xbox" | "retroachievements
 /**
  * Como a plataforma é vinculada:
  * - `oauth`: o provedor cuida do login, o app só abre o navegador.
- * - `credentials`: o usuário informa chave/token em um formulário antes.
+ * - `credentials`: o usuário informa chave/token em um formulário antes. A Steam
+ *   segue para o login OpenID; PSN e RetroAchievements provam a posse com o
+ *   código de verificação (`ownershipCode`).
  */
 export type PlatformAuthKind = "oauth" | "credentials";
 
@@ -39,8 +41,11 @@ export type Platform = {
   /** Texto do card enquanto a autenticação acontece. */
   loading: string;
   instructions?: PlatformInstruction[];
-  /** Código que o usuário precisa colar no perfil da plataforma para provar posse. */
-  verificationCode?: string;
+  /**
+   * Pede o código `PRISMA-XXXX` (emitido pelo backend) que o usuário cola no
+   * perfil da plataforma para provar que a conta é dele.
+   */
+  ownershipCode?: boolean;
   fields?: PlatformField[];
   /** Campo cujo valor vira o identificador exibido no card depois de vincular. */
   handleField?: number;
@@ -100,8 +105,7 @@ export const PLATFORMS: Platform[] = [
         },
       },
     ],
-    // TODO(api): o código de posse é emitido pelo backend por vínculo.
-    verificationCode: "PRISMA-Z37U",
+    ownershipCode: true,
     fields: [
       { label: "PSN ID", placeholder: "seu_username_psn" },
       { label: "Token de Acesso", placeholder: "Seu token de acesso da PSN" },
@@ -141,8 +145,7 @@ export const PLATFORMS: Platform[] = [
         body: "Nome de usuário e Web API Key, disponíveis no menu de configurações do RetroAchievements.",
       },
     ],
-    // TODO(api): o código de posse é emitido pelo backend por vínculo.
-    verificationCode: "PRISMA-4Y82",
+    ownershipCode: true,
     fields: [
       { label: "Username", placeholder: "Seu usuário do RetroAchievements" },
       { label: "API Key", placeholder: "Sua chave de API" },
