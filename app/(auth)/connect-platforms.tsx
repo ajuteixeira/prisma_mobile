@@ -52,7 +52,6 @@ export default function ConnectPlatformsScreen() {
           {/* Sem nenhuma conta o botão fica esmaecido e o toque não faz nada. */}
           <GradientButton
             label={flow.finishLabel}
-            loading={flow.finishing}
             dimmed={flow.finishDimmed}
             onPress={flow.finish}
           />
@@ -65,6 +64,10 @@ export default function ConnectPlatformsScreen() {
         onChangeField={flow.setField}
         ready={flow.modalReady}
         loading={flow.modalLoading}
+        error={flow.modalError}
+        verificationCode={flow.verificationCode}
+        codeLoading={flow.codeLoading}
+        onRegenerateCode={flow.regenerateCode}
         onSubmit={flow.submitModal}
         onClose={flow.closeModal}
       />

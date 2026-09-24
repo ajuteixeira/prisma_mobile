@@ -1,3 +1,4 @@
+import { Callout } from "@/components/ui/_callout";
 import { GradientButton } from "@/components/ui/_gradient-button";
 import { Icon } from "@/components/ui/_icon";
 import { IconButton } from "@/components/ui/_icon-button";
@@ -6,6 +7,7 @@ import { usePressed } from "@/hooks/_use-pressed";
 import { MotiView } from "moti";
 import { memo, useState } from "react";
 import {
+  ActivityIndicator,
   Linking,
   Modal,
   Platform as RNPlatform,
@@ -84,6 +86,12 @@ type CredentialsModalProps = {
   /** Todos os campos preenchidos. */
   ready: boolean;
   loading: boolean;
+  /** Falha da última tentativa, exibida acima dos botões. */
+  error: string | null;
+  /** Código `PRISMA-XXXX` emitido pelo backend (só PSN e RetroAchievements). */
+  verificationCode: string | null;
+  codeLoading: boolean;
+  onRegenerateCode: () => void;
   onSubmit: () => void;
   onClose: () => void;
 };
@@ -99,6 +107,10 @@ export const CredentialsModal = memo(
     onChangeField,
     ready,
     loading,
+    error,
+    verificationCode,
+    codeLoading,
+    onRegenerateCode,
     onSubmit,
     onClose,
   }: CredentialsModalProps) => {
@@ -162,18 +174,34 @@ export const CredentialsModal = memo(
             >
               {firstStep ? <Instruction {...firstStep} /> : null}
 
-              {platform.verificationCode ? (
+              {platform.ownershipCode ? (
                 <View className="rounded-2xl border border-prisma-ghost-border bg-prisma-sunken px-4 py-3.5">
                   <Text className="text-[11.5px] text-prisma-faint">Código de verificação</Text>
                   {/* TODO(deps): com `expo-clipboard` instalado, trocar por um botão
                       de copiar; hoje o código é selecionável no toque longo. */}
-                  <Text
-                    selectable
-                    className="mt-1.5 text-[21px] font-bold text-prisma-ink"
-                    style={{ letterSpacing: 2, fontFamily: MONOSPACE }}
-                  >
-                    {platform.verificationCode}
-                  </Text>
+                  {verificationCode ? (
+                    <Text
+                      selectable
+                      className="mt-1.5 text-[21px] font-bold text-prisma-ink"
+                      style={{ letterSpacing: 2, fontFamily: MONOSPACE }}
+                    >
+                      {verificationCode}
+                    </Text>
+                  ) : codeLoading ? (
+                    <ActivityIndicator
+                      className="mt-2 self-start"
+                      size="small"
+                      color={COLORS.accentSoft}
+                    />
+                  ) : (
+                    <Text
+                      accessibilityRole="button"
+                      className="mt-2 text-[13px] font-semibold text-prisma-accent"
+                      onPress={onRegenerateCode}
+                    >
+                      Gerar código
+                    </Text>
+                  )}
                 </View>
               ) : null}
 
@@ -190,6 +218,8 @@ export const CredentialsModal = memo(
                   onChangeText={(value) => onChangeField(platform.slug, index, value)}
                 />
               ))}
+
+              {error ? <Callout tone="danger">{error}</Callout> : null}
             </ScrollView>
 
             <View
