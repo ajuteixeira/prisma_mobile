@@ -30,3 +30,16 @@ export type Availability = { username?: boolean; email?: boolean };
 /** Confere se username e/ou e-mail ainda estão livres; só volta as chaves enviadas. */
 export const availability = (fields: { username?: string; email?: string }) =>
   apiRequest<Availability>("/api/auth/availability", { body: fields });
+/** Corpo de `POST /api/auth/password/forgot`. */
+export type ForgotPasswordPayload = {
+  email: string;
+};
+
+/** Resposta `202`, idêntica exista ou não a conta (evita enumeração de e-mails). */
+export type ForgotPasswordResponse = {
+  message: string;
+};
+
+/** Envia o link de redefinição; a nova senha é criada na versão web. */
+export const forgotPassword = (payload: ForgotPasswordPayload) =>
+  apiRequest<ForgotPasswordResponse>("/api/auth/password/forgot", { body: payload });
