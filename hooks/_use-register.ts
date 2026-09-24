@@ -1,4 +1,6 @@
 import { COLORS, PASSWORD_STRENGTH_COLORS, PASSWORD_STRENGTH_LABELS } from "@/constants";
+import { ApiError, authService, type RegisterPayload } from "@/services";
+import { useSession } from "@/store";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -9,8 +11,6 @@ const STEPS: RegisterStep[] = ["identity", "email", "password"];
 
 const MIN_PASSWORD_LENGTH = 6;
 const MIN_FULL_NAME_LENGTH = 3;
-/** Latência simulada enquanto a integração com a API não existe. */
-const REQUEST_DELAY = 1400;
 
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i;
 const USERNAME_PATTERN = /^[a-z0-9_]{3,}$/;
@@ -35,18 +35,33 @@ const COPY: Record<RegisterStep, { title: string; subtitle: string; button: stri
   },
 };
 
-/** Corpo de `POST /api/auth/register`. */
-type RegisterPayload = {
-  email: string;
-  password: string;
-  username: string;
-  full_name: string;
+/** Passo onde cada campo do `422` de `POST /api/auth/register` é editado. */
+const FIELD_STEP: Record<string, RegisterStep> = {
+  full_name: "identity",
+  username: "identity",
+  email: "email",
+  password: "password",
 };
 
-/** Resposta `201` do mesmo endpoint. */
-type RegisterResponse = {
-  token: string;
-  user: { email: string; username: string };
+const FIELD_LABEL: Record<string, string> = {
+  full_name: "Nome",
+  username: "Nickname",
+  email: "E-mail",
+  password: "Senha",
+};
+
+/** Primeiro erro de campo da API, já com o passo que precisa ser corrigido. */
+const describeRegisterError = (error: unknown): { message: string; step?: RegisterStep } => {
+  if (!(error instanceof ApiError))
+    return { message: "Não foi possível conectar ao servidor. Tente novamente." };
+
+  const [field, messages] = Object.entries(error.fieldErrors)[0] ?? [];
+  if (!field) return { message: error.message };
+
+  return {
+    message: `${FIELD_LABEL[field] ?? field} ${messages?.[0] ?? "inválido"}.`,
+    step: FIELD_STEP[field],
+  };
 };
 
 /**
@@ -63,11 +78,11 @@ const scorePassword = (password: string) =>
 
 /**
  * Máquina de estados do cadastro: perfil → e-mail → senha, tudo no mesmo sheet.
- * A chamada de rede está simulada; `runRequest` é o único ponto a trocar quando
- * a integração com `POST /api/auth/register` existir.
+ * O último passo envia tudo para `POST /api/auth/register` e guarda a sessão.
  */
 export const useRegister = () => {
   const router = useRouter();
+  const signIn = useSession((state) => state.signIn);
 
   const [step, setStep] = useState<RegisterStep>("identity");
   const [fullName, setFullName] = useState("");
@@ -79,28 +94,33 @@ export const useRegister = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const requestTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** Evita `setState` depois que a tela saiu da pilha no meio da requisição. */
+  const mounted = useRef(true);
   useEffect(
     () => () => {
-      if (requestTimeout.current) clearTimeout(requestTimeout.current);
+      mounted.current = false;
     },
     [],
   );
 
   const runRequest = useCallback(
-    (payload: RegisterPayload, onDone: (response: RegisterResponse) => void) => {
+    async (payload: RegisterPayload) => {
       setLoading(true);
-      requestTimeout.current = setTimeout(() => {
-        setLoading(false);
-        // TODO(api): enviar `payload` para POST /api/auth/register e guardar o
-        // token devolvido. Até lá devolvemos a mesma forma da resposta 201.
-        onDone({
-          token: "token-simulado",
-          user: { email: payload.email, username: payload.username },
-        });
-      }, REQUEST_DELAY);
+      try {
+        const session = await authService.register(payload);
+        signIn(session);
+        // Conta criada: o passo seguinte do onboarding é vincular as plataformas.
+        router.replace("/connect-platforms");
+      } catch (requestError) {
+        if (!mounted.current) return;
+        const { message, step: fieldStep } = describeRegisterError(requestError);
+        if (fieldStep) setStep(fieldStep);
+        setError(message);
+      } finally {
+        if (mounted.current) setLoading(false);
+      }
     },
-    [],
+    [router, signIn],
   );
 
   /** Qualquer edição limpa o erro exibido acima do botão. */
@@ -183,15 +203,13 @@ export const useRegister = () => {
       full_name: fullName.trim(),
     };
 
-    // Conta criada: o passo seguinte do onboarding é vincular as plataformas.
-    runRequest(payload, () => router.replace("/connect-platforms"));
+    runRequest(payload);
   }, [
     email,
     fullName,
     isLastStep,
     loading,
     password,
-    router,
     runRequest,
     stepIndex,
     username,
