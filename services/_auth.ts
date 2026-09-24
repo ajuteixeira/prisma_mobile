@@ -43,3 +43,10 @@ export type ForgotPasswordResponse = {
 /** Envia o link de redefinição; a nova senha é criada na versão web. */
 export const forgotPassword = (payload: ForgotPasswordPayload) =>
   apiRequest<ForgotPasswordResponse>("/api/auth/password/forgot", { body: payload });
+
+/**
+ * `POST /api/auth/logout` — o Bearer é obrigatório: o servidor encerra a
+ * sessão identificada pelo token.
+ */
+export const logout = (token: string) =>
+  apiRequest<null>("/api/auth/logout", { token, method: "POST" });

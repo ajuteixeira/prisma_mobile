@@ -2,8 +2,27 @@
 process.env.EXPO_PUBLIC_API_URL = "http://api.test";
 
 // Reanimated (usado pelo moti) e Worklets dependem de módulos nativos.
-jest.mock("react-native-worklets", () => jest.requireActual("react-native-worklets/src/mock"));
+// O `src/mock` do worklets 0.10 não cobre a API que o mock do reanimated 4.5
+// usa (holders, createShareable, ...): o Proxy devolve uma função vazia
+// genérica para o que faltar.
+jest.mock("react-native-worklets", () => {
+  const actual = jest.requireActual("react-native-worklets/src/mock");
+  return new Proxy(actual, {
+    get: (target, prop) => (prop in target ? target[prop] : () => ({})),
+  });
+});
 jest.mock("react-native-reanimated", () => jest.requireActual("react-native-reanimated/mock"));
+
+// `standard-navigation` é ESM-only ("type": "module") e o Jest não consegue
+// dar require() nele (ERR_REQUIRE_ESM). O expo-router só o usa nas APIs
+// `unstable_*`, fora do caminho dos testes.
+jest.mock("standard-navigation", () => ({
+  createStandardNavigator: (NavigatorContent: unknown) => ({
+    type: "standard",
+    version: 1,
+    NavigatorContent,
+  }),
+}));
 
 // Sem animação real, o `AnimatePresence` do moti não re-renderiza ao fim da saída e
 // o próximo passo nunca monta. Nos testes a troca de passo é imediata.

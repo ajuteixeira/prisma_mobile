@@ -5,4 +5,5 @@ export * from "./_icon-button";
 export * from "./_otp-input";
 export * from "./_prisma-background";
 export * from "./_segmented-bar";
+export * from "./_tab-bar";
 export * from "./_text-field";

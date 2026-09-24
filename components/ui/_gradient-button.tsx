@@ -12,6 +12,8 @@ type GradientButtonProps = Omit<PressableProps, "children" | "style"> & {
   /** O modal de credenciais usa uma versão levemente menor. */
   height?: number;
   radius?: number;
+  /** Gradiente do botão; o padrão é a marca azul (Zona de perigo usa vermelho). */
+  colors?: readonly [string, string];
 };
 
 /** Botão primário do sistema: gradiente 135deg com brilho projetado. */
@@ -22,6 +24,7 @@ export const GradientButton = memo(
     dimmed = false,
     height = 58,
     radius = 18,
+    colors = BRAND_GRADIENT,
     disabled,
     ...pressableProps
   }: GradientButtonProps) => {
@@ -41,7 +44,7 @@ export const GradientButton = memo(
         }}
       >
         <LinearGradient
-          colors={BRAND_GRADIENT}
+          colors={[...colors]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{

@@ -29,6 +29,12 @@ export const ICONS = {
   gamepad: { ios: "gamecontroller.fill", android: "sports_esports", web: "sports_esports" },
   joystick: { ios: "arcade.stick", android: "videogame_asset", web: "videogame_asset" },
   console: { ios: "gamecontroller", android: "stadia_controller", web: "stadia_controller" },
+  settings: { ios: "gearshape.fill", android: "settings", web: "settings" },
+  signOut: { ios: "rectangle.portrait.and.arrow.right", android: "logout", web: "logout" },
+  trash: { ios: "trash.fill", android: "delete", web: "delete" },
+  users: { ios: "person.2.fill", android: "group", web: "group" },
+  key: { ios: "key.fill", android: "key", web: "key" },
+  chevronRight: { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
 } as const satisfies Record<string, SymbolName>;
 
 export type IconName = keyof typeof ICONS;
