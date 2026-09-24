@@ -26,7 +26,7 @@ export const EmailStep = memo(({ email, onChangeEmail, onSubmit }: EmailStepProp
       onSubmitEditing={onSubmit}
       autoFocus
     />
-    <Callout>O código chega em segundos. Confira também a pasta de spam.</Callout>
+    <Callout>Você receberá um link para criar a nova senha pelo navegador.</Callout>
   </View>
 ));
 

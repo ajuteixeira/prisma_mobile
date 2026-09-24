@@ -1,4 +1,4 @@
-import { AuthHeader, AuthSheet, CodeStep, EmailStep, PasswordStep, SuccessStep } from "@/components/auth";
+import { AuthHeader, AuthSheet, EmailStep, SentStep } from "@/components/auth";
 import { Callout, GradientButton } from "@/components/ui";
 import { useForgotPassword } from "@/hooks";
 import { StatusBar } from "expo-status-bar";
@@ -42,31 +42,14 @@ export default function ForgotPasswordScreen() {
                   />
                 ) : null}
 
-                {flow.step === "code" ? (
-                  <CodeStep
-                    code={flow.code}
-                    onChangeCode={flow.setCode}
-                    onComplete={flow.submit}
+                {flow.step === "sent" ? (
+                  <SentStep
+                    email={flow.email}
                     resendLabel={flow.resendLabel}
                     canResend={flow.canResend}
-                    onResend={flow.resendCode}
+                    onResend={flow.resendLink}
                   />
                 ) : null}
-
-                {flow.step === "password" ? (
-                  <PasswordStep
-                    password={flow.password}
-                    onChangePassword={flow.setPassword}
-                    passwordConfirmation={flow.passwordConfirmation}
-                    onChangePasswordConfirmation={flow.setPasswordConfirmation}
-                    visible={flow.passwordVisible}
-                    onToggleVisibility={flow.togglePasswordVisibility}
-                    passwordsMatch={flow.passwordsMatch}
-                    onSubmit={flow.submit}
-                  />
-                ) : null}
-
-                {flow.step === "success" ? <SuccessStep /> : null}
               </MotiView>
             </AnimatePresence>
 
@@ -87,19 +70,22 @@ export default function ForgotPasswordScreen() {
             <GradientButton
               label={flow.buttonLabel}
               loading={flow.loading}
+              dimmed={flow.dimmed}
               onPress={flow.submit}
             />
 
-            <Text className="mt-[18px] text-center text-sm text-prisma-muted">
-              Lembrou a senha?{" "}
-              <Text
-                className="font-semibold text-prisma-accent"
-                accessibilityRole="link"
-                onPress={flow.leaveToSignIn}
-              >
-                Entrar
+            {flow.step === "email" ? (
+              <Text className="mt-[18px] text-center text-sm text-prisma-muted">
+                Lembrou a senha?{" "}
+                <Text
+                  className="font-semibold text-prisma-accent"
+                  accessibilityRole="link"
+                  onPress={flow.leaveToSignIn}
+                >
+                  Entrar
+                </Text>
               </Text>
-            </Text>
+            ) : null}
           </ScrollView>
         </AuthSheet>
       </KeyboardAvoidingView>
