@@ -241,3 +241,43 @@ export const CONNECT_BEAMS: PrismaBeam[] = [
 
 /** Opacidade do feixe de uma plataforma ainda não vinculada. */
 export const BEAM_OFF_OPACITY = 0.12;
+
+/** Altura da área iluminada no topo do Perfil (artboard 6a). */
+export const PROFILE_HERO_HEIGHT = 360;
+
+/** Feixes do Perfil: PlayStation e Steam no topo, um brilho dourado atrás do cartão. */
+export const PROFILE_BEAMS: PrismaBeam[] = [
+  {
+    id: "playstation",
+    rgb: "0, 112, 204",
+    intensity: 0.5,
+    size: 460,
+    top: -270,
+    left: -170,
+    drift: { x: 26, y: -18 },
+    duration: 20000,
+    delay: 0,
+  },
+  {
+    id: "steam",
+    rgb: "102, 192, 244",
+    intensity: 0.45,
+    size: 460,
+    top: -220,
+    right: -200,
+    drift: { x: -22, y: 20 },
+    duration: 25000,
+    delay: 1000,
+  },
+  {
+    id: "retroachievements",
+    rgb: "212, 160, 23",
+    intensity: 0.2,
+    size: 320,
+    top: 80,
+    left: 30,
+    drift: { x: 18, y: 14 },
+    duration: 22000,
+    delay: 3000,
+  },
+];

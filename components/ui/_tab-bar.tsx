@@ -11,11 +11,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
  * seguidores → ajustes), numa pill flutuante como no artboard 6d. A cor ativa
  * é o azul de destaque; as demais ficam em cinza.
  */
+/** Chaves são os nomes das rotas em `app/(tabs)` (pastas com `index` incluem o sufixo). */
 const TABS: Record<string, { icon: IconName; label: string }> = {
   profile: { icon: "user", label: "Perfil" },
   ranking: { icon: "trophy", label: "Ranking" },
   followers: { icon: "users", label: "Seguidores" },
-  settings: { icon: "settings", label: "Ajustes" },
+  "settings/index": { icon: "settings", label: "Ajustes" },
 };
 
 const TabItem = memo(

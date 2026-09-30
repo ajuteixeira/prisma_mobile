@@ -9,7 +9,7 @@ const renderScreen = () =>
     {
       index: () => null,
       "(auth)/login/index": LoginScreen,
-      "(tabs)/home/index": () => null,
+      "(tabs)/profile": () => null,
     },
     { initialUrl: "/login" },
   );
@@ -44,7 +44,7 @@ describe("LoginScreen", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  it("entra, guarda a sessão e abre a home", async () => {
+  it("entra, guarda a sessão e abre o perfil", async () => {
     const fetch = mockFetch(200, { token: "abc", user: USER });
     const view = await renderScreen();
 
@@ -53,7 +53,7 @@ describe("LoginScreen", () => {
     expect(fetch.mock.calls[0][0]).toBe("http://api.test/api/auth/login");
     expect(fetchBody(fetch)).toEqual({ email: "ana@prisma.gg", password: "senha123" });
     expect(useSession.getState()).toMatchObject({ token: "abc", user: USER });
-    expect(view).toHavePathname("/home");
+    expect(view).toHavePathname("/profile");
   });
 
   it("mostra erro genérico quando as credenciais estão erradas", async () => {

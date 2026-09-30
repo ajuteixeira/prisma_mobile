@@ -389,7 +389,7 @@ export const useConnectPlatforms = () => {
   const finish = useCallback(() => {
     if (busy || connected === 0) return;
     // TODO(api): disparar a sincronização inicial quando a API expuser a rota.
-    router.replace("/home");
+    router.replace("/profile");
   }, [busy, connected, router]);
 
   const goBack = useCallback(() => {

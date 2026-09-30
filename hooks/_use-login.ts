@@ -59,7 +59,7 @@ export const useLogin = () => {
     try {
       const session = await authService.login({ email: email.trim(), password });
       signIn(session);
-      router.replace("/home");
+      router.replace("/profile");
     } catch (requestError) {
       if (mounted.current) setError(describeLoginError(requestError));
     } finally {

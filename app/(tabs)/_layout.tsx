@@ -9,7 +9,7 @@ const TabsLayout = () => (
     <Tabs.Screen name="profile" options={{ title: "Perfil" }} />
     <Tabs.Screen name="ranking" options={{ title: "Ranking" }} />
     <Tabs.Screen name="followers" options={{ title: "Seguidores" }} />
-    <Tabs.Screen name="settings" options={{ title: "Ajustes" }} />
+    <Tabs.Screen name="settings/index" options={{ title: "Ajustes" }} />
   </Tabs>
 );
 

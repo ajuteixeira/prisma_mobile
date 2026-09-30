@@ -34,6 +34,8 @@ export const ICONS = {
   trash: { ios: "trash.fill", android: "delete", web: "delete" },
   users: { ios: "person.2.fill", android: "group", web: "group" },
   key: { ios: "key.fill", android: "key", web: "key" },
+  camera: { ios: "camera.fill", android: "photo_camera", web: "photo_camera" },
+  share: { ios: "square.and.arrow.up", android: "share", web: "share" },
   chevronRight: { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
 } as const satisfies Record<string, SymbolName>;
 
