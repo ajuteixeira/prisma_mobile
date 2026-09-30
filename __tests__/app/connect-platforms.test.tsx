@@ -44,7 +44,7 @@ const renderScreen = () =>
     {
       index: () => null,
       "(auth)/connect-platforms/index": ConnectPlatformsScreen,
-      "(tabs)/home/index": () => null,
+      "(tabs)/profile": () => null,
     },
     { initialUrl: "/connect-platforms" },
   );
@@ -92,13 +92,13 @@ describe("ConnectPlatformsScreen", () => {
     expect(view).toHavePathname("/connect-platforms");
   });
 
-  it("conclui e segue para a home", async () => {
+  it("conclui e segue para o perfil", async () => {
     mockFetchRoutes({ "GET /api/platforms": [200, { platforms: [account("xbox")] }] });
     const view = await renderScreen();
 
     await fireEvent.press(await screen.findByText("Concluir e sincronizar"));
 
-    expect(view).toHavePathname("/home");
+    expect(view).toHavePathname("/profile");
   });
 
   it("volta para o login pelo botão do topo", async () => {

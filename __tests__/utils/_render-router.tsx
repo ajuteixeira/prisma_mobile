@@ -11,7 +11,7 @@ type RenderRouterResult = Awaited<ReturnType<typeof expoRenderRouter>> &
  *
  * O original anexa `getPathname` e afins à Promise devolvida pelo `render`, e
  * eles se perdem no `await`. Aqui o resultado já vem com os getters, então os
- * matchers funcionam direto nele: `expect(view).toHavePathname("/home")`.
+ * matchers funcionam direto nele: `expect(view).toHavePathname("/profile")`.
  */
 export const renderRouter = async (
   ...args: Parameters<typeof expoRenderRouter>

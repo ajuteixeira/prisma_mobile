@@ -1,7 +1,7 @@
-import { SectionLabel, SettingsRow, SettingsSheet } from "@/components/settings";
-import { Callout, GradientButton, Icon, PrismaBackground, TextField } from "@/components/ui";
+import { EditProfileSheet, SectionLabel, SettingsRow, SettingsSheet } from "@/components/settings";
+import { Callout, fallbackAvatar, GradientButton, Icon, PrismaBackground, TextField } from "@/components/ui";
 import { COLORS } from "@/constants";
-import { useSettings } from "@/hooks";
+import { useEditProfile, useSettings } from "@/hooks";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -10,11 +10,12 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 
 /**
  * Configurações (artboard 6d): lista agrupada estilo iOS sobre os feixes do
- * prisma. Sair e Excluir abrem bottom sheets; o logout chama a API e encerra a
- * sessão local.
+ * prisma. O cartão do topo abre a sheet "Editar perfil"; Sair e Excluir abrem
+ * bottom sheets; o logout chama a API e encerra a sessão local.
  */
 export default function SettingsScreen() {
   const flow = useSettings();
+  const edit = useEditProfile();
   const router = useRouter();
 
   return (
@@ -37,14 +38,12 @@ export default function SettingsScreen() {
         {flow.user ? (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Abrir perfil"
-            onPress={() => router.push("/profile")}
+            accessibilityLabel="Editar perfil"
+            onPress={edit.open}
             className="mt-5 flex-row items-center gap-3.5 rounded-[20px] border border-white/[0.06] bg-prisma-surface p-4"
           >
             <Image
-              source={{
-                uri: `https://api.dicebear.com/7.x/avataaars/svg?seed=${flow.user.username}&backgroundColor=c0aede`,
-              }}
+              source={{ uri: edit.avatarUrl ?? fallbackAvatar(flow.user.username) }}
               style={{ width: 52, height: 52, borderRadius: 26, backgroundColor: "#c0aede" }}
             />
             <View className="min-w-0 flex-1">
@@ -111,6 +110,8 @@ export default function SettingsScreen() {
           />
         </View>
       </ScrollView>
+
+      <EditProfileSheet flow={edit} />
 
       {/* Sheet: confirmação de logout */}
       <SettingsSheet visible={flow.sheet === "logout"} onClose={flow.close}>
