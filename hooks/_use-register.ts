@@ -1,6 +1,6 @@
 import { COLORS, PASSWORD_STRENGTH_COLORS, PASSWORD_STRENGTH_LABELS } from "@/constants";
 import { ApiError, authService, type RegisterPayload } from "@/services";
-import { useSession } from "@/store";
+import { useRegistration } from "@/store";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -35,7 +35,7 @@ const COPY: Record<RegisterStep, { title: string; subtitle: string; button: stri
   },
 };
 
-/** Passo onde cada campo do `422` de `POST /api/auth/register` é editado. */
+/** Passo onde cada campo do `422` de `POST /api/auth/register/code` é editado. */
 const FIELD_STEP: Record<string, RegisterStep> = {
   full_name: "identity",
   username: "identity",
@@ -89,11 +89,12 @@ const scorePassword = (password: string) =>
 
 /**
  * Máquina de estados do cadastro: perfil → e-mail → senha, tudo no mesmo sheet.
- * O último passo envia tudo para `POST /api/auth/register` e guarda a sessão.
+ * O último passo pede o código de confirmação (`POST /api/auth/register/code`)
+ * e segue para `/verify-email`, onde a conta é de fato criada.
  */
 export const useRegister = () => {
   const router = useRouter();
-  const signIn = useSession((state) => state.signIn);
+  const setPending = useRegistration((state) => state.setPending);
 
   const [step, setStep] = useState<RegisterStep>("identity");
   const [fullName, setFullName] = useState("");
@@ -120,10 +121,10 @@ export const useRegister = () => {
     async (payload: RegisterPayload) => {
       setLoading(true);
       try {
-        const session = await authService.register(payload);
-        signIn(session);
-        // Conta criada: o passo seguinte do onboarding é vincular as plataformas.
-        router.replace("/connect-platforms");
+        const { verification_token, resend_in } = await authService.requestRegisterCode(payload);
+        setPending({ payload, verificationToken: verification_token, resendIn: resend_in });
+        // `push` mantém o cadastro na pilha: "Voltar e alterar dados" reencontra os campos.
+        router.push("/verify-email");
       } catch (requestError) {
         if (!mounted.current) return;
         const { message, step: fieldStep } = describeRegisterError(requestError);
@@ -133,7 +134,7 @@ export const useRegister = () => {
         if (mounted.current) setLoading(false);
       }
     },
-    [router, signIn],
+    [router, setPending],
   );
 
   /** Qualquer edição limpa o erro exibido acima do botão. */
@@ -268,7 +269,7 @@ export const useRegister = () => {
     step,
     title: COPY[step].title,
     subtitle: COPY[step].subtitle,
-    buttonLabel: loading ? "Criando conta…" : checking ? "Verificando…" : COPY[step].button,
+    buttonLabel: loading ? "Enviando código…" : checking ? "Verificando…" : COPY[step].button,
     stepLabel: `PASSO ${stepIndex + 1} DE ${STEPS.length}`,
     progress: { total: STEPS.length, current: stepIndex + 1 },
     loading: loading || checking,

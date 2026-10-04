@@ -7,12 +7,32 @@ export type ApiUser = {
   full_name: string | null;
 };
 
-/** Corpo de `POST /api/auth/register`. */
+/** Dados do cadastro, enviados a `POST /api/auth/register/code` e depois a `register`. */
 export type RegisterPayload = {
   email: string;
   password: string;
   username: string;
   full_name?: string;
+};
+
+/** Resposta `202` de `POST /api/auth/register/code`; prazos em segundos. */
+export type RegisterCodeResponse = {
+  verification_token: string;
+  expires_in: number;
+  resend_in: number;
+};
+
+/**
+ * Valida os dados do cadastro e envia o código de confirmação para o e-mail.
+ * Erros de campo voltam aqui (`422`), antes de o código ser enviado.
+ */
+export const requestRegisterCode = (payload: RegisterPayload) =>
+  apiRequest<RegisterCodeResponse>("/api/auth/register/code", { body: payload });
+
+/** Corpo de `POST /api/auth/register`: os dados do cadastro mais o código recebido. */
+export type VerifiedRegisterPayload = RegisterPayload & {
+  code: string;
+  verification_token: string;
 };
 
 /** Resposta `201` de `POST /api/auth/register` (e `200` do login). */
@@ -21,7 +41,11 @@ export type AuthResponse = {
   user: ApiUser;
 };
 
-export const register = (payload: RegisterPayload) =>
+/**
+ * Cria a conta se o código conferir: `422` código incorreto, `410` expirado e
+ * `429` tentativas esgotadas — nesses casos é preciso pedir um novo código.
+ */
+export const register = (payload: VerifiedRegisterPayload) =>
   apiRequest<AuthResponse>("/api/auth/register", { body: payload });
 
 /** Corpo de `POST /api/auth/login` — o login é por e-mail e senha (RF03). */
