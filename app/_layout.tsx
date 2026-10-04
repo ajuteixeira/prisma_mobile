@@ -1,4 +1,5 @@
 import { LoadingProvider } from "@/components/_loading";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/styles/global.css";
 import { Slot } from "expo-router";
 import { LogBox } from "react-native";
@@ -17,9 +18,11 @@ LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 const RootLayout = () => {
   return (
     <SafeAreaProvider>
+      <GluestackUIProvider mode="dark">
         <LoadingProvider>
           <Slot />
         </LoadingProvider>
+      </GluestackUIProvider>
       <Toast />
     </SafeAreaProvider>
   );
