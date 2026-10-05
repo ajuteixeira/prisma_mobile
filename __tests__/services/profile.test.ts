@@ -65,3 +65,22 @@ describe("profileService.update", () => {
     });
   });
 });
+
+describe("profileService.stats", () => {
+  it("envia GET /api/profile/stats com o Bearer e devolve estatísticas e distribuição", async () => {
+    const body = {
+      stats: { total_achievements: 2847, avg_completion: 34.2, perfect_games: 8 },
+      platform_distribution: [
+        { platform_id: 1, name: "Steam", slug: "steam", unlocked: 1708, percentage: 60.0 },
+      ],
+    };
+    const fetch = mockFetch(200, body);
+
+    await expect(profileService.stats("meu-token")).resolves.toEqual(body);
+
+    const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${API_URL}/api/profile/stats`);
+    expect(init.method).toBe("GET");
+    expect(init.headers).toMatchObject({ Authorization: "Bearer meu-token" });
+  });
+});

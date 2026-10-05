@@ -102,3 +102,92 @@ describe("ProfileScreen — cartão de perfil", () => {
     expect(view).toHavePathname("/followers");
   });
 });
+
+const STATS = {
+  stats: { total_achievements: 2847, avg_completion: 34.2, perfect_games: 8 },
+  platform_distribution: [
+    { platform_id: 1, name: "Steam", slug: "steam", unlocked: 1708, percentage: 60.0 },
+    {
+      platform_id: 2,
+      name: "PlayStation Network",
+      slug: "playstation",
+      unlocked: 569,
+      percentage: 20.0,
+    },
+    { platform_id: 3, name: "Xbox Live", slug: "xbox", unlocked: 285, percentage: 10.0 },
+    {
+      platform_id: 4,
+      name: "RetroAchievements",
+      slug: "retroachievements",
+      unlocked: 285,
+      percentage: 10.0,
+    },
+  ],
+};
+
+describe("ProfileScreen — estatísticas e troféus por plataforma", () => {
+  beforeEach(() => {
+    useSession.setState({ token: "abc", user: USER });
+  });
+
+  it("carrega as estatísticas com o token da sessão, abaixo do cartão", async () => {
+    const fetch = mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/stats": [200, STATS],
+    });
+    await renderScreen();
+
+    expect(await screen.findByText("2.847")).toBeOnTheScreen();
+    expect(screen.getByText("34%")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Steam: 60%")).toBeOnTheScreen();
+
+    const statsCall = fetch.mock.calls.find(([url]) => String(url).endsWith("/api/profile/stats"));
+    expect(statsCall?.[1]).toMatchObject({ headers: { Authorization: "Bearer abc" } });
+  });
+
+  it("mostra o carregamento das estatísticas enquanto a API não responde", async () => {
+    const pending = new Promise<Response>(() => undefined);
+    jest.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
+      String(input).endsWith("/api/profile/stats")
+        ? pending
+        : new Response(JSON.stringify({ profile: PROFILE }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+    );
+    await renderScreen();
+
+    expect(await screen.findByText("@carly")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Carregando estatísticas")).toBeOnTheScreen();
+  });
+
+  it("falha nas estatísticas não esconde o cartão e permite tentar de novo", async () => {
+    mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/stats": [
+        [500, { error: "Falhou" }],
+        [200, STATS],
+      ],
+    });
+    await renderScreen();
+
+    expect(
+      await screen.findByText("Não foi possível carregar suas estatísticas."),
+    ).toBeOnTheScreen();
+    expect(screen.getByText("@carly")).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByLabelText("Tentar carregar as estatísticas de novo"));
+
+    expect(await screen.findByText("2.847")).toBeOnTheScreen();
+  });
+
+  it("sem sessão, não busca as estatísticas", async () => {
+    useSession.setState({ token: null, user: null });
+    const fetch = mockFetchRoutes({});
+    await renderScreen();
+
+    expect(await screen.findByText("Sua sessão expirou. Entre novamente.")).toBeOnTheScreen();
+    expect(fetch).not.toHaveBeenCalled();
+    expect(screen.queryByLabelText("Carregando estatísticas")).not.toBeOnTheScreen();
+  });
+});

@@ -36,6 +36,8 @@ export const ICONS = {
   key: { ios: "key.fill", android: "key", web: "key" },
   camera: { ios: "camera.fill", android: "photo_camera", web: "photo_camera" },
   share: { ios: "square.and.arrow.up", android: "share", web: "share" },
+  pieChart: { ios: "chart.pie.fill", android: "pie_chart", web: "pie_chart" },
+  crown: { ios: "crown.fill", android: "crown", web: "crown" },
   chevronRight: { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
 } as const satisfies Record<string, SymbolName>;
 

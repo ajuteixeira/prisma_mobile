@@ -5,5 +5,6 @@ export * from "./_use-forgot-password";
 export * from "./_use-login";
 export * from "./_use-pressed";
 export * from "./_use-profile-card";
+export * from "./_use-profile-stats";
 export * from "./_use-register";
 export * from "./_use-settings";

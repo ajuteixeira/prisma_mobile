@@ -1,15 +1,60 @@
-import { ProfileCard } from "@/components/profile";
+import { PlatformDistributionCard, ProfileCard, ProfileStatsCard } from "@/components/profile";
 import { Callout, PrismaBackground } from "@/components/ui";
 import { COLORS, PROFILE_BEAMS, PROFILE_HERO_HEIGHT } from "@/constants";
-import { useProfileCard } from "@/hooks";
+import { useProfileCard, useProfileStats } from "@/hooks";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 
+const RetryButton = ({ onPress, label }: { onPress: () => void; label?: string }) => (
+  <Pressable
+    accessibilityRole="button"
+    accessibilityLabel={label}
+    onPress={onPress}
+    className="h-11 items-center justify-center self-start rounded-xl border border-white/[0.08] bg-white/[0.06] px-4"
+  >
+    <Text className="text-[14px] font-semibold text-prisma-body">Tentar novamente</Text>
+  </Pressable>
+);
+
+/** Estatísticas e troféus por plataforma, abaixo do cartão. */
+const ProfileStatsSection = () => {
+  const { data, loading, error, reload } = useProfileStats();
+
+  if (data) {
+    return (
+      <View className="mt-[26px] gap-3">
+        <ProfileStatsCard stats={data.stats} />
+        <PlatformDistributionCard distribution={data.platform_distribution} />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="mt-[26px] gap-3">
+        <Callout tone="danger">{error}</Callout>
+        <RetryButton onPress={reload} label="Tentar carregar as estatísticas de novo" />
+      </View>
+    );
+  }
+
+  if (!loading) return null;
+
+  return (
+    <View
+      accessibilityLabel="Carregando estatísticas"
+      className="mt-[26px] h-[220px] items-center justify-center rounded-[20px] border border-white/[0.06] bg-prisma-surface"
+    >
+      <ActivityIndicator color={COLORS.accent} />
+    </View>
+  );
+};
+
 /**
- * Perfil (artboard 6a), primeira aba após o login. Por ora só o cartão de
- * perfil; jogado recentemente, estatísticas e distribuição de troféus entram
- * depois, abaixo dele.
+ * Perfil (artboard 6a), primeira aba após o login: cartão de perfil,
+ * estatísticas e troféus por plataforma. Jogado recentemente e jogos
+ * recentes entram depois.
  */
 export default function ProfileScreen() {
   const card = useProfileCard();
@@ -36,22 +81,19 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         {card.profile ? (
-          <ProfileCard
-            profile={card.profile}
-            onShare={card.share}
-            onPressFollowers={card.openFollowers}
-            onPressFollowing={card.openFollowing}
-          />
+          <>
+            <ProfileCard
+              profile={card.profile}
+              onShare={card.share}
+              onPressFollowers={card.openFollowers}
+              onPressFollowing={card.openFollowing}
+            />
+            <ProfileStatsSection />
+          </>
         ) : card.error ? (
           <View className="gap-3">
             <Callout tone="danger">{card.error}</Callout>
-            <Pressable
-              accessibilityRole="button"
-              onPress={card.reload}
-              className="h-11 items-center justify-center self-start rounded-xl border border-white/[0.08] bg-white/[0.06] px-4"
-            >
-              <Text className="text-[14px] font-semibold text-prisma-body">Tentar novamente</Text>
-            </Pressable>
+            <RetryButton onPress={card.reload} />
           </View>
         ) : (
           <View
