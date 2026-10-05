@@ -4,4 +4,11 @@ export type { ApiUser, AuthResponse, Availability, LoginPayload, RegisterPayload
 export * as platformService from "./_platforms";
 export type { OwnershipPayload, PlatformAccount, VerificationCode } from "./_platforms";
 export * as profileService from "./_profile";
-export type { PinnedAchievement, ProfileCardData, ProfileUpdatePayload } from "./_profile";
+export type {
+  PinnedAchievement,
+  PlatformShare,
+  ProfileCardData,
+  ProfileStats,
+  ProfileStatsResponse,
+  ProfileUpdatePayload,
+} from "./_profile";
