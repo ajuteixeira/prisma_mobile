@@ -8,6 +8,8 @@ type OtpInputProps = {
   length?: number;
   /** Dispara quando o último dígito é preenchido. */
   onComplete?: (value: string) => void;
+  /** Código recusado: as caixas ficam vermelhas até a próxima edição. */
+  invalid?: boolean;
 };
 
 const onlyDigits = (text: string) => text.replace(/\D/g, "");
@@ -16,7 +18,7 @@ const onlyDigits = (text: string) => text.replace(/\D/g, "");
  * Código de verificação com auto-avanço: digitar preenche e pula para a próxima
  * caixa, apagar volta para a anterior, e colar distribui os dígitos de uma vez.
  */
-export const OtpInput = memo(({ value, onChange, length = 6, onComplete }: OtpInputProps) => {
+export const OtpInput = memo(({ value, onChange, length = 6, onComplete, invalid = false }: OtpInputProps) => {
   const inputs = useRef<(TextInput | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
@@ -89,8 +91,17 @@ export const OtpInput = memo(({ value, onChange, length = 6, onComplete }: OtpIn
             autoComplete="sms-otp"
             selectionColor={COLORS.accent}
             accessibilityLabel={`Dígito ${index + 1} de ${length}`}
-            className={`h-16 min-w-0 flex-1 rounded-2xl border text-center text-[26px] font-bold text-prisma-ink ${
-              active ? "border-prisma-brand bg-prisma-field-active" : "border-prisma-field-border-strong bg-prisma-field"
+            // `text-center` num `TextInput` quebra o render no react-native-css 3.0.7
+            // (o mapeamento de `textAlign` chama `split` em `true`); vai por `style`.
+            style={{ textAlign: "center" }}
+            className={`h-16 min-w-0 flex-1 rounded-2xl border text-[26px] font-bold text-prisma-ink ${
+              active ? "bg-prisma-field-active" : "bg-prisma-field"
+            } ${
+              invalid
+                ? "border-prisma-danger-border"
+                : active
+                  ? "border-prisma-brand"
+                  : "border-prisma-field-border-strong"
             }`}
           />
         );

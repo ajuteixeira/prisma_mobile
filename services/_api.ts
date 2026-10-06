@@ -18,6 +18,21 @@ export class ApiError extends Error {
 const BASE_URL = settings.API_URL.replace(/\/+$/, "");
 
 /**
+ * Só entradas com lista de mensagens são erros de campo. O Phoenix responde
+ * rotas inexistentes e falhas internas com `{"errors": {"detail": "Not Found"}}`,
+ * que não é de nenhum campo do formulário.
+ */
+const parseFieldErrors = (errors: unknown): ApiFieldErrors =>
+  errors && typeof errors === "object"
+    ? Object.fromEntries(
+        Object.entries(errors).filter(
+          (entry): entry is [string, string[]] =>
+            Array.isArray(entry[1]) && entry[1].every((message) => typeof message === "string"),
+        ),
+      )
+    : {};
+
+/**
  * `fetch` com JSON nos dois sentidos. Respostas fora de 2xx viram `ApiError`
  * com a mensagem de `{"error": ...}` ou os erros de campo de `{"errors": ...}`.
  */
@@ -45,7 +60,7 @@ export const apiRequest = async <T>(
     throw new ApiError(
       response.status,
       typeof data?.error === "string" ? data.error : `Erro ${response.status}`,
-      data?.errors ?? {},
+      parseFieldErrors(data?.errors),
     );
   }
 

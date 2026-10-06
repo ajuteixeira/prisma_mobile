@@ -8,3 +8,4 @@ export * from "./_use-profile-card";
 export * from "./_use-profile-stats";
 export * from "./_use-register";
 export * from "./_use-settings";
+export * from "./_use-verify-email";

@@ -12,6 +12,7 @@ type SymbolName = Extract<SymbolViewProps["name"], { ios?: unknown }>;
 export const ICONS = {
   back: { ios: "arrow.left", android: "arrow_back", web: "arrow_back" },
   mail: { ios: "envelope.fill", android: "mail", web: "mail" },
+  mailOpen: { ios: "envelope.open.fill", android: "drafts", web: "drafts" },
   lock: { ios: "lock.fill", android: "lock", web: "lock" },
   eye: { ios: "eye.fill", android: "visibility", web: "visibility" },
   eyeOff: { ios: "eye.slash.fill", android: "visibility_off", web: "visibility_off" },

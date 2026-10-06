@@ -1,4 +1,5 @@
 import { renderRouter as expoRenderRouter } from "expo-router/testing-library";
+import { Providers } from "./_providers";
 
 type RenderRouterResult = Awaited<ReturnType<typeof expoRenderRouter>> &
   Pick<
@@ -12,11 +13,12 @@ type RenderRouterResult = Awaited<ReturnType<typeof expoRenderRouter>> &
  * O original anexa `getPathname` e afins à Promise devolvida pelo `render`, e
  * eles se perdem no `await`. Aqui o resultado já vem com os getters, então os
  * matchers funcionam direto nele: `expect(view).toHavePathname("/profile")`.
+ * As telas renderizam dentro dos mesmos providers do `app/_layout.tsx`.
  */
 export const renderRouter = async (
-  ...args: Parameters<typeof expoRenderRouter>
+  ...[context, options]: Parameters<typeof expoRenderRouter>
 ): Promise<RenderRouterResult> => {
-  const pending = expoRenderRouter(...args);
+  const pending = expoRenderRouter(context, { wrapper: Providers, ...options });
   const result = await pending;
 
   return Object.assign(result, {

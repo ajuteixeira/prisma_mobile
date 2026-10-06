@@ -10,7 +10,11 @@ export const useCountdown = (seconds: number) => {
     return () => clearTimeout(timeout);
   }, [remaining]);
 
-  const start = useCallback(() => setRemaining(seconds), [seconds]);
+  /** `override` vale para esta contagem, ex.: o prazo que a API acabou de devolver. */
+  const start = useCallback(
+    (override?: number) => setRemaining(override ?? seconds),
+    [seconds],
+  );
   const reset = useCallback(() => setRemaining(0), []);
 
   return { remaining, running: remaining > 0, start, reset };

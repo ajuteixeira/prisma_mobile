@@ -43,6 +43,14 @@ describe("apiRequest", () => {
     expect((error as ApiError).fieldErrors).toEqual({ email: ["já está em uso"] });
   });
 
+  it("não trata o `detail` do Phoenix como erro de campo", async () => {
+    mockFetch(404, { errors: { detail: "Not Found" } });
+
+    const error = await apiRequest("/api/x", { body: {} }).catch((e: unknown) => e);
+
+    expect(error).toMatchObject({ status: 404, message: "Erro 404", fieldErrors: {} });
+  });
+
   it("propaga a falha de rede sem virar ApiError", async () => {
     mockFetchNetworkError();
 

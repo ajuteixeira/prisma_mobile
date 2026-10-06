@@ -1,5 +1,5 @@
 import RegisterScreen from "@/app/(auth)/register";
-import { useSession } from "@/store";
+import { useRegistration, useSession } from "@/store";
 import {
   fetchBody,
   fireEvent,
@@ -11,14 +11,19 @@ import {
   waitFor,
 } from "@/__tests__/utils";
 
-const USER = { id: 1, email: "ana@prisma.gg", username: "ana_silva", full_name: "Ana Silva" };
+const PAYLOAD = {
+  email: "ana@prisma.gg",
+  password: "Prisma123",
+  username: "ana_silva",
+  full_name: "Ana Silva",
+};
 
 const renderScreen = () =>
   renderRouter(
     {
       index: () => null,
       "(auth)/register/index": RegisterScreen,
-      "(auth)/connect-platforms/index": () => null,
+      "(auth)/verify-email/index": () => null,
     },
     { initialUrl: "/register" },
   );
@@ -39,7 +44,10 @@ const fillPassword = async (password = "Prisma123", confirmation = password) => 
 };
 
 describe("RegisterScreen", () => {
-  beforeEach(() => useSession.setState({ token: null, user: null }));
+  beforeEach(() => {
+    useSession.setState({ token: null, user: null });
+    useRegistration.setState({ pending: null });
+  });
 
   it("não chama a API com o perfil incompleto", async () => {
     const fetch = mockFetch(200, {});
@@ -141,11 +149,11 @@ describe("RegisterScreen", () => {
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 
-  it("cria a conta, guarda a sessão e segue para as plataformas", async () => {
+  it("envia o código e segue para a confirmação do e-mail", async () => {
     const fetch = mockFetchSequence(
       [200, { username: true }],
       [200, { email: true }],
-      [201, { token: "abc", user: USER }],
+      [202, { verification_token: "tok", expires_in: 600, resend_in: 60 }],
     );
     const view = await renderScreen();
 
@@ -156,16 +164,17 @@ describe("RegisterScreen", () => {
     await fillPassword();
     await press("Criar conta");
 
-    await waitFor(() => expect(view).toHavePathname("/connect-platforms"));
-    expect(fetch.mock.calls[2][0]).toBe("http://api.test/api/auth/register");
+    await waitFor(() => expect(view).toHavePathname("/verify-email"));
+    expect(fetch.mock.calls[2][0]).toBe("http://api.test/api/auth/register/code");
     expect(fetchBody(fetch, 1)).toEqual({ email: "ana@prisma.gg" });
-    expect(fetchBody(fetch, 2)).toEqual({
-      email: "ana@prisma.gg",
-      password: "Prisma123",
-      username: "ana_silva",
-      full_name: "Ana Silva",
+    expect(fetchBody(fetch, 2)).toEqual(PAYLOAD);
+    // A conta só nasce depois do código: por ora a sessão continua vazia.
+    expect(useSession.getState().token).toBeNull();
+    expect(useRegistration.getState().pending).toEqual({
+      payload: PAYLOAD,
+      verificationToken: "tok",
+      resendIn: 60,
     });
-    expect(useSession.getState()).toMatchObject({ token: "abc", user: USER });
   });
 
   it("leva ao passo do campo recusado pela API", async () => {
@@ -185,6 +194,6 @@ describe("RegisterScreen", () => {
 
     expect(await screen.findByText("E-mail já está em uso.")).toBeOnTheScreen();
     expect(screen.getByText("PASSO 2 DE 3")).toBeOnTheScreen();
-    expect(useSession.getState().token).toBeNull();
+    expect(useRegistration.getState().pending).toBeNull();
   });
 });
