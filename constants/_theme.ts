@@ -1,6 +1,6 @@
 /**
  * Tokens visuais do protótipo "Prisma Mobile" (artboard 4a — recuperação de senha).
- * Os mesmos valores estão espelhados em `styles/global.css` como `--color-prisma-*`,
+ * Os mesmos valores estão espelhados em `tailwind.config.js` sob a chave `prisma`,
  * para que o className e o style compartilhem a mesma paleta.
  */
 export const COLORS = {

@@ -73,7 +73,8 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
     <Sheet
       visible={flow.visible}
       onClose={flow.close}
-      className="h-[92%] max-h-[92%] overflow-hidden"
+      heightRatio={0.92}
+      className="overflow-hidden"
     >
       <View className="flex-row items-center justify-between pb-2 pl-6 pr-5 pt-[22px]">
         <Text className="text-[21px] font-bold text-white" style={{ letterSpacing: -0.3 }}>

@@ -48,16 +48,15 @@ type FieldProps = {
 
 /**
  * Campo do modal: rótulo acima e caixa mais baixa que a do formulário padrão. O
- * realce de foco vem do `Input` (`data-[focus=true]`); as variantes `dark:`
- * sobrepõem as cores neutras do gluestack, já que o app é só escuro.
+ * realce de foco vem do `Input` (`data-[focus=true]`).
  */
 const Field = memo(({ label, placeholder, value, onChangeText }: FieldProps) => (
   <View>
     <Text className="mb-2 ml-0.5 text-[12.5px] font-semibold text-prisma-body">{label}</Text>
-    <Input className="h-[54px] rounded-[15px] border-prisma-ghost-border bg-prisma-sunken px-4 shadow-none dark:bg-prisma-sunken data-[focus=true]:border-prisma-brand data-[focus=true]:bg-prisma-field-active dark:data-[focus=true]:border-prisma-brand dark:data-[focus=true]:bg-prisma-field-active">
+    <Input className="h-[54px] rounded-[15px] border-prisma-ghost-border bg-prisma-sunken px-4 data-[hover=true]:border-prisma-ghost-border data-[focus=true]:border-prisma-brand data-[focus=true]:bg-prisma-field-active data-[focus=true]:hover:border-prisma-brand data-[focus=true]:web:ring-0">
       <InputField
         aria-label={label}
-        className="text-[15px] text-prisma-body"
+        className="px-0 text-[15px] text-prisma-body placeholder:text-prisma-faint"
         placeholder={placeholder}
         placeholderTextColor={COLORS.faint}
         selectionColor={COLORS.accent}
@@ -120,7 +119,8 @@ export const CredentialsModal = memo(
         visible
         onClose={onClose}
         backdropColor="rgba(4, 7, 11, 0.72)"
-        className="max-h-[88%] rounded-t-[28px] border border-b-0 bg-prisma-elevated"
+        maxHeightRatio={0.88}
+        className="rounded-t-[28px] border border-b-0 bg-prisma-elevated"
         style={{ boxShadow: "0px -20px 60px rgba(0, 0, 0, 0.7)" }}
       >
         <View className="flex-row items-center gap-[13px] border-b border-prisma-field-border px-[22px] pb-4 pt-5">

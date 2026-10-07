@@ -11,7 +11,7 @@ module.exports = {
   testMatch: ["<rootDir>/__tests__/**/*.test.[jt]s?(x)"],
   // Padrão do `jest-expo` mais as libs que publicam ESM sem compilar (moti, nativewind, gluestack).
   transformIgnorePatterns: [
-    "/node_modules/(?!(.pnpm|react-native|@react-native|@react-native-community|expo|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|standard-navigation|moti|@motify|nativewind|react-native-css|@gluestack-ui|@legendapp))",
+    "/node_modules/(?!(.pnpm|react-native|@react-native|@react-native-community|expo|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|standard-navigation|moti|@motify|nativewind|@gluestack-ui|@legendapp))",
     "/node_modules/react-native-reanimated/plugin/",
     "/node_modules/@react-native/babel-preset/",
   ],

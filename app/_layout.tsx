@@ -18,7 +18,7 @@ LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
 const RootLayout = () => {
   return (
     <SafeAreaProvider>
-      <GluestackUIProvider mode="dark">
+      <GluestackUIProvider>
         <LoadingProvider>
           <Slot />
         </LoadingProvider>
