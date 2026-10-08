@@ -16,4 +16,7 @@ const env = envSchema.parse({
 
 export const settings = {
   ...env,
-};
+  STORAGE_KEYS: {
+    session: "prisma.session",
+  },
+} as const;
