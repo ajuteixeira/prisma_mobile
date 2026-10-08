@@ -1,7 +1,3 @@
-import { settings } from "@/config";
-import { apiRequest } from "./_api";
-import type { ApiUser } from "./_auth";
-
 /** Conquista fixada no cartão, na ordem de `position` (1 a 4). */
 export type PinnedAchievement = {
   id: number;
@@ -22,10 +18,6 @@ export type ProfileCardData = {
   following_count: number;
   pinned_achievements: PinnedAchievement[];
 };
-
-/** Bio, avatar, seguidores/seguindo e conquistas fixadas do usuário logado. */
-export const me = (token: string) =>
-  apiRequest<{ profile: ProfileCardData }>("/api/profile", { token });
 
 /** Cards de estatísticas do perfil, com as mesmas regras da web. */
 export type ProfileStats = {
@@ -53,14 +45,6 @@ export type ProfileStatsResponse = {
   platform_distribution: PlatformShare[];
 };
 
-/** Estatísticas e troféus por plataforma do usuário logado. */
-export const stats = (token: string) =>
-  apiRequest<ProfileStatsResponse>("/api/profile/stats", { token });
-
-/** Perfil público na versão web (`GET /:username`), usado no compartilhamento. */
-export const publicUrl = (username: string) =>
-  `${settings.API_URL.replace(/\/+$/, "")}/${encodeURIComponent(username)}`;
-
 /** Corpo de `PATCH /api/profile`: só as chaves enviadas são alteradas. */
 export type ProfileUpdatePayload = {
   full_name?: string;
@@ -69,11 +53,3 @@ export type ProfileUpdatePayload = {
   /** Data URL (JPG, PNG, GIF ou WebP, até 2 MB). */
   avatar?: string;
 };
-
-/** Salva a sheet "Editar perfil"; `422` traz os erros por campo. */
-export const update = (token: string, payload: ProfileUpdatePayload) =>
-  apiRequest<{ profile: ProfileCardData; user: ApiUser }>("/api/profile", {
-    token,
-    method: "PATCH",
-    body: payload,
-  });

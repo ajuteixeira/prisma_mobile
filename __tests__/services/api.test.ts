@@ -1,11 +1,11 @@
-import { ApiError, apiRequest } from "@/services";
+import { ApiError, request } from "@/services";
 import { fetchBody, mockFetch, mockFetchNetworkError } from "@/__tests__/utils";
 
-describe("apiRequest", () => {
+describe("request", () => {
   it("faz GET sem corpo e devolve o JSON", async () => {
     const fetch = mockFetch(200, { ok: true });
 
-    await expect(apiRequest("/api/ping")).resolves.toEqual({ ok: true });
+    await expect(request("/api/ping")).resolves.toEqual({ ok: true });
 
     const [url, init] = fetch.mock.calls[0];
     expect(url).toBe("http://api.test/api/ping");
@@ -15,7 +15,7 @@ describe("apiRequest", () => {
   it("faz POST com JSON e envia o token Bearer", async () => {
     const fetch = mockFetch(201, {});
 
-    await apiRequest("/api/items", { body: { name: "Prisma" }, token: "abc" });
+    await request("/api/items", { body: { name: "Prisma" }, token: "abc" });
 
     expect(fetch.mock.calls[0][1]).toMatchObject({
       method: "POST",
@@ -27,7 +27,7 @@ describe("apiRequest", () => {
   it("transforma `{error}` em ApiError com a mensagem da API", async () => {
     mockFetch(429, { error: "Muitas tentativas." });
 
-    await expect(apiRequest("/api/x", { body: {} })).rejects.toMatchObject({
+    await expect(request("/api/x", { body: {} })).rejects.toMatchObject({
       name: "ApiError",
       status: 429,
       message: "Muitas tentativas.",
@@ -37,7 +37,7 @@ describe("apiRequest", () => {
   it("expõe os erros de campo do 422", async () => {
     mockFetch(422, { errors: { email: ["já está em uso"] } });
 
-    const error = await apiRequest("/api/x", { body: {} }).catch((e: unknown) => e);
+    const error = await request("/api/x", { body: {} }).catch((e: unknown) => e);
 
     expect(error).toBeInstanceOf(ApiError);
     expect((error as ApiError).fieldErrors).toEqual({ email: ["já está em uso"] });
@@ -46,7 +46,7 @@ describe("apiRequest", () => {
   it("não trata o `detail` do Phoenix como erro de campo", async () => {
     mockFetch(404, { errors: { detail: "Not Found" } });
 
-    const error = await apiRequest("/api/x", { body: {} }).catch((e: unknown) => e);
+    const error = await request("/api/x", { body: {} }).catch((e: unknown) => e);
 
     expect(error).toMatchObject({ status: 404, message: "Erro 404", fieldErrors: {} });
   });
@@ -54,6 +54,6 @@ describe("apiRequest", () => {
   it("propaga a falha de rede sem virar ApiError", async () => {
     mockFetchNetworkError();
 
-    await expect(apiRequest("/api/x")).rejects.not.toBeInstanceOf(ApiError);
+    await expect(request("/api/x")).rejects.not.toBeInstanceOf(ApiError);
   });
 });

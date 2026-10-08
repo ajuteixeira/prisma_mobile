@@ -17,6 +17,18 @@ export class ApiError extends Error {
 
 const BASE_URL = settings.API_URL.replace(/\/+$/, "");
 
+type SessionBridge = {
+  /** Chamado quando uma rota autenticada responde `401`: o servidor não aceita mais o token. */
+  onUnauthorized: () => void;
+};
+
+let session: SessionBridge | null = null;
+
+/** Liga o cliente ao store de sessão sem que este arquivo importe o store. */
+export const bindSession = (bridge: SessionBridge) => {
+  session = bridge;
+};
+
 /**
  * Só entradas com lista de mensagens são erros de campo. O Phoenix responde
  * rotas inexistentes e falhas internas com `{"errors": {"detail": "Not Found"}}`,
@@ -36,7 +48,7 @@ const parseFieldErrors = (errors: unknown): ApiFieldErrors =>
  * `fetch` com JSON nos dois sentidos. Respostas fora de 2xx viram `ApiError`
  * com a mensagem de `{"error": ...}` ou os erros de campo de `{"errors": ...}`.
  */
-export const apiRequest = async <T>(
+export const request = async <T>(
   path: string,
   { body, token, method = body === undefined ? "GET" : "POST" }: {
     body?: unknown;
@@ -57,6 +69,7 @@ export const apiRequest = async <T>(
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 401 && token) session?.onUnauthorized();
     throw new ApiError(
       response.status,
       typeof data?.error === "string" ? data.error : `Erro ${response.status}`,

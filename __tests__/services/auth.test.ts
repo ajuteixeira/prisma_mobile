@@ -1,8 +1,8 @@
-import { ApiError, authService } from "@/services";
+import { ApiError, authApi } from "@/services";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-describe("authService.logout", () => {
+describe("authApi.logout", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
@@ -12,7 +12,7 @@ describe("authService.logout", () => {
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response("{}", { status: 200 }));
 
-    await authService.logout("meu-token");
+    await authApi.logout("meu-token");
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
@@ -24,7 +24,7 @@ describe("authService.logout", () => {
   it("resolve quando o servidor responde 204 sem corpo", async () => {
     jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
 
-    await expect(authService.logout("token")).resolves.toBeNull();
+    await expect(authApi.logout("token")).resolves.toBeNull();
   });
 
   it("lança ApiError com a mensagem do corpo quando a resposta é de erro", async () => {
@@ -34,14 +34,14 @@ describe("authService.logout", () => {
         new Response(JSON.stringify({ error: "Token inválido" }), { status: 401 }),
       );
 
-    const failure = authService.logout("token");
+    const failure = authApi.logout("token");
 
     await expect(failure).rejects.toBeInstanceOf(ApiError);
     await expect(failure).rejects.toMatchObject({ status: 401, message: "Token inválido" });
   });
 });
 
-describe("authService.deleteAccount", () => {
+describe("authApi.deleteAccount", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
@@ -51,7 +51,7 @@ describe("authService.deleteAccount", () => {
       .spyOn(globalThis, "fetch")
       .mockResolvedValue(new Response(null, { status: 204 }));
 
-    await authService.deleteAccount("meu-token");
+    await authApi.deleteAccount("meu-token");
 
     expect(fetchSpy).toHaveBeenCalledTimes(1);
     const [url, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
@@ -63,7 +63,7 @@ describe("authService.deleteAccount", () => {
   it("resolve quando o servidor responde 204 sem corpo", async () => {
     jest.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 204 }));
 
-    await expect(authService.deleteAccount("token")).resolves.toBeNull();
+    await expect(authApi.deleteAccount("token")).resolves.toBeNull();
   });
 
   it("lança ApiError quando o token é inválido", async () => {
@@ -75,7 +75,7 @@ describe("authService.deleteAccount", () => {
         }),
       );
 
-    const failure = authService.deleteAccount("token");
+    const failure = authApi.deleteAccount("token");
 
     await expect(failure).rejects.toBeInstanceOf(ApiError);
     await expect(failure).rejects.toMatchObject({
@@ -91,7 +91,7 @@ describe("authService.deleteAccount", () => {
         new Response(JSON.stringify({ error: "Usuário não encontrado" }), { status: 404 }),
       );
 
-    const failure = authService.deleteAccount("token");
+    const failure = authApi.deleteAccount("token");
 
     await expect(failure).rejects.toBeInstanceOf(ApiError);
     await expect(failure).rejects.toMatchObject({ status: 404, message: "Usuário não encontrado" });
