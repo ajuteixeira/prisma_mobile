@@ -23,6 +23,7 @@ const renderScreen = () =>
       index: () => null,
       "(tabs)/profile/index": ProfileScreen,
       "(tabs)/followers/index": () => null,
+      "(auth)/connect-platforms/index": () => null,
     },
     { initialUrl: "/profile" },
   );
@@ -189,5 +190,113 @@ describe("ProfileScreen — estatísticas e troféus por plataforma", () => {
     expect(await screen.findByText("Sua sessão expirou. Entre novamente.")).toBeOnTheScreen();
     expect(fetch).not.toHaveBeenCalled();
     expect(screen.queryByLabelText("Carregando estatísticas")).not.toBeOnTheScreen();
+  });
+});
+
+const recentGame = (id: number, name: string) => ({
+  id,
+  name,
+  cover_url: null,
+  platform: { slug: "steam", name: "Steam" },
+  playtime_minutes: 600,
+  last_played_at: "2026-09-28T15:00:00Z",
+  unlocked_achievements: 5,
+  total_achievements: 10,
+});
+
+const recentlyPlayed = (names: string[]) => ({
+  recently_played: names.map((name, index) => recentGame(index + 1, name)),
+  total: names.length,
+  limit: 4,
+  offset: 0,
+});
+
+describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
+  beforeEach(() => {
+    useSession.setState({ token: "abc", user: USER });
+  });
+
+  const routes = (recent: [number, unknown] | [number, unknown][]) => ({
+    "GET /api/profile": [200, { profile: PROFILE }] as [number, unknown],
+    "GET /api/profile/stats": [200, STATS] as [number, unknown],
+    "GET /api/profile/recently-played": recent,
+  });
+
+  it("destaca o último jogado e lista do 2º ao 4º em jogos recentes", async () => {
+    const fetch = mockFetchRoutes(
+      routes([200, recentlyPlayed(["Valorant", "Apex Legends", "CS:GO", "Phasmophobia"])]),
+    );
+    await renderScreen();
+
+    expect(await screen.findByText("JOGADO RECENTEMENTE")).toBeOnTheScreen();
+    expect(screen.getByTestId("recently-played-card")).toHaveTextContent(/Valorant/);
+    expect(screen.getByText("JOGOS RECENTES")).toBeOnTheScreen();
+    expect(
+      screen.getAllByTestId("recent-game-row").map((row) => row.props.accessibilityLabel),
+    ).toEqual([
+      expect.stringContaining("Apex Legends"),
+      expect.stringContaining("CS:GO"),
+      expect.stringContaining("Phasmophobia"),
+    ]);
+
+    const call = fetch.mock.calls.find(([url]) => String(url).includes("/recently-played"));
+    expect(String(call?.[0])).toContain("limit=4");
+    expect(call?.[1]).toMatchObject({
+      headers: { Authorization: "Bearer abc" },
+    });
+  });
+
+  it("com um jogo só, mostra o destaque e esconde jogos recentes", async () => {
+    mockFetchRoutes(routes([200, recentlyPlayed(["Valorant"])]));
+    await renderScreen();
+
+    expect(await screen.findByTestId("recently-played-card")).toBeOnTheScreen();
+    expect(screen.queryByText("JOGOS RECENTES")).not.toBeOnTheScreen();
+  });
+
+  it("sem jogos, convida a conectar uma plataforma", async () => {
+    mockFetchRoutes(routes([200, recentlyPlayed([])]));
+    const view = await renderScreen();
+
+    expect(await screen.findByText("Nenhum jogo por aqui ainda")).toBeOnTheScreen();
+    expect(screen.queryByText("JOGOS RECENTES")).not.toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByText("Conectar plataformas"));
+
+    expect(view).toHavePathname("/connect-platforms");
+  });
+
+  it("mostra o carregamento enquanto a API não responde", async () => {
+    const pending = new Promise<Response>(() => undefined);
+    jest.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
+      String(input).includes("/recently-played")
+        ? pending
+        : new Response(JSON.stringify({ profile: PROFILE, ...STATS }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          }),
+    );
+    await renderScreen();
+
+    expect(await screen.findByLabelText("Carregando jogos recentes")).toBeOnTheScreen();
+  });
+
+  it("falha nos jogos não esconde o restante e permite tentar de novo", async () => {
+    mockFetchRoutes(
+      routes([
+        [500, { error: "Falhou" }],
+        [200, recentlyPlayed(["Valorant"])],
+      ]),
+    );
+    await renderScreen();
+
+    expect(
+      await screen.findByText("Não foi possível carregar seus jogos recentes."),
+    ).toBeOnTheScreen();
+    expect(screen.getByText("@carly")).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByLabelText("Tentar carregar os jogos recentes de novo"));
+
+    expect(await screen.findByTestId("recently-played-card")).toBeOnTheScreen();
   });
 });

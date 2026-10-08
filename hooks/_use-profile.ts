@@ -16,3 +16,14 @@ export const useProfile = () => useFocusFetch(fetchProfile, describeProfileError
 
 /** Estatísticas por plataforma, recarregadas a cada foco porque a sincronização muda os números. */
 export const useProfileStats = () => useFocusFetch(profileApi.stats, describeStatsError);
+
+/** Um destaque em "Jogado recentemente" mais três em "Jogos recentes". */
+const RECENT_GAMES_LIMIT = 4;
+
+const fetchRecentlyPlayed = (token: string) => profileApi.recentlyPlayed(token, RECENT_GAMES_LIMIT);
+
+const describeRecentlyPlayedError = () => "Não foi possível carregar seus jogos recentes.";
+
+/** Jogos mais recentes, recarregados a cada foco porque a sincronização traz jogos novos. */
+export const useRecentlyPlayed = () =>
+  useFocusFetch(fetchRecentlyPlayed, describeRecentlyPlayedError);
