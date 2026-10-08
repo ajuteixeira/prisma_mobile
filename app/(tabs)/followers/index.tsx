@@ -3,7 +3,7 @@ import { COLORS } from "@/constants";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 
-/** Placeholder de Seguidores (artboard 6c) — layout ainda será desenhado. */
+/** Placeholder de Seguidores (artboard 6c) até o layout ser desenhado. */
 export default function FollowersScreen() {
   return (
     <View className="flex-1 items-center justify-center bg-prisma-background px-6">

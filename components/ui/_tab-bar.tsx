@@ -7,16 +7,14 @@ import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 /**
- * Mesma ordem e ícones da sidebar do protótipo web (perfil → ranking →
- * seguidores → ajustes), numa pill flutuante como no artboard 6d. A cor ativa
- * é o azul de destaque; as demais ficam em cinza.
+ * Ícone de cada aba, pela pasta da rota em `app/(tabs)`. Mesma ordem e ícones
+ * da sidebar do protótipo web, numa pill flutuante como no artboard 6d.
  */
-/** Chaves são os nomes das rotas em `app/(tabs)` (pastas com `index` incluem o sufixo). */
-const TABS: Record<string, { icon: IconName; label: string }> = {
-  profile: { icon: "user", label: "Perfil" },
-  ranking: { icon: "trophy", label: "Ranking" },
-  followers: { icon: "users", label: "Seguidores" },
-  "settings/index": { icon: "settings", label: "Ajustes" },
+const TAB_ICONS: Record<string, IconName> = {
+  profile: "user",
+  ranking: "trophy",
+  followers: "users",
+  settings: "settings",
 };
 
 const TabItem = memo(
@@ -58,12 +56,11 @@ const TabItem = memo(
 
 TabItem.displayName = "TabItem";
 
-export const PrismaTabBar = memo(({ state, navigation }: BottomTabBarProps) => {
+export const PrismaTabBar = memo(({ state, descriptors, navigation }: BottomTabBarProps) => {
   const insets = useSafeAreaInsets();
 
   return (
-    // Posição absoluta dentro do container da tab bar: a pill flutua sobre o
-    // conteúdo da tela, com a margem inferior seguindo a safe area.
+    // Absoluta para a pill flutuar sobre o conteúdo, e não empurrá-lo para cima.
     <View
       pointerEvents="box-none"
       className="absolute left-3.5 right-3.5 h-[66px] flex-row overflow-hidden rounded-3xl border border-white/10"
@@ -74,7 +71,7 @@ export const PrismaTabBar = memo(({ state, navigation }: BottomTabBarProps) => {
       }}
     >
       {state.routes.map((route, index) => {
-        const tab = TABS[route.name] ?? { icon: "user" as IconName, label: route.name };
+        const label = descriptors[route.key].options.title ?? route.name;
         const active = state.index === index;
 
         const onPress = () => {
@@ -89,8 +86,8 @@ export const PrismaTabBar = memo(({ state, navigation }: BottomTabBarProps) => {
         return (
           <TabItem
             key={route.key}
-            icon={tab.icon}
-            label={tab.label}
+            icon={TAB_ICONS[route.name.replace(/\/index$/, "")] ?? "user"}
+            label={label}
             active={active}
             onPress={onPress}
             onLongPress={() => navigation.emit({ type: "tabLongPress", target: route.key })}

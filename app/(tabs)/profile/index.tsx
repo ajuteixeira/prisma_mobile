@@ -1,10 +1,12 @@
 import { PlatformDistributionCard, ProfileCard, ProfileStatsCard } from "@/components/profile";
 import { Callout, PrismaBackground } from "@/components/ui";
 import { COLORS, PROFILE_BEAMS, PROFILE_HERO_HEIGHT } from "@/constants";
-import { useProfileCard, useProfileStats } from "@/hooks";
+import { useProfile, useProfileStats } from "@/hooks";
+import { profileApi } from "@/services";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Share, Text, View } from "react-native";
 
 const RetryButton = ({ onPress, label }: { onPress: () => void; label?: string }) => (
   <Pressable
@@ -56,8 +58,16 @@ const ProfileStatsSection = () => {
  * estatísticas e troféus por plataforma. Jogado recentemente e jogos
  * recentes entram depois.
  */
+const shareProfile = (username: string) => {
+  const url = profileApi.publicUrl(username);
+  Share.share({ message: `Veja minhas conquistas no Prisma: ${url}`, url }).catch(() => undefined);
+};
+
 export default function ProfileScreen() {
-  const card = useProfileCard();
+  const router = useRouter();
+  const { data: profile, error, reload } = useProfile();
+  // TODO: abrir já na aba "Seguindo" quando a tela de Seguidores existir (artboard 6c).
+  const openFollowers = () => router.push("/followers");
 
   return (
     <View className="flex-1 bg-prisma-background">
@@ -80,20 +90,20 @@ export default function ProfileScreen() {
         contentContainerClassName="px-5 pb-[120px] pt-[64px]"
         showsVerticalScrollIndicator={false}
       >
-        {card.profile ? (
+        {profile ? (
           <>
             <ProfileCard
-              profile={card.profile}
-              onShare={card.share}
-              onPressFollowers={card.openFollowers}
-              onPressFollowing={card.openFollowing}
+              profile={profile}
+              onShare={() => shareProfile(profile.username)}
+              onPressFollowers={openFollowers}
+              onPressFollowing={openFollowers}
             />
             <ProfileStatsSection />
           </>
-        ) : card.error ? (
+        ) : error ? (
           <View className="gap-3">
-            <Callout tone="danger">{card.error}</Callout>
-            <RetryButton onPress={card.reload} />
+            <Callout tone="danger">{error}</Callout>
+            <RetryButton onPress={reload} />
           </View>
         ) : (
           <View

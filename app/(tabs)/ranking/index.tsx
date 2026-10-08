@@ -3,7 +3,7 @@ import { COLORS } from "@/constants";
 import { StatusBar } from "expo-status-bar";
 import { Text, View } from "react-native";
 
-/** Placeholder do Ranking (artboard 6b) — layout ainda será desenhado. */
+/** Placeholder do Ranking (artboard 6b) até o layout ser desenhado. */
 export default function RankingScreen() {
   return (
     <View className="flex-1 items-center justify-center bg-prisma-background px-6">
