@@ -1,7 +1,14 @@
-import { PlatformDistributionCard, ProfileCard, ProfileStatsCard } from "@/components/profile";
+import {
+  PlatformDistributionCard,
+  ProfileCard,
+  ProfileStatsCard,
+  RecentGamesList,
+  RecentlyPlayedCard,
+  RecentlyPlayedEmpty,
+} from "@/components/profile";
 import { Callout, PrismaBackground } from "@/components/ui";
 import { COLORS, PROFILE_BEAMS, PROFILE_HERO_HEIGHT } from "@/constants";
-import { useProfile, useProfileStats } from "@/hooks";
+import { useProfile, useProfileStats, useRecentlyPlayed } from "@/hooks";
 import { profileApi } from "@/services";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -53,16 +60,78 @@ const ProfileStatsSection = () => {
   );
 };
 
+const SectionLabel = ({ children }: { children: string }) => (
+  <Text
+    className="mb-3 mt-[26px] text-[12px] font-semibold text-prisma-muted"
+    style={{ letterSpacing: 1 }}
+  >
+    {children}
+  </Text>
+);
+
 /**
- * Perfil (artboard 6a), primeira aba após o login: cartão de perfil,
- * estatísticas e troféus por plataforma. Jogado recentemente e jogos
- * recentes entram depois.
+ * Seções abaixo do cartão. Uma única busca alimenta o destaque ("Jogado
+ * recentemente", 1º jogo) e a lista ("Jogos recentes", do 2º ao 4º), que fica
+ * depois das estatísticas e só aparece quando há mais de um jogo.
  */
+const ProfileSections = () => {
+  const router = useRouter();
+  const { data, loading, error, reload } = useRecentlyPlayed();
+  const [latest, ...others] = data?.games ?? [];
+
+  let recentlyPlayed = null;
+  if (latest) {
+    recentlyPlayed = <RecentlyPlayedCard game={latest} />;
+  } else if (data) {
+    recentlyPlayed = <RecentlyPlayedEmpty onConnect={() => router.push("/connect-platforms")} />;
+  } else if (error) {
+    recentlyPlayed = (
+      <View className="gap-3">
+        <Callout tone="danger">{error}</Callout>
+        <RetryButton onPress={reload} label="Tentar carregar os jogos recentes de novo" />
+      </View>
+    );
+  } else if (loading) {
+    recentlyPlayed = (
+      <View
+        accessibilityLabel="Carregando jogos recentes"
+        className="h-[200px] items-center justify-center rounded-[22px] border border-white/[0.06] bg-prisma-surface"
+      >
+        <ActivityIndicator color={COLORS.accent} />
+      </View>
+    );
+  }
+
+  return (
+    <>
+      {recentlyPlayed ? (
+        <>
+          <SectionLabel>JOGADO RECENTEMENTE</SectionLabel>
+          {recentlyPlayed}
+        </>
+      ) : null}
+
+      <ProfileStatsSection />
+
+      {others.length > 0 ? (
+        <>
+          <SectionLabel>JOGOS RECENTES</SectionLabel>
+          <RecentGamesList games={others} />
+        </>
+      ) : null}
+    </>
+  );
+};
+
 const shareProfile = (username: string) => {
   const url = profileApi.publicUrl(username);
   Share.share({ message: `Veja minhas conquistas no Prisma: ${url}`, url }).catch(() => undefined);
 };
 
+/**
+ * Perfil (artboard 6a), primeira aba após o login: cartão de perfil, jogado
+ * recentemente, estatísticas, troféus por plataforma e jogos recentes.
+ */
 export default function ProfileScreen() {
   const router = useRouter();
   const { data: profile, error, reload } = useProfile();
@@ -98,7 +167,7 @@ export default function ProfileScreen() {
               onPressFollowers={openFollowers}
               onPressFollowing={openFollowers}
             />
-            <ProfileStatsSection />
+            <ProfileSections />
           </>
         ) : error ? (
           <View className="gap-3">

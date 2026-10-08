@@ -53,3 +53,26 @@ export type ProfileUpdatePayload = {
   /** Data URL (JPG, PNG, GIF ou WebP, até 2 MB). */
   avatar?: string;
 };
+
+/**
+ * Jogo de `GET /api/profile/recently-played`, do mais recente ao mais antigo.
+ * Formato presumido: até agora só vimos a lista vazia. Os campos são lidos em
+ * `profileApi.recentlyPlayed`, e o que faltar vira `null` (ou 0 nas conquistas).
+ */
+export type RecentGame = {
+  id: number;
+  name: string;
+  cover_url: string | null;
+  platform: { slug: string; name: string } | null;
+  playtime_minutes: number | null;
+  /** ISO 8601. */
+  last_played_at: string | null;
+  unlocked_achievements: number;
+  total_achievements: number;
+};
+
+/** Jogos recentes já normalizados, e quantos o usuário tem ao todo. */
+export type RecentlyPlayed = {
+  games: RecentGame[];
+  total: number;
+};

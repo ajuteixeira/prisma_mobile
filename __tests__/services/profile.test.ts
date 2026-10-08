@@ -84,3 +84,56 @@ describe("profileApi.stats", () => {
     expect(init.headers).toMatchObject({ Authorization: "Bearer meu-token" });
   });
 });
+
+describe("profileApi.recentlyPlayed", () => {
+  const GAME = {
+    id: 42,
+    name: "Counter-Strike: Global Offensive",
+    cover_url: "https://cdn.test/730.jpg",
+    platform: { slug: "steam", name: "Steam" },
+    playtime_minutes: 50700,
+    last_played_at: "2025-10-28T23:02:00Z",
+    unlocked_achievements: 142,
+    total_achievements: 167,
+  };
+
+  it("envia GET /api/profile/recently-played com o Bearer e o limite pedido", async () => {
+    const fetch = mockFetch(200, { recently_played: [GAME], total: 1, limit: 4, offset: 0 });
+
+    await expect(profileApi.recentlyPlayed("meu-token", 4)).resolves.toEqual({
+      games: [GAME],
+      total: 1,
+    });
+
+    const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${API_URL}/api/profile/recently-played?limit=4`);
+    expect(init.method).toBe("GET");
+    expect(init.headers).toMatchObject({ Authorization: "Bearer meu-token" });
+  });
+
+  it("devolve lista vazia quando o usuário não tem jogos", async () => {
+    mockFetch(200, { recently_played: [], total: 0, limit: 4, offset: 0 });
+
+    await expect(profileApi.recentlyPlayed("token", 4)).resolves.toEqual({ games: [], total: 0 });
+  });
+
+  it("tolera campos ausentes ou com tipo inesperado em cada jogo", async () => {
+    mockFetch(200, { recently_played: [{ name: "Roblox", total_achievements: "x" }] });
+
+    await expect(profileApi.recentlyPlayed("token", 4)).resolves.toEqual({
+      games: [
+        {
+          id: 0,
+          name: "Roblox",
+          cover_url: null,
+          platform: null,
+          playtime_minutes: null,
+          last_played_at: null,
+          unlocked_achievements: 0,
+          total_achievements: 0,
+        },
+      ],
+      total: 1,
+    });
+  });
+});

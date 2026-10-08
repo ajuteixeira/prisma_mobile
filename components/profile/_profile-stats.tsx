@@ -1,6 +1,7 @@
 import { Icon, type IconName } from "@/components/ui";
 import { COLORS, PLATFORMS, type PlatformSlug } from "@/constants";
 import type { PlatformShare, ProfileStats } from "@/services";
+import { formatCount } from "@/utils";
 import { memo } from "react";
 import { Text, View } from "react-native";
 
@@ -11,10 +12,6 @@ const BAR_COLORS: Record<PlatformSlug, string> = {
   xbox: "#107c10",
   retroachievements: "#d4a017",
 };
-
-/** 2847 → "2.847", como no protótipo. */
-const formatCount = (value: number) =>
-  String(Math.trunc(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
 /** Como a web: inteiro quando não há decimal (60.0 → "60"), senão uma casa ("33,3"). */
 const formatPercent = (value: number) =>
