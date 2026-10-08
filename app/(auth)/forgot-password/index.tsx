@@ -1,94 +1,101 @@
-import { AuthHeader, AuthSheet, EmailStep, SentStep } from "@/components/auth";
-import { Callout, GradientButton } from "@/components/ui";
-import { useForgotPassword } from "@/hooks";
-import { StatusBar } from "expo-status-bar";
-import { AnimatePresence, MotiView } from "moti";
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import {
+  AuthHeader,
+  AuthPrompt,
+  AuthScreen,
+  AuthSpacer,
+  EmailStep,
+  SentStep,
+} from "@/components/auth";
+import { FormError, GradientButton, StepTransition } from "@/components/ui";
+import { useCountdown, useRequest } from "@/hooks";
+import { emailSchema, validate } from "@/schemas";
+import { authApi } from "@/services";
+import { goBackOr } from "@/utils";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
+/** A API aceita 5 pedidos a cada 5 min por e-mail; a espera evita estourar o limite. */
+const RESEND_SECONDS = 60;
+
+const COPY = {
+  email: {
+    title: "Esqueceu a senha?",
+    subtitle: "Informe o e-mail da conta e enviaremos um link para criar uma nova senha.",
+    button: "Enviar link",
+  },
+  sent: {
+    title: "Confira seu e-mail",
+    subtitle: "A nova senha é criada pelo navegador, no link que acabamos de enviar.",
+    button: "Voltar para o login",
+  },
+};
+
+/**
+ * Recuperação de senha em dois passos no mesmo sheet. A API responde igual
+ * exista ou não a conta, por isso "enviado" nunca confirma o cadastro.
+ */
 export default function ForgotPasswordScreen() {
-  const flow = useForgotPassword();
+  const router = useRouter();
+  const countdown = useCountdown(RESEND_SECONDS);
+  const request = useRequest();
+  const [step, setStep] = useState<keyof typeof COPY>("email");
+  const [email, setEmail] = useState("");
+  const parsed = validate(emailSchema, email);
+
+  const leave = () => goBackOr(router, "/");
+
+  /** Envia (ou reenvia) o link e liga a contagem do reenvio. */
+  const sendLink = async () => {
+    if (!parsed.data) return request.setError(parsed.error);
+    const sent = await request.run(() => authApi.forgotPassword({ email: parsed.data }));
+    if (!sent) return;
+    countdown.start();
+    setStep("sent");
+  };
+
+  /** No passo "enviado", voltar permite corrigir um e-mail digitado errado. */
+  const goBack = () => {
+    if (step === "email") return leave();
+    request.setError(null);
+    countdown.reset();
+    setStep("email");
+  };
 
   return (
-    <View className="flex-1 bg-prisma-background">
-      <StatusBar style="light" />
+    <AuthScreen
+      header={<AuthHeader title={COPY[step].title} subtitle={COPY[step].subtitle} onBack={goBack} />}
+    >
+      <StepTransition step={step}>
+        {step === "email" ? (
+          <EmailStep
+            email={email}
+            onChangeEmail={(value) => {
+              request.setError(null);
+              setEmail(value);
+            }}
+            onSubmit={sendLink}
+          />
+        ) : (
+          <SentStep
+            email={email}
+            resendIn={countdown.remaining}
+            resending={request.loading}
+            onResend={sendLink}
+          />
+        )}
+      </StepTransition>
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <AuthHeader title={flow.title} subtitle={flow.subtitle} onBack={flow.goBack} />
-
-        <AuthSheet>
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ flexGrow: 1, paddingTop: 26 }}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Um passo por vez, sempre dentro do mesmo sheet. */}
-            <AnimatePresence exitBeforeEnter>
-              <MotiView
-                key={flow.step}
-                from={{ opacity: 0, translateY: 12 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                exit={{ opacity: 0, translateY: -12 }}
-                transition={{ type: "timing", duration: 220 }}
-              >
-                {flow.step === "email" ? (
-                  <EmailStep
-                    email={flow.email}
-                    onChangeEmail={flow.setEmail}
-                    onSubmit={flow.submit}
-                  />
-                ) : null}
-
-                {flow.step === "sent" ? (
-                  <SentStep
-                    email={flow.email}
-                    resendLabel={flow.resendLabel}
-                    canResend={flow.canResend}
-                    onResend={flow.resendLink}
-                  />
-                ) : null}
-              </MotiView>
-            </AnimatePresence>
-
-            {/* Empurra o botão para a base do sheet. */}
-            <View className="flex-1" />
-
-            {flow.error ? (
-              <MotiView
-                from={{ opacity: 0, translateY: -6 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: "timing", duration: 180 }}
-                className="mb-3"
-              >
-                <Callout tone="danger">{flow.error}</Callout>
-              </MotiView>
-            ) : null}
-
-            <GradientButton
-              label={flow.buttonLabel}
-              loading={flow.loading}
-              dimmed={flow.dimmed}
-              onPress={flow.submit}
-            />
-
-            {flow.step === "email" ? (
-              <Text className="mt-[18px] text-center text-sm text-prisma-muted">
-                Lembrou a senha?{" "}
-                <Text
-                  className="font-semibold text-prisma-accent"
-                  accessibilityRole="link"
-                  onPress={flow.leaveToSignIn}
-                >
-                  Entrar
-                </Text>
-              </Text>
-            ) : null}
-          </ScrollView>
-        </AuthSheet>
-      </KeyboardAvoidingView>
-    </View>
+      <AuthSpacer />
+      <FormError message={request.error} />
+      <GradientButton
+        label={request.loading && step === "email" ? "Enviando…" : COPY[step].button}
+        loading={request.loading && step === "email"}
+        dimmed={step === "email" && parsed.error !== null}
+        onPress={step === "email" ? sendLink : leave}
+      />
+      {step === "email" ? (
+        <AuthPrompt question="Lembrou a senha?" action="Entrar" onPress={leave} />
+      ) : null}
+    </AuthScreen>
   );
 }

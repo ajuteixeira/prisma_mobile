@@ -1,7 +1,7 @@
 import { IconButton } from "@/components/ui/_icon-button";
 import { TextField } from "@/components/ui/_text-field";
 import { COLORS } from "@/constants";
-import { memo, useRef } from "react";
+import { memo, useRef, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 
 type LoginFormProps = {
@@ -9,8 +9,6 @@ type LoginFormProps = {
   onChangeEmail: (email: string) => void;
   password: string;
   onChangePassword: (password: string) => void;
-  passwordVisible: boolean;
-  onTogglePasswordVisibility: () => void;
   onForgotPassword: () => void;
   onSubmit: () => void;
 };
@@ -22,12 +20,11 @@ export const LoginForm = memo(
     onChangeEmail,
     password,
     onChangePassword,
-    passwordVisible,
-    onTogglePasswordVisibility,
     onForgotPassword,
     onSubmit,
   }: LoginFormProps) => {
     const passwordRef = useRef<TextInput>(null);
+    const [passwordVisible, setPasswordVisible] = useState(false);
 
     return (
       <View>
@@ -71,7 +68,7 @@ export const LoginForm = memo(
               <IconButton
                 icon={passwordVisible ? "eyeOff" : "eye"}
                 color={COLORS.faint}
-                onPress={onTogglePasswordVisibility}
+                onPress={() => setPasswordVisible((visible) => !visible)}
                 accessibilityLabel={passwordVisible ? "Ocultar senha" : "Mostrar senha"}
               />
             }

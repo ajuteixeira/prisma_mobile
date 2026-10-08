@@ -1,82 +1,70 @@
-import { AuthSheet, LoginForm, LoginHero } from "@/components/auth";
-import { Callout, GradientButton } from "@/components/ui";
-import { useLogin } from "@/hooks";
-import { StatusBar } from "expo-status-bar";
+import { AuthPrompt, AuthScreen, AuthSpacer, LoginForm, LoginHero } from "@/components/auth";
+import { FormError, GradientButton } from "@/components/ui";
+import { useRequest } from "@/hooks";
+import { loginSchema, validate } from "@/schemas";
+import { ApiError, authApi } from "@/services";
+import { useSession } from "@/store";
+import { describeApiError } from "@/utils";
+import { useRouter } from "expo-router";
 import { MotiView } from "moti";
-import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+
+/** `401` não diz qual campo falhou, para não revelar se o e-mail tem conta. */
+const describeLoginError = (error: unknown) =>
+  error instanceof ApiError && error.status === 401
+    ? "E-mail ou senha incorretos."
+    : describeApiError(error);
 
 export default function LoginScreen() {
-  const flow = useLogin();
+  const router = useRouter();
+  const signIn = useSession((state) => state.signIn);
+  const request = useRequest(describeLoginError);
+  const [form, setForm] = useState({ email: "", password: "" });
+  const credentials = validate(loginSchema, form);
+
+  const edit = (changes: Partial<typeof form>) => {
+    request.setError(null);
+    setForm((current) => ({ ...current, ...changes }));
+  };
+
+  const submit = async () => {
+    if (!credentials.data) return request.setError(credentials.error);
+    const session = await request.run(() => authApi.login(credentials.data));
+    if (!session) return;
+    signIn(session);
+    router.replace("/profile");
+  };
 
   return (
-    <View className="flex-1 bg-prisma-background">
-      <StatusBar style="light" />
-
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+    <AuthScreen header={<LoginHero />} contentTop={24}>
+      <MotiView
+        from={{ opacity: 0, translateY: 12 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        transition={{ type: "timing", duration: 550 }}
       >
-        <LoginHero />
+        <LoginForm
+          email={form.email}
+          onChangeEmail={(email) => edit({ email })}
+          password={form.password}
+          onChangePassword={(password) => edit({ password })}
+          onForgotPassword={() => router.push("/forgot-password")}
+          onSubmit={submit}
+        />
+        <FormError message={request.error} />
+        <GradientButton
+          label={request.loading ? "Entrando…" : "Entrar"}
+          loading={request.loading}
+          dimmed={credentials.error !== null}
+          onPress={submit}
+        />
+      </MotiView>
 
-        <AuthSheet>
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ flexGrow: 1, paddingTop: 24 }}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <MotiView
-              from={{ opacity: 0, translateY: 12 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              transition={{ type: "timing", duration: 550 }}
-            >
-              <LoginForm
-                email={flow.email}
-                onChangeEmail={flow.setEmail}
-                password={flow.password}
-                onChangePassword={flow.setPassword}
-                passwordVisible={flow.passwordVisible}
-                onTogglePasswordVisibility={flow.togglePasswordVisibility}
-                onForgotPassword={flow.goToForgotPassword}
-                onSubmit={flow.submit}
-              />
-
-              {flow.error ? (
-                <MotiView
-                  from={{ opacity: 0, translateY: -6 }}
-                  animate={{ opacity: 1, translateY: 0 }}
-                  transition={{ type: "timing", duration: 180 }}
-                  className="mb-3"
-                >
-                  <Callout tone="danger">{flow.error}</Callout>
-                </MotiView>
-              ) : null}
-
-              {/* Campos incompletos esmaecem o botão, mas o toque revela o erro. */}
-              <GradientButton
-                label={flow.buttonLabel}
-                loading={flow.loading}
-                dimmed={flow.dimmed}
-                onPress={flow.submit}
-              />
-            </MotiView>
-
-            {/* Empurra o convite de cadastro para a base do sheet. */}
-            <View className="flex-1" />
-
-            <Text className="mt-[18px] text-center text-sm text-prisma-muted">
-              Não tem uma conta?{" "}
-              <Text
-                className="font-semibold text-prisma-accent"
-                accessibilityRole="link"
-                onPress={flow.goToRegister}
-              >
-                Cadastre-se
-              </Text>
-            </Text>
-          </ScrollView>
-        </AuthSheet>
-      </KeyboardAvoidingView>
-    </View>
+      <AuthSpacer />
+      <AuthPrompt
+        question="Não tem uma conta?"
+        action="Cadastre-se"
+        onPress={() => router.push("/register")}
+      />
+    </AuthScreen>
   );
 }

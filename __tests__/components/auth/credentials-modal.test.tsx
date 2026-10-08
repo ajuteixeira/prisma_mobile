@@ -7,9 +7,6 @@ const PLAYSTATION = PLATFORMS.find((platform) => platform.slug === "playstation"
 const renderModal = (platform: Platform | null, overrides = {}) => {
   const props = {
     platform,
-    values: ["", ""],
-    onChangeField: jest.fn(),
-    ready: false,
     loading: false,
     error: null,
     verificationCode: null,
@@ -29,13 +26,18 @@ describe("CredentialsModal", () => {
     expect(screen.queryByText("Configuração de API")).not.toBeOnTheScreen();
   });
 
-  it("repassa cada campo com o índice e a plataforma", async () => {
+  it("só envia com todos os campos preenchidos, sem espaços nas pontas", async () => {
     const props = await renderModal(PLAYSTATION, { verificationCode: "PRISMA-1234" });
 
     await fireEvent.changeText(screen.getByPlaceholderText("Seu token de acesso da PSN"), "npsso");
+    await fireEvent.press(screen.getByText("Vincular Conta"));
+    expect(props.onSubmit).not.toHaveBeenCalled();
+
+    await fireEvent.changeText(screen.getByPlaceholderText("seu_username_psn"), " ana_psn ");
+    await fireEvent.press(screen.getByText("Vincular Conta"));
 
     expect(screen.getByText("PRISMA-1234")).toBeOnTheScreen();
-    expect(props.onChangeField).toHaveBeenCalledWith("playstation", 1, "npsso");
+    expect(props.onSubmit).toHaveBeenCalledWith(["ana_psn", "npsso"]);
   });
 
   it("oferece gerar o código quando ele falta", async () => {

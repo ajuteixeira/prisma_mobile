@@ -3,17 +3,19 @@ import { Icon } from "@/components/ui/_icon";
 import { COLORS } from "@/constants";
 import { MotiView } from "moti";
 import { memo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { ResendLink } from "../_resend-link";
 
 type SentStepProps = {
   email: string;
-  resendLabel: string;
-  canResend: boolean;
+  /** Segundos até liberar o reenvio. */
+  resendIn: number;
+  resending: boolean;
   onResend: () => void;
 };
 
-/** Passo 2 — link enviado; a nova senha é definida na versão web. */
-export const SentStep = memo(({ email, resendLabel, canResend, onResend }: SentStepProps) => (
+/** Confirmação do link enviado para `email`; a nova senha é definida na versão web. */
+export const SentStep = memo(({ email, resendIn, resending, onResend }: SentStepProps) => (
   <View>
     <View className="items-center px-2 pt-1.5">
       <MotiView
@@ -39,21 +41,12 @@ export const SentStep = memo(({ email, resendLabel, canResend, onResend }: SentS
 
     <View className="mt-4 flex-row items-center justify-between">
       <Text className="text-[13px] text-prisma-faint">Não recebeu?</Text>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityState={{ disabled: !canResend }}
-        disabled={!canResend}
+      <ResendLink
+        label="Reenviar link"
+        remaining={resendIn}
+        loading={resending}
         onPress={onResend}
-        hitSlop={8}
-      >
-        <Text
-          className={`py-1.5 text-[13.5px] font-semibold ${
-            canResend ? "text-prisma-accent" : "text-prisma-faint"
-          }`}
-        >
-          {resendLabel}
-        </Text>
-      </Pressable>
+      />
     </View>
   </View>
 ));

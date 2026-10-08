@@ -4,9 +4,9 @@ import { Icon } from "@/components/ui/_icon";
 import { IconButton } from "@/components/ui/_icon-button";
 import { Sheet } from "@/components/ui/_sheet";
 import { Input, InputField } from "@/components/ui/input";
-import { COLORS, type Platform, type PlatformInstruction, type PlatformSlug } from "@/constants";
+import { COLORS, type Platform, type PlatformInstruction } from "@/constants";
 import { usePressed } from "@/hooks/_use-pressed";
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
   ActivityIndicator,
   Linking,
@@ -75,10 +75,6 @@ Field.displayName = "Field";
 type CredentialsModalProps = {
   /** `null` mantém o modal fechado. */
   platform: Platform | null;
-  values: string[];
-  onChangeField: (slug: PlatformSlug, index: number, value: string) => void;
-  /** Todos os campos preenchidos. */
-  ready: boolean;
   loading: boolean;
   /** Falha da última tentativa, exibida acima dos botões. */
   error: string | null;
@@ -86,7 +82,8 @@ type CredentialsModalProps = {
   verificationCode: string | null;
   codeLoading: boolean;
   onRegenerateCode: () => void;
-  onSubmit: () => void;
+  /** Recebe os campos já sem espaços nas pontas, na ordem do catálogo. */
+  onSubmit: (values: string[]) => void;
   onClose: () => void;
 };
 
@@ -97,9 +94,6 @@ type CredentialsModalProps = {
 export const CredentialsModal = memo(
   ({
     platform,
-    values,
-    onChangeField,
-    ready,
     loading,
     error,
     verificationCode,
@@ -109,10 +103,17 @@ export const CredentialsModal = memo(
     onClose,
   }: CredentialsModalProps) => {
     const { pressed, handlers } = usePressed();
+    const [values, setValues] = useState<string[]>([]);
 
     if (!platform) return null;
 
     const [firstStep, ...remainingSteps] = platform.instructions ?? [];
+    const fields = platform.fields ?? [];
+    const trimmed = fields.map((_, index) => (values[index] ?? "").trim());
+    const ready =
+      fields.length > 0 &&
+      trimmed.every(Boolean) &&
+      (!platform.ownershipCode || verificationCode !== null);
 
     return (
       <Sheet
@@ -193,13 +194,15 @@ export const CredentialsModal = memo(
             <Instruction key={step.title} {...step} />
           ))}
 
-          {(platform.fields ?? []).map((field, index) => (
+          {fields.map((field, index) => (
             <Field
               key={field.label}
               label={field.label}
               placeholder={field.placeholder}
               value={values[index] ?? ""}
-              onChangeText={(value) => onChangeField(platform.slug, index, value)}
+              onChangeText={(value) =>
+                setValues((current) => Object.assign([...current], { [index]: value }))
+              }
             />
           ))}
 
@@ -225,7 +228,9 @@ export const CredentialsModal = memo(
             dimmed={!ready}
             height={54}
             radius={16}
-            onPress={onSubmit}
+            onPress={() => {
+              if (ready && !loading) onSubmit(trimmed);
+            }}
           />
         </View>
       </Sheet>

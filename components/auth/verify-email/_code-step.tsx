@@ -1,7 +1,8 @@
 import { Icon } from "@/components/ui/_icon";
 import { OtpInput } from "@/components/ui/_otp-input";
 import { memo } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import { ResendLink } from "../_resend-link";
 
 type CodeStepProps = {
   email: string;
@@ -10,12 +11,13 @@ type CodeStepProps = {
   codeLength: number;
   /** Código recusado pela API: as caixas ficam vermelhas. */
   invalid: boolean;
-  resendLabel: string;
-  canResend: boolean;
+  /** Segundos até liberar o reenvio. */
+  resendIn: number;
+  resending: boolean;
   onResend: () => void;
 };
 
-/** Código de 6 dígitos enviado para o e-mail do cadastro, com reenvio em contagem. */
+/** Caixas do código enviado para `email`, com o reenvio liberado ao fim da contagem. */
 export const CodeStep = memo(
   ({
     email,
@@ -23,8 +25,8 @@ export const CodeStep = memo(
     onChangeCode,
     codeLength,
     invalid,
-    resendLabel,
-    canResend,
+    resendIn,
+    resending,
     onResend,
   }: CodeStepProps) => (
     <View>
@@ -52,21 +54,12 @@ export const CodeStep = memo(
 
       <View className="mt-4 flex-row items-center justify-between">
         <Text className="text-[13px] text-prisma-faint">Não recebeu? Veja o spam.</Text>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityState={{ disabled: !canResend }}
-          disabled={!canResend}
+        <ResendLink
+          label="Reenviar código"
+          remaining={resendIn}
+          loading={resending}
           onPress={onResend}
-          hitSlop={8}
-        >
-          <Text
-            className={`py-1.5 text-[13.5px] font-semibold ${
-              canResend ? "text-prisma-accent" : "text-prisma-faint"
-            }`}
-          >
-            {resendLabel}
-          </Text>
-        </Pressable>
+        />
       </View>
     </View>
   ),

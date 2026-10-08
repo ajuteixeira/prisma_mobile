@@ -1,24 +1,21 @@
-import { ConfirmDialog, TextField } from "@/components/ui";
+import { Callout, ConfirmDialog, TextField } from "@/components/ui";
+import { useDeleteAccount } from "@/hooks/_use-delete-account";
 import { useState } from "react";
-import { Alert, Text } from "react-native";
+import { Text } from "react-native";
 
 const CONFIRM_WORD = "EXCLUIR";
 
 type DeleteAccountDialogProps = { visible: boolean; onClose: () => void };
 
-/** Exclusão de conta, liberada só depois de digitar EXCLUIR. */
+/** Exclusão definitiva da conta, liberada só depois de digitar EXCLUIR; a falha aparece no próprio diálogo. */
 export const DeleteAccountDialog = ({ visible, onClose }: DeleteAccountDialogProps) => {
   const [confirmText, setConfirmText] = useState("");
+  const { deleteAccount, loading, error, clearError } = useDeleteAccount();
 
   const close = () => {
     setConfirmText("");
+    clearError();
     onClose();
-  };
-
-  const confirm = () => {
-    // TODO(api): POST /api/auth/delete (ou equivalente) ainda não existe.
-    close();
-    Alert.alert("Em breve", "A exclusão de conta ainda não está disponível.");
   };
 
   return (
@@ -34,9 +31,10 @@ export const DeleteAccountDialog = ({ visible, onClose }: DeleteAccountDialogPro
           <Text className="font-bold text-prisma-danger-text">{CONFIRM_WORD}</Text> para confirmar.
         </Text>
       }
-      confirmLabel="Excluir conta"
+      confirmLabel={loading ? "Excluindo…" : "Excluir conta"}
+      loading={loading}
       disabled={confirmText !== CONFIRM_WORD}
-      onConfirm={confirm}
+      onConfirm={deleteAccount}
     >
       <TextField
         icon="key"
@@ -46,6 +44,7 @@ export const DeleteAccountDialog = ({ visible, onClose }: DeleteAccountDialogPro
         autoCapitalize="characters"
         autoCorrect={false}
       />
+      {error ? <Callout tone="danger">{error}</Callout> : null}
     </ConfirmDialog>
   );
 };
