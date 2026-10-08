@@ -84,3 +84,12 @@ export const forgotPassword = (payload: ForgotPasswordPayload) =>
  */
 export const logout = (token: string) =>
   apiRequest<null>("/api/auth/logout", { token, method: "POST" });
+
+/**
+ * `DELETE /api/auth/account` — deleta a conta do usuário autenticado.
+ *
+ * Remove a conta, profile, contas de plataforma, games e achievements associados.
+ * O Bearer é obrigatório. Retorna 204 (no content) em sucesso.
+ */
+export const deleteAccount = (token: string) =>
+  apiRequest<null>("/api/auth/account", { token, method: "DELETE" });
