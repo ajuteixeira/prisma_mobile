@@ -19,5 +19,4 @@ COPY . .
 
 EXPOSE 8081
 
-# O comando efetivo (LAN/tunnel) vem do docker-compose.yml; este é só fallback.
 CMD ["bunx", "expo", "start", "--host", "lan", "--port", "8081"]

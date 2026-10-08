@@ -80,17 +80,36 @@ export const useSettings = () => {
     }
   }, [loading, signOut]);
 
-  const confirmDelete = useCallback(() => {
-    // TODO(api): POST /api/auth/delete (ou equivalente) ainda não existe.
-    setSheet(null);
-    setConfirmTextRaw("");
-    Alert.alert("Em breve", "A exclusão de conta ainda não está disponível.");
-  }, []);
+  const confirmDelete = useCallback(async () => {
+    if (loading) return;
+    setLoading(true);
+
+    try {
+      const token = useSession.getState().token;
+      if (token) await authService.deleteAccount(token);
+      signOut();
+      setDone({
+        title: "Conta excluída",
+        text: "Sua conta e todos os dados foram removidos permanentemente.",
+        cta: "Voltar ao início",
+      });
+      setSheet("done");
+    } catch (requestError) {
+      setSheet(null);
+      setError(
+        requestError instanceof ApiError
+          ? requestError.message
+          : "Não foi possível excluir a conta. Verifique sua conexão e tente novamente.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, signOut]);
 
   const finish = useCallback(() => {
     setSheet(null);
     setDone(null);
-    router.replace("/register");
+    router.replace("/login");
   }, [router]);
 
   return {
