@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-/** Contagem regressiva em segundos, usada no reenvio do código. */
-export const useCountdown = (seconds: number) => {
-  const [remaining, setRemaining] = useState(0);
+/** Contagem regressiva em segundos. Com `startNow`, começa contando `seconds` na montagem. */
+export const useCountdown = (seconds: number, startNow = false) => {
+  const [remaining, setRemaining] = useState(startNow ? seconds : 0);
 
   useEffect(() => {
     if (remaining <= 0) return;
@@ -18,11 +18,4 @@ export const useCountdown = (seconds: number) => {
   const reset = useCallback(() => setRemaining(0), []);
 
   return { remaining, running: remaining > 0, start, reset };
-};
-
-/** Formata os segundos restantes como `m:ss`. */
-export const formatCountdown = (totalSeconds: number) => {
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 };

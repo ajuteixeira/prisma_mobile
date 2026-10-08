@@ -91,10 +91,7 @@ export const OtpInput = memo(({ value, onChange, length = 6, onComplete, invalid
             autoComplete="sms-otp"
             selectionColor={COLORS.accent}
             accessibilityLabel={`Dígito ${index + 1} de ${length}`}
-            // `text-center` num `TextInput` quebra o render no react-native-css 3.0.7
-            // (o mapeamento de `textAlign` chama `split` em `true`); vai por `style`.
-            style={{ textAlign: "center" }}
-            className={`h-16 min-w-0 flex-1 rounded-2xl border text-[26px] font-bold text-prisma-ink ${
+            className={`h-16 min-w-0 flex-1 rounded-2xl border text-center text-[26px] font-bold text-prisma-ink ${
               active ? "bg-prisma-field-active" : "bg-prisma-field"
             } ${
               invalid

@@ -3,6 +3,9 @@ import type { IconName } from "@/components/ui/_icon";
 /** Slugs conforme o backend (`priv/repo/seeds.exs` / `DELETE /api/platforms/:slug`). */
 export type PlatformSlug = "steam" | "playstation" | "xbox" | "retroachievements";
 
+/** Vínculo de uma plataforma: desvinculada, vinculando ou vinculada. */
+export type PlatformStatus = "off" | "loading" | "on";
+
 /**
  * Como a plataforma é vinculada:
  * - `oauth`: o provedor cuida do login, o app só abre o navegador.
@@ -53,7 +56,7 @@ export type Platform = {
 
 /**
  * Catálogo do artboard 5a. `expo-symbols` não expõe as marcas Steam/PlayStation/
- * Xbox, então cada plataforma recebe um símbolo genérico distinto — a cor e o
+ * Xbox, então cada plataforma recebe um símbolo genérico distinto; a cor e o
  * nome ao lado fazem a identificação.
  */
 export const PLATFORMS: Platform[] = [

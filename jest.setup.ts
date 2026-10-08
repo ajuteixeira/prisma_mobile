@@ -42,3 +42,18 @@ console.warn = (...args: unknown[]) => {
   if (typeof args[0] === "string" && args[0].startsWith("SafeAreaView has been deprecated")) return;
   warn(...args);
 };
+
+// SecureStore em memória: o módulo nativo não existe no Jest. Funções comuns, e não
+// `jest.fn`, porque o `restoreMocks` apagaria a implementação entre os testes.
+jest.mock("expo-secure-store", () => {
+  const items = new Map<string, string>();
+  return {
+    getItemAsync: async (key: string) => items.get(key) ?? null,
+    setItemAsync: async (key: string, value: string) => {
+      items.set(key, value);
+    },
+    deleteItemAsync: async (key: string) => {
+      items.delete(key);
+    },
+  };
+});

@@ -9,18 +9,17 @@ type TextFieldProps = TextInputProps & {
   ref?: Ref<TextInput>;
   /** Ícone à esquerda do campo. */
   icon?: IconName;
-  /** Slot à direita — botão de olho, indicador de validação, etc. */
+  /** Conteúdo à direita do campo. */
   trailing?: ReactNode;
 };
 
 /**
  * Campo de texto do sistema: 58px de altura, ícone à esquerda e realce no foco,
- * que o `Input` do gluestack aplica via `data-[focus=true]`. As variantes `dark:`
- * sobrepõem as cores neutras do gluestack, já que o app é só escuro.
+ * que o `Input` do gluestack aplica via `data-[focus=true]`.
  */
 export const TextField = memo(({ icon, trailing, ref, ...inputProps }: TextFieldProps) => (
   <Input
-    className={`h-[58px] gap-3 rounded-2xl border-prisma-field-border bg-prisma-field pl-4 shadow-none dark:bg-prisma-field data-[focus=true]:border-prisma-brand data-[focus=true]:bg-prisma-field-active dark:data-[focus=true]:border-prisma-brand dark:data-[focus=true]:bg-prisma-field-active ${
+    className={`h-[58px] gap-3 rounded-2xl border-prisma-field-border bg-prisma-field pl-4 data-[hover=true]:border-prisma-field-border data-[focus=true]:border-prisma-brand data-[focus=true]:bg-prisma-field-active data-[focus=true]:hover:border-prisma-brand data-[focus=true]:web:ring-0 ${
       trailing ? "pr-2" : "pr-4"
     }`}
   >
@@ -30,7 +29,7 @@ export const TextField = memo(({ icon, trailing, ref, ...inputProps }: TextField
       ref={ref as unknown as Ref<TextInputProps>}
       // Sem isso o gluestack anuncia todo campo como "Input Field" no leitor de tela.
       aria-label={inputProps.accessibilityLabel ?? inputProps.placeholder}
-      className="min-w-0 text-base text-prisma-body"
+      className="min-w-0 px-0 text-base text-prisma-body placeholder:text-prisma-faint"
       placeholderTextColor={COLORS.faint}
       selectionColor={COLORS.accent}
       {...inputProps}

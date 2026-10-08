@@ -1,4 +1,5 @@
 import { TextField } from "@/components/ui/_text-field";
+import { sanitizeUsername } from "@/utils";
 import { memo } from "react";
 import { Text, View } from "react-native";
 
@@ -10,7 +11,7 @@ type IdentityStepProps = {
   onSubmit: () => void;
 };
 
-/** Passo 1 — nome de exibição e o @ público, já sanitizado enquanto digita. */
+/** Nome de exibição e nickname; `onChangeUsername` recebe o nickname já sanitizado. */
 export const IdentityStep = memo(
   ({
     fullName,
@@ -36,7 +37,7 @@ export const IdentityStep = memo(
         icon="at"
         placeholder="nickname"
         value={username}
-        onChangeText={onChangeUsername}
+        onChangeText={(value) => onChangeUsername(sanitizeUsername(value))}
         autoCapitalize="none"
         autoCorrect={false}
         autoComplete="username-new"

@@ -9,7 +9,7 @@ const renderScreen = () =>
     {
       index: () => null,
       "(auth)/login/index": LoginScreen,
-      "(tabs)/profile": () => null,
+      "(tabs)/profile/index": () => null,
     },
     { initialUrl: "/login" },
   );

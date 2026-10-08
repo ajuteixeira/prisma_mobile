@@ -4,7 +4,7 @@ import type { PropsWithChildren, ReactElement } from "react";
 
 /** Mesmos providers do `app/_layout.tsx`: os overlays do gluestack renderizam aqui. */
 export const Providers = ({ children }: PropsWithChildren) => (
-  <GluestackUIProvider mode="dark">{children}</GluestackUIProvider>
+  <GluestackUIProvider>{children}</GluestackUIProvider>
 );
 
 /** `render` do RNTL já dentro dos providers do app. */

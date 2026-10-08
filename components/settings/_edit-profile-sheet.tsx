@@ -8,14 +8,16 @@ import {
   TextField,
 } from "@/components/ui";
 import { BRAND_GRADIENT, COLORS } from "@/constants";
-import { BIO_MAX, type NickStatus, type useEditProfile } from "@/hooks/_use-edit-profile";
+import { useEditProfile } from "@/hooks/_use-edit-profile";
+import type { UsernameStatus } from "@/hooks/_use-username-availability";
+import { BIO_MAX } from "@/schemas";
+import type { ProfileCardData } from "@/services";
+import { sanitizeUsername } from "@/utils";
 import { LinearGradient } from "expo-linear-gradient";
-import { memo, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 
-type EditProfileFlow = ReturnType<typeof useEditProfile>;
-
-const NICK_STATUS: Record<NickStatus, { label: string; color: string } | null> = {
+const USERNAME_STATUS: Record<UsernameStatus, { label: string; color: string } | null> = {
   idle: null,
   checking: null,
   available: { label: "disponível", color: COLORS.success },
@@ -61,20 +63,19 @@ const CameraBadge = (
   </View>
 );
 
-/**
- * Sheet alta "Editar perfil" (artboard 6d): foto com o anel do espectro, nome,
- * nickname com checagem de disponibilidade e bio com contador.
- */
-export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
-  const nick = NICK_STATUS[flow.nickStatus];
+type EditProfileFormProps = {
+  profile: ProfileCardData;
+  onClose: () => void;
+  onSaved: () => void;
+};
+
+/** Conteúdo da sheet: monta a cada abertura, então começa sempre do perfil salvo. */
+const EditProfileForm = ({ profile, onClose, onSaved }: EditProfileFormProps) => {
+  const form = useEditProfile(profile, onSaved);
+  const status = USERNAME_STATUS[form.usernameStatus];
 
   return (
-    // Sheet alta: ocupa quase a tela e encolhe junto com o teclado.
-    <Sheet
-      visible={flow.visible}
-      onClose={flow.close}
-      className="h-[92%] max-h-[92%] overflow-hidden"
-    >
+    <>
       <View className="flex-row items-center justify-between pb-2 pl-6 pr-5 pt-[22px]">
         <Text className="text-[21px] font-bold text-white" style={{ letterSpacing: -0.3 }}>
           Editar perfil
@@ -84,7 +85,7 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
           variant="ghost"
           color={COLORS.muted}
           accessibilityLabel="Fechar edição"
-          onPress={flow.close}
+          onPress={onClose}
           className="h-[38px] w-[38px]"
         />
       </View>
@@ -99,30 +100,30 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Escolher foto"
-            onPress={flow.pickPhoto}
+            onPress={form.pickPhoto}
           >
             <SpectrumAvatar
-              username={flow.avatarSeed}
-              uri={flow.draft.avatarUri}
+              username={form.avatarSeed}
+              uri={form.avatarUri}
               size={104}
               badge={CameraBadge}
             />
           </Pressable>
-          <Pressable accessibilityRole="button" onPress={flow.pickPhoto} className="mt-3.5 px-2.5 py-1.5">
+          <Pressable accessibilityRole="button" onPress={form.pickPhoto} className="mt-3.5 px-2.5 py-1.5">
             <Text className="text-[14.5px] font-semibold text-prisma-accent">Alterar foto</Text>
           </Pressable>
           <Text
             className={`mt-0.5 text-center text-[12px] ${
-              flow.fieldErrors.avatar ? "text-prisma-danger" : "text-prisma-faint"
+              form.fieldErrors.avatar ? "text-prisma-danger" : "text-prisma-faint"
             }`}
           >
-            {flow.fieldErrors.avatar ?? "JPG, PNG, GIF ou WebP · máx. 2 MB"}
+            {form.fieldErrors.avatar ?? "JPG, PNG, GIF ou WebP · máx. 2 MB"}
           </Text>
         </View>
 
-        {flow.error ? (
+        {form.error ? (
           <View className="mt-5">
-            <Callout tone="danger">{flow.error}</Callout>
+            <Callout tone="danger">{form.error}</Callout>
           </View>
         ) : null}
 
@@ -130,13 +131,13 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
           <Field
             label="Nome completo"
             hint="Exibido no seu perfil e em outras áreas do Prisma."
-            error={flow.fieldErrors.full_name}
+            error={form.fieldErrors.full_name}
           >
             <TextField
               icon="user"
               placeholder="Seu nome"
-              value={flow.draft.fullName}
-              onChangeText={flow.setFullName}
+              value={form.draft.fullName}
+              onChangeText={(value) => form.set("fullName", value)}
               autoCapitalize="words"
               textContentType="name"
             />
@@ -145,28 +146,28 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
           <Field
             label="Nickname"
             hint="Letras minúsculas, números e underscore."
-            error={flow.fieldErrors.username}
+            error={form.fieldErrors.username}
           >
             <TextField
               icon="at"
               placeholder="nickname"
-              value={flow.draft.username}
-              onChangeText={flow.setUsername}
+              value={form.draft.username}
+              onChangeText={(value) => form.set("username", sanitizeUsername(value))}
               autoCapitalize="none"
               autoCorrect={false}
               trailing={
-                flow.nickStatus === "checking" ? (
+                form.usernameStatus === "checking" ? (
                   <ActivityIndicator size="small" color={COLORS.faint} />
-                ) : nick ? (
-                  <Text className="pr-2 text-[12.5px] font-semibold" style={{ color: nick.color }}>
-                    {nick.label}
+                ) : status ? (
+                  <Text className="pr-2 text-[12.5px] font-semibold" style={{ color: status.color }}>
+                    {status.label}
                   </Text>
                 ) : null
               }
             />
           </Field>
 
-          <Field label="Bio" error={flow.fieldErrors.bio}>
+          <Field label="Bio" error={form.fieldErrors.bio}>
             <View className="rounded-2xl border border-prisma-field-border bg-prisma-field px-4 py-3.5">
               <TextInput
                 multiline
@@ -174,14 +175,14 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
                 placeholderTextColor={COLORS.faint}
                 selectionColor={COLORS.accent}
                 maxLength={BIO_MAX}
-                value={flow.draft.bio}
-                onChangeText={flow.setBio}
+                value={form.draft.bio}
+                onChangeText={(value) => form.set("bio", value.slice(0, BIO_MAX))}
                 className="h-[84px] p-0 text-base leading-[23px] text-prisma-body"
                 style={{ textAlignVertical: "top" }}
               />
             </View>
             <Text className="mx-0.5 mt-2 text-right text-[12px] text-prisma-faint">
-              {flow.draft.bio.length}/{BIO_MAX}
+              {form.draft.bio.length}/{BIO_MAX}
             </Text>
           </Field>
         </View>
@@ -190,7 +191,8 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
       <View className="flex-row gap-2.5 border-t border-white/[0.05] px-6 pb-6 pt-3.5">
         <Pressable
           accessibilityRole="button"
-          onPress={flow.close}
+          onPress={onClose}
+          disabled={form.saving}
           className="h-14 flex-1 items-center justify-center rounded-[18px] border border-white/[0.08] bg-white/[0.06]"
         >
           <Text className="text-[15.5px] font-semibold text-prisma-body">Cancelar</Text>
@@ -198,16 +200,33 @@ export const EditProfileSheet = memo(({ flow }: { flow: EditProfileFlow }) => {
         <View style={{ flex: 1.4 }}>
           <GradientButton
             accessibilityLabel="Salvar alterações"
-            label={flow.saving ? "Salvando…" : flow.saved ? "Salvo!" : "Salvar alterações"}
-            loading={flow.saving}
-            dimmed={!flow.canSave}
+            label={form.saving ? "Salvando…" : form.saved ? "Salvo!" : "Salvar alterações"}
+            loading={form.saving}
+            dimmed={!form.canSave}
             height={56}
-            onPress={flow.save}
+            onPress={form.save}
           />
         </View>
       </View>
-    </Sheet>
+    </>
   );
-});
+};
 
-EditProfileSheet.displayName = "EditProfileSheet";
+type EditProfileSheetProps = {
+  visible: boolean;
+  /** Perfil salvo; enquanto carrega, a sheet mostra só o indicador. */
+  profile: ProfileCardData | null;
+  onClose: () => void;
+  onSaved: () => void;
+};
+
+/** Sheet alta "Editar perfil": foto com o anel do espectro, nome, nickname e bio. */
+export const EditProfileSheet = ({ visible, profile, onClose, onSaved }: EditProfileSheetProps) => (
+  <Sheet visible={visible} onClose={onClose} heightRatio={0.92} className="overflow-hidden">
+    {profile ? (
+      <EditProfileForm profile={profile} onClose={onClose} onSaved={onSaved} />
+    ) : (
+      <ActivityIndicator className="flex-1" color={COLORS.accent} />
+    )}
+  </Sheet>
+);

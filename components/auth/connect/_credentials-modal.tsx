@@ -4,9 +4,9 @@ import { Icon } from "@/components/ui/_icon";
 import { IconButton } from "@/components/ui/_icon-button";
 import { Sheet } from "@/components/ui/_sheet";
 import { Input, InputField } from "@/components/ui/input";
-import { COLORS, type Platform, type PlatformInstruction, type PlatformSlug } from "@/constants";
+import { COLORS, type Platform, type PlatformInstruction } from "@/constants";
 import { usePressed } from "@/hooks/_use-pressed";
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
   ActivityIndicator,
   Linking,
@@ -48,16 +48,15 @@ type FieldProps = {
 
 /**
  * Campo do modal: rótulo acima e caixa mais baixa que a do formulário padrão. O
- * realce de foco vem do `Input` (`data-[focus=true]`); as variantes `dark:`
- * sobrepõem as cores neutras do gluestack, já que o app é só escuro.
+ * realce de foco vem do `Input` (`data-[focus=true]`).
  */
 const Field = memo(({ label, placeholder, value, onChangeText }: FieldProps) => (
   <View>
     <Text className="mb-2 ml-0.5 text-[12.5px] font-semibold text-prisma-body">{label}</Text>
-    <Input className="h-[54px] rounded-[15px] border-prisma-ghost-border bg-prisma-sunken px-4 shadow-none dark:bg-prisma-sunken data-[focus=true]:border-prisma-brand data-[focus=true]:bg-prisma-field-active dark:data-[focus=true]:border-prisma-brand dark:data-[focus=true]:bg-prisma-field-active">
+    <Input className="h-[54px] rounded-[15px] border-prisma-ghost-border bg-prisma-sunken px-4 data-[hover=true]:border-prisma-ghost-border data-[focus=true]:border-prisma-brand data-[focus=true]:bg-prisma-field-active data-[focus=true]:hover:border-prisma-brand data-[focus=true]:web:ring-0">
       <InputField
         aria-label={label}
-        className="text-[15px] text-prisma-body"
+        className="px-0 text-[15px] text-prisma-body placeholder:text-prisma-faint"
         placeholder={placeholder}
         placeholderTextColor={COLORS.faint}
         selectionColor={COLORS.accent}
@@ -76,10 +75,6 @@ Field.displayName = "Field";
 type CredentialsModalProps = {
   /** `null` mantém o modal fechado. */
   platform: Platform | null;
-  values: string[];
-  onChangeField: (slug: PlatformSlug, index: number, value: string) => void;
-  /** Todos os campos preenchidos. */
-  ready: boolean;
   loading: boolean;
   /** Falha da última tentativa, exibida acima dos botões. */
   error: string | null;
@@ -87,7 +82,8 @@ type CredentialsModalProps = {
   verificationCode: string | null;
   codeLoading: boolean;
   onRegenerateCode: () => void;
-  onSubmit: () => void;
+  /** Recebe os campos já sem espaços nas pontas, na ordem do catálogo. */
+  onSubmit: (values: string[]) => void;
   onClose: () => void;
 };
 
@@ -98,9 +94,6 @@ type CredentialsModalProps = {
 export const CredentialsModal = memo(
   ({
     platform,
-    values,
-    onChangeField,
-    ready,
     loading,
     error,
     verificationCode,
@@ -110,17 +103,25 @@ export const CredentialsModal = memo(
     onClose,
   }: CredentialsModalProps) => {
     const { pressed, handlers } = usePressed();
+    const [values, setValues] = useState<string[]>([]);
 
     if (!platform) return null;
 
     const [firstStep, ...remainingSteps] = platform.instructions ?? [];
+    const fields = platform.fields ?? [];
+    const trimmed = fields.map((_, index) => (values[index] ?? "").trim());
+    const ready =
+      fields.length > 0 &&
+      trimmed.every(Boolean) &&
+      (!platform.ownershipCode || verificationCode !== null);
 
     return (
       <Sheet
         visible
         onClose={onClose}
         backdropColor="rgba(4, 7, 11, 0.72)"
-        className="max-h-[88%] rounded-t-[28px] border border-b-0 bg-prisma-elevated"
+        maxHeightRatio={0.88}
+        className="rounded-t-[28px] border border-b-0 bg-prisma-elevated"
         style={{ boxShadow: "0px -20px 60px rgba(0, 0, 0, 0.7)" }}
       >
         <View className="flex-row items-center gap-[13px] border-b border-prisma-field-border px-[22px] pb-4 pt-5">
@@ -193,13 +194,15 @@ export const CredentialsModal = memo(
             <Instruction key={step.title} {...step} />
           ))}
 
-          {(platform.fields ?? []).map((field, index) => (
+          {fields.map((field, index) => (
             <Field
               key={field.label}
               label={field.label}
               placeholder={field.placeholder}
               value={values[index] ?? ""}
-              onChangeText={(value) => onChangeField(platform.slug, index, value)}
+              onChangeText={(value) =>
+                setValues((current) => Object.assign([...current], { [index]: value }))
+              }
             />
           ))}
 
@@ -225,7 +228,9 @@ export const CredentialsModal = memo(
             dimmed={!ready}
             height={54}
             radius={16}
-            onPress={onSubmit}
+            onPress={() => {
+              if (ready && !loading) onSubmit(trimmed);
+            }}
           />
         </View>
       </Sheet>

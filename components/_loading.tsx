@@ -1,5 +1,5 @@
-import { useLoading } from "@/store";
-import { Image as MotiImage } from "moti";
+import { useIsLoading, useLoadingMessage } from "@/store";
+import { AnimatePresence, Image as MotiImage, MotiView } from "moti";
 import { memo, useEffect, useState, type PropsWithChildren } from "react";
 import { Text, View } from "react-native";
 
@@ -35,30 +35,31 @@ export const LoadingDots = memo(({ className, text }: LoadingDotsProps) => {
   );
 });
 
-const Loading = memo(() => {
-  const loading = useLoading((s) => s.loading);
-  if (loading === 0) return null;
-  return (
-    <View
-      className="flex h-full w-full items-center justify-center"
-      style={{ position: "absolute", zIndex: 9999 }}
-    >
-      <View
-        className="p-3 flex justify-center items-center  h-full w-full gap-3"
-        style={{ backgroundColor: "rgba(0,0,0,0.2)" }}
-      >
-        <AnimatedLogo />
-        <LoadingDots className="text-white" />
-      </View>
-    </View>
-  );
-});
+const LoadingOverlay = ({ message }: { message: string | null }) => (
+  <MotiView
+    accessible
+    accessibilityRole="progressbar"
+    accessibilityLabel={message ?? "Carregando"}
+    from={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ type: "timing", duration: 160 }}
+    className="absolute inset-0 items-center justify-center gap-3"
+    style={{ zIndex: 9999, backgroundColor: "rgba(0, 0, 0, 0.45)" }}
+  >
+    <AnimatedLogo />
+    <LoadingDots className="text-white" text={message ?? undefined} />
+  </MotiView>
+);
 
-export const LoadingProvider = (props: PropsWithChildren) => {
+export const LoadingProvider = ({ children }: PropsWithChildren) => {
+  const isLoading = useIsLoading();
+  const message = useLoadingMessage();
+
   return (
-    <View className="w-full h-full">
-      <Loading />
-      {props.children}
+    <View className="flex-1">
+      {children}
+      <AnimatePresence>{isLoading ? <LoadingOverlay message={message} /> : null}</AnimatePresence>
     </View>
   );
 };

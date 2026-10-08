@@ -21,8 +21,8 @@ const renderScreen = () =>
   renderRouter(
     {
       index: () => null,
-      "(tabs)/profile": ProfileScreen,
-      "(tabs)/followers": () => null,
+      "(tabs)/profile/index": ProfileScreen,
+      "(tabs)/followers/index": () => null,
     },
     { initialUrl: "/profile" },
   );

@@ -38,7 +38,7 @@ const saved = (changes: Record<string, unknown>) =>
 
 const renderScreen = () =>
   renderRouter(
-    { index: () => null, "(tabs)/settings/index": SettingsScreen, "(tabs)/profile": () => null },
+    { index: () => null, "(tabs)/settings/index": SettingsScreen, "(tabs)/profile/index": () => null },
     { initialUrl: "/settings" },
   );
 

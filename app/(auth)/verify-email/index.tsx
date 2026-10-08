@@ -1,100 +1,137 @@
-import { AuthHeader, AuthSheet, CodeStep, VerifiedStep } from "@/components/auth";
-import { Callout, GradientButton, Icon } from "@/components/ui";
-import { VERIFICATION_CODE_LENGTH, useVerifyEmail } from "@/hooks";
-import { Redirect } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { AnimatePresence, MotiView } from "moti";
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { AuthHeader, AuthScreen, AuthSpacer, CodeStep, VerifiedStep } from "@/components/auth";
+import { FormError, GradientButton, Icon, StepTransition } from "@/components/ui";
+import { useCountdown, useRequest } from "@/hooks";
+import { ApiError, authApi } from "@/services";
+import { useRegistration, useSession } from "@/store";
+import { describeApiError, firstFieldError, goBackOr } from "@/utils";
+import { Redirect, useRouter } from "expo-router";
+import { useState } from "react";
+import { Pressable, Text } from "react-native";
 
+const CODE_LENGTH = 6;
+
+/** Erro de campo só acontece se o nickname/e-mail foi tomado enquanto o código chegava. */
+const describeVerifyError = (error: unknown) => {
+  const fieldError = firstFieldError(error);
+  return fieldError ? `${fieldError.message} Volte e altere os dados.` : describeApiError(error);
+};
+
+/**
+ * Confirmação do e-mail do cadastro: a conta só é criada quando o código
+ * enviado confere. Os dados do cadastro chegam pelo `useRegistration`.
+ */
 export default function VerifyEmailScreen() {
-  const flow = useVerifyEmail();
+  const router = useRouter();
+  const signIn = useSession((state) => state.signIn);
+  const { pending, setPending, clear } = useRegistration();
+  // O código acabou de ser enviado pelo cadastro: o reenvio começa bloqueado.
+  const countdown = useCountdown(pending?.resendIn ?? 0, true);
+  const confirm = useRequest(describeVerifyError);
+  const resend = useRequest(describeVerifyError);
+  const [verified, setVerified] = useState(false);
+  const [code, setCode] = useState("");
+  /** O erro veio do código: as caixas ficam vermelhas até a próxima edição. */
+  const [codeInvalid, setCodeInvalid] = useState(false);
 
-  if (flow.missingRegistration) return <Redirect href="/register" />;
+  // Sem cadastro pendente (ex.: app reaberto nesta rota) volta ao cadastro.
+  if (!pending && !verified) return <Redirect href="/register" />;
+
+  const clearErrors = () => {
+    confirm.setError(null);
+    resend.setError(null);
+    setCodeInvalid(false);
+  };
+
+  const submit = async () => {
+    if (verified) {
+      clear();
+      return router.replace("/connect-platforms");
+    }
+    if (!pending) return;
+    if (code.length < CODE_LENGTH)
+      return confirm.setError(`Preencha os ${CODE_LENGTH} dígitos do código.`);
+
+    const session = await confirm.run(
+      () =>
+        authApi.register({ ...pending.payload, code, verification_token: pending.verificationToken }),
+      (error) => {
+        // Código incorreto, expirado ou esgotado: limpa as caixas para digitar de novo.
+        if (error instanceof ApiError && !firstFieldError(error)) {
+          setCode("");
+          setCodeInvalid(true);
+        }
+        return describeVerifyError(error);
+      },
+    );
+    if (!session) return;
+    signIn(session);
+    setVerified(true);
+  };
+
+  /** Pede um código novo: o token anterior deixa de valer. */
+  const resendCode = async () => {
+    if (!pending || confirm.loading) return;
+    clearErrors();
+    const sent = await resend.run(() => authApi.requestRegisterCode(pending.payload));
+    if (!sent) return;
+    setPending({ ...pending, verificationToken: sent.verification_token, resendIn: sent.resend_in });
+    setCode("");
+    countdown.start(sent.resend_in);
+  };
+
+  /** Depois de criada a conta não há volta: o cadastro já foi concluído. */
+  const goBack = verified ? undefined : () => goBackOr(router, "/register");
 
   return (
-    <View className="flex-1 bg-prisma-background">
-      <StatusBar style="light" />
-
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
+    <AuthScreen
+      header={
         <AuthHeader
           title="Verifique seu e-mail"
           subtitle="Falta pouco para entrar na comunidade Prisma."
-          onBack={flow.goBack}
+          onBack={goBack}
           stepLabel="CONFIRMAÇÃO"
         />
+      }
+    >
+      <StepTransition step={verified ? "done" : "code"}>
+        {verified ? (
+          <VerifiedStep />
+        ) : (
+          <CodeStep
+            email={pending?.payload.email ?? ""}
+            code={code}
+            onChangeCode={(value) => {
+              clearErrors();
+              setCode(value);
+            }}
+            codeLength={CODE_LENGTH}
+            invalid={codeInvalid}
+            resendIn={countdown.remaining}
+            resending={resend.loading}
+            onResend={resendCode}
+          />
+        )}
+      </StepTransition>
 
-        <AuthSheet>
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ flexGrow: 1, paddingTop: 26 }}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            <AnimatePresence exitBeforeEnter>
-              <MotiView
-                key={flow.step}
-                from={{ opacity: 0, translateY: 12 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                exit={{ opacity: 0, translateY: -12 }}
-                transition={{ type: "timing", duration: 220 }}
-              >
-                {flow.step === "code" ? (
-                  <CodeStep
-                    email={flow.email}
-                    code={flow.code}
-                    onChangeCode={flow.setCode}
-                    codeLength={VERIFICATION_CODE_LENGTH}
-                    invalid={flow.codeInvalid}
-                    resendLabel={flow.resendLabel}
-                    canResend={flow.canResend}
-                    onResend={flow.resendCode}
-                  />
-                ) : (
-                  <VerifiedStep />
-                )}
-              </MotiView>
-            </AnimatePresence>
-
-            {/* Empurra o botão para a base do sheet. */}
-            <View className="flex-1" />
-
-            {flow.error ? (
-              <MotiView
-                from={{ opacity: 0, translateY: -6 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: "timing", duration: 180 }}
-                className="mb-3"
-              >
-                <Callout tone="danger">{flow.error}</Callout>
-              </MotiView>
-            ) : null}
-
-            <GradientButton
-              label={flow.buttonLabel}
-              loading={flow.loading}
-              dimmed={flow.dimmed}
-              onPress={flow.submit}
-            />
-
-            {flow.goBack ? (
-              <Pressable
-                accessibilityRole="link"
-                onPress={flow.goBack}
-                hitSlop={8}
-                className="mt-[18px] flex-row items-center justify-center gap-1.5"
-              >
-                <Icon name="back" size={12} />
-                <Text className="text-sm font-semibold text-prisma-accent">
-                  Voltar e alterar dados
-                </Text>
-              </Pressable>
-            ) : null}
-          </ScrollView>
-        </AuthSheet>
-      </KeyboardAvoidingView>
-    </View>
+      <AuthSpacer />
+      <FormError message={confirm.error ?? resend.error} />
+      <GradientButton
+        label={confirm.loading ? "Verificando…" : verified ? "Vincular contas" : "Confirmar código"}
+        loading={confirm.loading}
+        dimmed={!verified && code.length < CODE_LENGTH}
+        onPress={submit}
+      />
+      {goBack ? (
+        <Pressable
+          accessibilityRole="link"
+          onPress={goBack}
+          hitSlop={8}
+          className="mt-[18px] flex-row items-center justify-center gap-1.5"
+        >
+          <Icon name="back" size={12} />
+          <Text className="text-sm font-semibold text-prisma-accent">Voltar e alterar dados</Text>
+        </Pressable>
+      ) : null}
+    </AuthScreen>
   );
 }

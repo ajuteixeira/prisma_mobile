@@ -1,7 +1,6 @@
 /**
- * Tokens visuais do protótipo "Prisma Mobile" (artboard 4a — recuperação de senha).
- * Os mesmos valores estão espelhados em `styles/global.css` como `--color-prisma-*`,
- * para que o className e o style compartilhem a mesma paleta.
+ * Tokens visuais do protótipo "Prisma Mobile". Os mesmos valores estão em
+ * `tailwind.config.js` sob a chave `prisma`, para className e style usarem a mesma paleta.
  */
 export const COLORS = {
   /** Fundo da tela, atrás dos feixes. */
@@ -35,7 +34,7 @@ export const COLORS = {
 export const BRAND_GRADIENT = [COLORS.brand, COLORS.brandDark] as const;
 
 /**
- * Feixes de luz do topo. Cada plataforma conectada acende sua própria cor —
+ * Feixes de luz do topo. Cada plataforma conectada acende sua própria cor;
  * a intensidade reproduz o peso definido no protótipo.
  */
 export type PrismaBeam = {
@@ -50,7 +49,7 @@ export type PrismaBeam = {
   bottom?: number;
   left?: number;
   right?: number;
-  /** Opacidade do feixe inteiro — apaga quando a plataforma não está vinculada. */
+  /** Opacidade do feixe inteiro; `BEAM_OFF_OPACITY` para plataforma não vinculada. */
   opacity?: number;
   /** Deslocamento da animação de flutuação. */
   drift: { x: number; y: number };
@@ -169,8 +168,7 @@ export const PRISMA_LOGO_COLORS = [
 ] as const;
 
 /**
- * Régua de força da senha (artboard 3a): o índice é a pontuação de 0 a 4 —
- * um ponto por critério atendido (6+ caracteres, 10+, maiúscula, número/símbolo).
+ * Régua de força da senha (artboard 3a), indexada pela pontuação de 0 a 4 de `passwordScore`.
  */
 export const PASSWORD_STRENGTH_COLORS = [
   COLORS.track,
@@ -190,7 +188,7 @@ export const CONNECT_SCRIM = "rgba(10, 14, 20, 0.66)";
 
 /**
  * Um feixe por plataforma. Na tela de vinculação cada um acende conforme a
- * conta correspondente é conectada — daí o `id` casar com o slug da API.
+ * conta correspondente é conectada, por isso o `id` é o slug da API.
  */
 export const CONNECT_BEAMS: PrismaBeam[] = [
   {

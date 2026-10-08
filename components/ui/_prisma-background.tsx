@@ -8,9 +8,9 @@ import { Easing } from "react-native-reanimated";
 const LAYERS = 9;
 
 /**
- * O protótipo usa `radial-gradient` + `filter: blur(90px)`, que não existem no
- * React Native. Empilhamos círculos concêntricos translúcidos: cada camada soma
- * um pouco de cor, produzindo o mesmo decaimento suave do centro para a borda.
+ * Feixe de luz flutuante. O protótipo usa `radial-gradient` com `filter: blur(90px)`,
+ * que o React Native não tem: círculos concêntricos translúcidos somam cor e
+ * reproduzem o decaimento do centro para a borda.
  */
 const Beam = memo(
   ({ rgb, intensity, size, drift, duration, delay, opacity = 1, ...position }: PrismaBeam) => {
@@ -71,7 +71,7 @@ const Beam = memo(
 Beam.displayName = "Beam";
 
 type PrismaBackgroundProps = {
-  /** Conjunto de feixes; a tela de vinculação usa um por plataforma. */
+  /** Feixes desenhados; o padrão é `PRISMA_BEAMS`. */
   beams?: PrismaBeam[];
   scrim?: string;
 };

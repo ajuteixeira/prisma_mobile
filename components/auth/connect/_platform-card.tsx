@@ -1,6 +1,5 @@
 import { Icon } from "@/components/ui/_icon";
-import { COLORS, type Platform } from "@/constants";
-import type { PlatformStatus } from "@/hooks/_use-connect-platforms";
+import { COLORS, type Platform, type PlatformStatus } from "@/constants";
 import { usePressed } from "@/hooks/_use-pressed";
 import { memo } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
@@ -8,21 +7,25 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 type PlatformCardProps = {
   platform: Platform;
   status: PlatformStatus;
-  /** Já resolvida entre "Conectado · handle", texto de carregamento e convite. */
-  description: string;
+  /** Identificador da conta vinculada, exibido ao lado de "Conectado". */
+  handle?: string;
   onPress: (platform: Platform) => void;
 };
 
-/**
- * Linha de uma plataforma na tela de vinculação: ícone da marca, estado atual e
- * o botão que conecta ou desvincula. Vinculada, a borda e o botão ficam verdes.
- */
+/** Card de uma plataforma com o estado da conta e o botão que conecta ou desvincula. */
 export const PlatformCard = memo(
-  ({ platform, status, description, onPress }: PlatformCardProps) => {
+  ({ platform, status, handle, onPress }: PlatformCardProps) => {
     const connected = status === "on";
     const loading = status === "loading";
     /** Conectado ou carregando, o botão vira só o ícone, como no protótipo. */
     const iconOnly = connected || loading;
+    const description = connected
+      ? handle
+        ? `Conectado · ${handle}`
+        : "Conectado"
+      : loading
+        ? platform.loading
+        : platform.idle;
 
     const { pressed, handlers } = usePressed();
 

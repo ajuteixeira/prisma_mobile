@@ -2,10 +2,7 @@ import { memo, type PropsWithChildren } from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-/**
- * Sheet arredondado onde vive o formulário. Ele nunca troca de tela: os passos
- * do fluxo se alternam aqui dentro, preservando o contexto do usuário.
- */
+/** Painel arredondado que ocupa o espaço abaixo do topo, com respiro da safe area na base. */
 export const AuthSheet = memo(({ children }: PropsWithChildren) => {
   const insets = useSafeAreaInsets();
 

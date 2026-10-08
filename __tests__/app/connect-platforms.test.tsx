@@ -44,7 +44,7 @@ const renderScreen = () =>
     {
       index: () => null,
       "(auth)/connect-platforms/index": ConnectPlatformsScreen,
-      "(tabs)/profile": () => null,
+      "(tabs)/profile/index": () => null,
     },
     { initialUrl: "/connect-platforms" },
   );

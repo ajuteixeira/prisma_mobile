@@ -3,7 +3,6 @@ import { Text, View } from "react-native";
 
 type SectionLabelProps = {
   children: string;
-  /** "CONTA"/"SESSÃO" usam o cinza; "ZONA DE PERIGO" usa o vermelho. */
   color?: string;
 };
 

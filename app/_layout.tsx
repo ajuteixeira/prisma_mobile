@@ -1,30 +1,36 @@
 import { LoadingProvider } from "@/components/_loading";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import { useSession } from "@/store";
 import "@/styles/global.css";
-import { Slot } from "expo-router";
-import { LogBox } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 
-/**
- * O `moti` reexporta o `SafeAreaView` do core, que está depreciado. O aviso vem
- * de dependência, não do nosso código, e o LogBox o desenha branco-no-branco
- * (o NativeWind faz `cssInterop` no `Pressable` e descarta o `style` em função
- * usado pelo `LogBoxButton`), virando uma barra vazia. Silenciamos o aviso — o
- * Metro continua imprimindo tudo no terminal.
- */
-LogBox.ignoreLogs(["SafeAreaView has been deprecated"]);
+// A splash fica até a sessão salva ser lida, para nenhuma rota abrir sem saber se há login.
+SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 const RootLayout = () => {
+  const hydrated = useSession((state) => state.hydrated);
+  const hydrate = useSession((state) => state.hydrate);
+
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
+
+  useEffect(() => {
+    if (hydrated) SplashScreen.hideAsync().catch(() => undefined);
+  }, [hydrated]);
+
+  if (!hydrated) return null;
+
   return (
-    <SafeAreaProvider>
-      <GluestackUIProvider mode="dark">
-        <LoadingProvider>
-          <Slot />
-        </LoadingProvider>
-      </GluestackUIProvider>
+    <GluestackUIProvider>
+      <LoadingProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </LoadingProvider>
       <Toast />
-    </SafeAreaProvider>
+    </GluestackUIProvider>
   );
 };
 

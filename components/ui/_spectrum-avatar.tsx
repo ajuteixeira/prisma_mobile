@@ -19,7 +19,7 @@ type SpectrumAvatarProps = {
   /** Foto enviada (data URL ou arquivo local); sem ela, o avatar gerado. */
   uri: string | null;
   size: number;
-  /** Selo no canto inferior direito — ponto online no Perfil, câmera na edição. */
+  /** Selo no canto inferior direito do avatar. */
   badge?: ReactNode;
 };
 

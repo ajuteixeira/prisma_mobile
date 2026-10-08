@@ -15,7 +15,7 @@ type AuthHeaderProps = {
   /** Uma barra por passo, acesas da primeira até a atual. */
   progress?: { total: number; current: number };
   height?: number;
-  /** Feixes do fundo; a tela de vinculação troca por um feixe por plataforma. */
+  /** Feixes do fundo; sem eles, `PRISMA_BEAMS`. */
   beams?: PrismaBeam[];
   scrim?: string;
 };
