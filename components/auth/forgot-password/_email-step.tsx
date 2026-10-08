@@ -9,7 +9,7 @@ type EmailStepProps = {
   onSubmit: () => void;
 };
 
-/** Passo 1 — identificação da conta. */
+/** Campo do e-mail da conta; o "enviar" do teclado chama `onSubmit`. */
 export const EmailStep = memo(({ email, onChangeEmail, onSubmit }: EmailStepProps) => (
   <View className="gap-3">
     <TextField

@@ -27,7 +27,7 @@ type CalloutProps = {
   children: string;
 };
 
-/** Caixa de aviso — informativa (azul) ou de erro (vermelha). */
+/** Caixa de aviso: informativa (azul) ou de erro (vermelha). */
 export const Callout = memo(({ tone = "info", icon, children }: CalloutProps) => {
   const style = TONES[tone];
 

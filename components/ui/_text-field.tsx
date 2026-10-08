@@ -9,7 +9,7 @@ type TextFieldProps = TextInputProps & {
   ref?: Ref<TextInput>;
   /** Ícone à esquerda do campo. */
   icon?: IconName;
-  /** Slot à direita — botão de olho, indicador de validação, etc. */
+  /** Conteúdo à direita do campo. */
   trailing?: ReactNode;
 };
 

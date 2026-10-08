@@ -2,12 +2,9 @@ import { useCallback, useMemo, useState } from "react";
 import type { PressableProps } from "react-native";
 
 /**
- * Estado de toque de um `Pressable`.
- *
- * O NativeWind registra `cssInterop(Pressable, { className: "style" })`, então
- * ele trata `style` como um valor a mesclar com as classes e nunca chama a
- * forma de função — `style={({ pressed }) => …}` é silenciosamente descartado.
- * Rastreamos o toque aqui e devolvemos um `style` objeto, que o interop aplica.
+ * Estado de toque de um `Pressable`, com os handlers para espalhar nele. O
+ * `cssInterop` do NativeWind mescla `style` com as classes e descarta a forma de
+ * função (`style={({ pressed }) => …}`), então o toque precisa vir deste estado.
  */
 export const usePressed = () => {
   const [pressed, setPressed] = useState(false);

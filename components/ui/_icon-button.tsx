@@ -8,7 +8,7 @@ type IconButtonProps = Omit<PressableProps, "children" | "style"> & {
   icon: IconName;
   size?: number;
   color?: string;
-  /** `ghost` desenha a moldura translúcida usada no botão de voltar. */
+  /** `ghost` desenha uma moldura translúcida; `bare` mostra só o ícone. */
   variant?: "ghost" | "bare";
   className?: string;
 };

@@ -7,12 +7,11 @@ import { ActivityIndicator, Pressable, Text, type PressableProps } from "react-n
 type GradientButtonProps = Omit<PressableProps, "children" | "style"> & {
   label: string;
   loading?: boolean;
-  /** Esmaece o botão sem bloquear o toque: o passo ainda não está válido. */
+  /** Esmaece o botão sem bloquear o toque, para o toque revelar o erro de validação. */
   dimmed?: boolean;
-  /** O modal de credenciais usa uma versão levemente menor. */
   height?: number;
   radius?: number;
-  /** Gradiente do botão; o padrão é a marca azul (Zona de perigo usa vermelho). */
+  /** Início e fim do gradiente; o padrão é o azul da marca. */
   colors?: readonly [string, string];
 };
 

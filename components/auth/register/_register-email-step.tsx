@@ -9,7 +9,7 @@ type RegisterEmailStepProps = {
   onSubmit: () => void;
 };
 
-/** Passo 2 — e-mail da conta, com o aviso de privacidade do protótipo. */
+/** E-mail da conta, com o aviso de privacidade. */
 export const RegisterEmailStep = memo(
   ({ email, onChangeEmail, onSubmit }: RegisterEmailStepProps) => (
     <View className="gap-3">

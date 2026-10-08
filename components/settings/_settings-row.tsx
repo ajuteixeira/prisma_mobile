@@ -9,16 +9,11 @@ type SettingsRowProps = {
   iconBackground: string;
   title: string;
   subtitle?: string;
-  /** Linhas da Zona de perigo usam o vermelho-claro do protótipo. */
   titleColor?: string;
   onPress: () => void;
 };
 
-/**
- * Linha da lista agrupada de Configurações (artboard 6d): caixa de ícone 32px,
- * título, subtítulo opcional e chevron. "Sair da conta" e "Excluir conta"
- * compartilham esta forma — só trocam as cores.
- */
+/** Linha da lista agrupada de Configurações (artboard 6d): caixa de ícone 32px, título, subtítulo opcional e chevron. */
 export const SettingsRow = memo(
   ({
     icon,

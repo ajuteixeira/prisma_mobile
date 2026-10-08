@@ -11,10 +11,7 @@ type SegmentedBarProps = {
   height?: number;
 };
 
-/**
- * Barra dividida em segmentos, usada no progresso do cadastro, na régua de
- * força da senha e no contador de contas vinculadas.
- */
+/** Barra dividida em segmentos, cada um com a sua cor e a troca de cor animada. */
 export const SegmentedBar = memo(
   ({ colors, segmentWidth, gap = 6, height = 4 }: SegmentedBarProps) => (
     <View className="flex-row" style={{ gap }}>
