@@ -2,6 +2,7 @@ import FollowersScreen from "@/app/(tabs)/followers";
 import { useSession } from "@/store";
 import {
   act,
+  cleanup,
   fireEvent,
   mockFetchRoutes,
   renderRouter,
@@ -170,7 +171,13 @@ describe("FollowersScreen", () => {
 
   describe("Pesquisar", () => {
     beforeEach(() => jest.useFakeTimers());
-    afterEach(() => jest.useRealTimers());
+    // Desmonta ainda com o relógio falso: com os timers reais de volta, o
+    // `cleanup` do RNTL espera timers falsos que nunca disparam e os testes
+    // seguintes estouram o tempo.
+    afterEach(async () => {
+      await cleanup();
+      jest.useRealTimers();
+    });
 
     const openSearch = async () => {
       await renderScreen();
