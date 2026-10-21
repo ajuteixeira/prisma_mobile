@@ -14,6 +14,8 @@ const AnimatedLogo = memo(() => (
   />
 ));
 
+AnimatedLogo.displayName = "AnimatedLogo";
+
 type LoadingDotsProps = {
   className?: string;
   text?: string;
@@ -34,6 +36,8 @@ export const LoadingDots = memo(({ className, text }: LoadingDotsProps) => {
     </Text>
   );
 });
+
+LoadingDots.displayName = "LoadingDots";
 
 const LoadingOverlay = ({ message }: { message: string | null }) => (
   <MotiView
