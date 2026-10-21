@@ -39,17 +39,30 @@ const toRecentGame = (raw: unknown, index: number): RecentGame => {
   };
 };
 
+/** `/api/profile` do usuário logado ou `/api/profiles/:username` de outro perfil. */
+const basePath = (username?: string) =>
+  username ? `/api/profiles/${encodeURIComponent(username)}` : "/api/profile";
+
 export const profileApi = {
-  /** Bio, avatar, seguidores/seguindo e conquistas fixadas do usuário logado. */
-  me: (token: string) => request<{ profile: ProfileCardData }>("/api/profile", { token }),
+  /** Bio, avatar, seguidores/seguindo e conquistas fixadas. Sem `username`, do usuário logado. */
+  card: (token: string, username?: string) =>
+    request<{ profile: ProfileCardData }>(basePath(username), { token }),
 
-  /** Estatísticas e troféus por plataforma do usuário logado. */
-  stats: (token: string) => request<ProfileStatsResponse>("/api/profile/stats", { token }),
+  /** Estatísticas e troféus por plataforma. Sem `username`, do usuário logado. */
+  stats: (token: string, username?: string) =>
+    request<ProfileStatsResponse>(`${basePath(username)}/stats`, { token }),
 
-  /** Os `limit` jogos jogados mais recentemente pelo usuário logado, do mais novo ao mais antigo. */
-  recentlyPlayed: async (token: string, limit: number): Promise<RecentlyPlayed> => {
+  /**
+   * Os `limit` jogos jogados mais recentemente, do mais novo ao mais antigo.
+   * Sem `username`, do usuário logado.
+   */
+  recentlyPlayed: async (
+    token: string,
+    limit: number,
+    username?: string,
+  ): Promise<RecentlyPlayed> => {
     const data = await request<RecentlyPlayedResponse>(
-      `/api/profile/recently-played?limit=${limit}`,
+      `${basePath(username)}/recently-played?limit=${limit}`,
       { token },
     );
     const games = Array.isArray(data?.recently_played)
