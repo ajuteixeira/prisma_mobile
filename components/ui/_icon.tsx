@@ -40,6 +40,7 @@ export const ICONS = {
   pieChart: { ios: "chart.pie.fill", android: "pie_chart", web: "pie_chart" },
   crown: { ios: "crown.fill", android: "crown", web: "crown" },
   chevronRight: { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
+  chevronDown: { ios: "chevron.down", android: "expand_more", web: "expand_more" },
 } as const satisfies Record<string, SymbolName>;
 
 export type IconName = keyof typeof ICONS;

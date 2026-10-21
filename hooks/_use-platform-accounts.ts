@@ -1,6 +1,6 @@
 import { PLATFORMS, type Platform, type PlatformSlug, type PlatformStatus } from "@/constants";
 import { platformsApi, type PlatformAccount } from "@/services";
-import { useSession, withLoading } from "@/store";
+import { startSync, useSession, withLoading } from "@/store";
 import { authorizeInBrowser, describeApiError } from "@/utils";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -23,6 +23,7 @@ const retryMessage = (error: unknown) => describeApiError(error, "Tente novament
 /**
  * Contas vinculadas do usuário e o estado de cada card. Vincula pelo navegador
  * (Steam e Xbox) ou por código de posse (PSN e RetroAchievements), e desvincula.
+ * Chama `startSync` após cada vínculo concluído.
  */
 export const usePlatformAccounts = () => {
   const token = useSession((state) => state.token);
@@ -67,8 +68,10 @@ export const usePlatformAccounts = () => {
       const result = await authorizeInBrowser(url);
       update(slug, { status: result?.ok ? "on" : "off" });
       // Navegador fechado (`null`) não é erro: só volta a desvinculada.
-      if (result?.ok) await refresh().catch(() => undefined);
-      else if (result) showError("Não foi possível vincular a conta", result.message);
+      if (result?.ok) {
+        startSync();
+        await refresh().catch(() => undefined);
+      } else if (result) showError("Não foi possível vincular a conta", result.message);
     } catch (error) {
       update(slug, { status: "off" });
       showError("Não foi possível vincular a conta", retryMessage(error));
@@ -87,6 +90,7 @@ export const usePlatformAccounts = () => {
         verification_token: verificationToken,
       });
       update(slug, { status: "on", handle: handleField === undefined ? "" : values[handleField] });
+      startSync();
     } catch (error) {
       update(slug, { status: "off" });
       throw error;
