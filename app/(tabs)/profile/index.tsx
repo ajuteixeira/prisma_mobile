@@ -1,4 +1,5 @@
 import {
+  AchievementDetailDialog,
   PinAchievementsSheet,
   PlatformDistributionCard,
   ProfileCard,
@@ -140,6 +141,8 @@ export default function ProfileScreen() {
   // TODO: abrir já na aba "Seguindo" quando a tela de Seguidores existir (artboard 6c).
   const openFollowers = () => router.push("/followers");
   const [pinning, setPinning] = useState(false);
+  const [detailId, setDetailId] = useState<number | null>(null);
+  const closeDetail = useCallback(() => setDetailId(null), []);
   const closePins = useCallback(() => setPinning(false), []);
   const onPinsSaved = useCallback(() => {
     setPinning(false);
@@ -175,6 +178,7 @@ export default function ProfileScreen() {
               onPressFollowers={openFollowers}
               onPressFollowing={openFollowers}
               onManagePins={() => setPinning(true)}
+              onPressAchievement={(achievement) => setDetailId(achievement.id)}
             />
             <ProfileSections />
           </>
@@ -201,6 +205,8 @@ export default function ProfileScreen() {
           onSaved={onPinsSaved}
         />
       ) : null}
+
+      <AchievementDetailDialog achievementId={detailId} onClose={closeDetail} />
     </View>
   );
 }

@@ -1,6 +1,7 @@
 import { settings } from "@/config";
 import { request } from "./_client";
 import type {
+  AchievementDetail,
   AchievementPage,
   ApiUser,
   PinnedAchievement,
@@ -63,6 +64,10 @@ export const profileApi = {
     if (query) params.set("q", query);
     return request<AchievementPage>(`/api/profile/achievements?${params}`, { token });
   },
+
+  /** Descrição, jogo e data de desbloqueio de uma conquista do usuário logado. */
+  achievement: (token: string, id: number) =>
+    request<{ achievement: AchievementDetail }>(`/api/profile/achievements/${id}`, { token }),
 
   /** Substitui as fixadas pelas `ids`, nesta ordem (até 4). */
   setPinned: (token: string, ids: number[]) =>

@@ -462,3 +462,62 @@ describe("ProfileScreen — fixar conquistas", () => {
     expect(screen.getByText("Fixar conquistas")).toBeOnTheScreen();
   });
 });
+
+describe("ProfileScreen — detalhes da conquista", () => {
+  beforeEach(() => {
+    useSession.setState({ token: "abc", user: USER });
+  });
+
+  const DETAIL = {
+    id: 1,
+    name: "Mestre Atirador",
+    game_name: "CS2",
+    icon_url: null,
+    position: 1,
+    description: "Acerte 100 tiros na cabeça.",
+    unlocked_at: "2026-03-04T10:20:00",
+  };
+
+  it("tocar na conquista fixada abre os detalhes vindos da API", async () => {
+    const fetch = mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/achievements/1": [200, { achievement: DETAIL }],
+    });
+    await renderScreen();
+
+    await fireEvent.press(await screen.findByLabelText("Detalhes de Mestre Atirador"));
+
+    expect(await screen.findByText("Acerte 100 tiros na cabeça.")).toBeOnTheScreen();
+    expect(screen.getByText("Detalhes da conquista")).toBeOnTheScreen();
+    expect(screen.getByText("Desbloqueada em 04/03/2026")).toBeOnTheScreen();
+    expect(screen.getByText("CS2")).toBeOnTheScreen();
+    expect(fetch.mock.calls.map(([url]) => String(url))).toContain(
+      "http://api.test/api/profile/achievements/1",
+    );
+
+    await fireEvent.press(screen.getByText("Fechar"));
+
+    expect(screen.queryByText("Detalhes da conquista")).not.toBeOnTheScreen();
+  });
+
+  it("se a busca falha, mostra o erro e tenta de novo", async () => {
+    mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/achievements/1": [
+        [500, { error: "Falhou" }],
+        [200, { achievement: DETAIL }],
+      ],
+    });
+    await renderScreen();
+
+    await fireEvent.press(await screen.findByLabelText("Detalhes de Mestre Atirador"));
+
+    expect(
+      await screen.findByText("Não foi possível carregar a conquista."),
+    ).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByLabelText("Tentar carregar a conquista de novo"));
+
+    expect(await screen.findByText("Acerte 100 tiros na cabeça.")).toBeOnTheScreen();
+  });
+});

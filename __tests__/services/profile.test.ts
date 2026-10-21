@@ -182,3 +182,20 @@ describe("profileApi.setPinned", () => {
     });
   });
 });
+
+describe("profileApi.achievement", () => {
+  it("busca os detalhes da conquista pelo id", async () => {
+    const achievement = {
+      ...PROFILE.pinned_achievements[0],
+      description: "Acerte 100 tiros na cabeça.",
+      unlocked_at: "2026-03-04T10:20:00",
+    };
+    const fetch = mockFetch(200, { achievement });
+
+    await expect(profileApi.achievement("meu-token", 1)).resolves.toEqual({ achievement });
+
+    const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${API_URL}/api/profile/achievements/1`);
+    expect(init.headers).toMatchObject({ Authorization: "Bearer meu-token" });
+  });
+});

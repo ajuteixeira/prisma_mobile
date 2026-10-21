@@ -10,6 +10,12 @@ export type PinnedAchievement = {
 /** Conquista desbloqueada na lista da pinagem; `position` só vem nas já fixadas. */
 export type AchievementOption = Omit<PinnedAchievement, "position"> & { position: number | null };
 
+/** Detalhes de `GET /api/profile/achievements/:id`; `unlocked_at` vem sem fuso. */
+export type AchievementDetail = AchievementOption & {
+  description: string | null;
+  unlocked_at: string | null;
+};
+
 /** Uma página de `GET /api/profile/achievements`; `next_offset` é `null` no fim. */
 export type AchievementPage = {
   results: AchievementOption[];

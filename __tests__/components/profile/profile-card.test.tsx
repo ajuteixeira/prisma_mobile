@@ -33,6 +33,7 @@ const renderCard = (profile: ProfileCardData = CARLY, handlers = {}) =>
       onPressFollowers={jest.fn()}
       onPressFollowing={jest.fn()}
       onManagePins={jest.fn()}
+      onPressAchievement={jest.fn()}
       {...handlers}
     />,
   );

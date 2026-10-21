@@ -1,4 +1,10 @@
-import { completionPercent, formatCount, formatPlayedDate, formatPlaytime } from "@/utils";
+import {
+  completionPercent,
+  formatCount,
+  formatPlayedDate,
+  formatPlaytime,
+  formatUnlockDate,
+} from "@/utils";
 
 describe("formatCount", () => {
   it("separa milhares com ponto, como no protótipo", () => {
@@ -48,5 +54,16 @@ describe("completionPercent", () => {
 
   it("é 0 quando o jogo não tem conquistas", () => {
     expect(completionPercent(0, 0)).toBe(0);
+  });
+});
+
+describe("formatUnlockDate", () => {
+  it("mostra a data do desbloqueio sem mudar de dia pelo fuso", () => {
+    expect(formatUnlockDate("2026-03-04T23:50:00")).toBe("Desbloqueada em 04/03/2026");
+  });
+
+  it("sem data ou com data inválida, diz que é desconhecida", () => {
+    expect(formatUnlockDate(null)).toBe("Data desconhecida");
+    expect(formatUnlockDate("ontem")).toBe("Data desconhecida");
   });
 });
