@@ -10,9 +10,14 @@ export type FollowProfile = {
   is_following: boolean;
 };
 
-export type Follows = {
-  /** Quem segue o usuário, mais recentes primeiro. */
-  followers: FollowProfile[];
-  /** Quem o usuário segue, mais recentes primeiro. */
-  following: FollowProfile[];
+/** Contagens das abas Seguidores e Seguindo. */
+export type FollowCounts = {
+  followers_count: number;
+  following_count: number;
+};
+
+/** Página de uma lista de Seguidores; `next_offset` é `null` na última. */
+export type FollowPage = {
+  results: FollowProfile[];
+  next_offset: number | null;
 };

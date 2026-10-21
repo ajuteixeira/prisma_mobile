@@ -6,6 +6,7 @@ import {
   mockFetchRoutes,
   renderRouter,
   screen,
+  waitFor,
 } from "@/__tests__/utils";
 
 const USER = {
@@ -30,7 +31,16 @@ const BETO = person({
 });
 const CAIO = person({ profile_id: 4, username: "caio", display_name: "caio" });
 
-const FOLLOWS = { followers: [ANA], following: [BETO] };
+const page = (results: object[], next_offset: number | null = null): [number, object] => [
+  200,
+  { results, next_offset },
+];
+const COUNTS: [number, object] = [200, { followers_count: 1, following_count: 1 }];
+const ROUTES = {
+  "GET /api/follows": COUNTS,
+  "GET /api/follows/followers": page([ANA]),
+  "GET /api/follows/following": page([BETO]),
+};
 
 const renderScreen = () =>
   renderRouter(
@@ -38,13 +48,18 @@ const renderScreen = () =>
     { initialUrl: "/followers" },
   );
 
+const urlsOf = (spy: jest.SpyInstance, path: string) =>
+  spy.mock.calls
+    .map(([url]) => new URL(String(url)))
+    .filter((url) => url.pathname === path);
+
 describe("FollowersScreen", () => {
   beforeEach(() => {
     useSession.setState({ token: "abc", user: USER });
   });
 
   it("abre em Seguidores com as contagens nas abas", async () => {
-    mockFetchRoutes({ "GET /api/follows": [200, FOLLOWS] });
+    mockFetchRoutes(ROUTES);
     await renderScreen();
 
     expect(await screen.findByText("Ana Souza")).toBeOnTheScreen();
@@ -56,7 +71,7 @@ describe("FollowersScreen", () => {
   });
 
   it("troca para a aba Seguindo", async () => {
-    mockFetchRoutes({ "GET /api/follows": [200, FOLLOWS] });
+    mockFetchRoutes(ROUTES);
     await renderScreen();
     await screen.findByText("Ana Souza");
 
@@ -65,27 +80,45 @@ describe("FollowersScreen", () => {
     expect(screen.queryByText("Ana Souza")).toBeNull();
   });
 
+  it("carrega a próxima página ao chegar no fim da lista", async () => {
+    const spy = mockFetchRoutes({
+      ...ROUTES,
+      "GET /api/follows/followers": [page([ANA], 20), page([CAIO])],
+    });
+    await renderScreen();
+    await screen.findByText("Ana Souza");
+
+    await fireEvent(screen.getByTestId("follow-list"), "endReached");
+    expect(await screen.findByText("@caio")).toBeOnTheScreen();
+    expect(screen.getByText("Ana Souza")).toBeOnTheScreen();
+    expect(
+      urlsOf(spy, "/api/follows/followers").map((url) => url.searchParams.get("offset")),
+    ).toEqual(["0", "20"]);
+
+    // Sem próxima página, chegar no fim não busca de novo.
+    await fireEvent(screen.getByTestId("follow-list"), "endReached");
+    expect(urlsOf(spy, "/api/follows/followers")).toHaveLength(2);
+  });
+
   it("mostra os vazios de cada aba como a web", async () => {
-    mockFetchRoutes({ "GET /api/follows": [200, { followers: [], following: [] }] });
+    mockFetchRoutes({
+      "GET /api/follows": [200, { followers_count: 0, following_count: 0 }],
+      "GET /api/follows/followers": page([]),
+      "GET /api/follows/following": page([]),
+    });
     await renderScreen();
 
     expect(await screen.findByText("Nenhum seguidor ainda.")).toBeOnTheScreen();
     await fireEvent.press(screen.getByLabelText("Seguindo, 0"));
-    expect(screen.getByText("Você ainda não segue ninguém.")).toBeOnTheScreen();
+    expect(
+      await screen.findByText("Você ainda não segue ninguém."),
+    ).toBeOnTheScreen();
   });
 
-  it("seguir de volta atualiza o botão e a aba Seguindo", async () => {
+  it("seguir de volta atualiza o botão e a contagem de Seguindo", async () => {
     const spy = mockFetchRoutes({
-      "GET /api/follows": [
-        [200, FOLLOWS],
-        [
-          200,
-          {
-            followers: [{ ...ANA, is_following: true }],
-            following: [{ ...ANA, is_following: true }, BETO],
-          },
-        ],
-      ],
+      ...ROUTES,
+      "GET /api/follows": [COUNTS, [200, { followers_count: 1, following_count: 2 }]],
       "PUT /api/follows/2": [204],
     });
     await renderScreen();
@@ -106,17 +139,15 @@ describe("FollowersScreen", () => {
 
   it("deixar de seguir na aba Seguindo tira a pessoa da lista", async () => {
     mockFetchRoutes({
-      "GET /api/follows": [
-        [200, FOLLOWS],
-        [200, { followers: [ANA], following: [] }],
-      ],
+      ...ROUTES,
+      "GET /api/follows": [COUNTS, [200, { followers_count: 1, following_count: 0 }]],
       "DELETE /api/follows/3": [204],
     });
     await renderScreen();
     await screen.findByText("Ana Souza");
     await fireEvent.press(screen.getByLabelText("Seguindo, 1"));
 
-    await fireEvent.press(screen.getByLabelText("Deixar de seguir beto"));
+    await fireEvent.press(await screen.findByLabelText("Deixar de seguir beto"));
     expect(
       await screen.findByText("Você ainda não segue ninguém."),
     ).toBeOnTheScreen();
@@ -124,7 +155,7 @@ describe("FollowersScreen", () => {
 
   it("desfaz o botão e mostra o erro quando a API recusa", async () => {
     mockFetchRoutes({
-      "GET /api/follows": [200, FOLLOWS],
+      ...ROUTES,
       "PUT /api/follows/2": [422, { error: "Nao foi possivel atualizar o follow agora." }],
     });
     await renderScreen();
@@ -152,38 +183,31 @@ describe("FollowersScreen", () => {
       await act(() => jest.advanceTimersByTimeAsync(300));
     };
 
-    it("busca por username ao digitar", async () => {
+    it("lista todo mundo sem texto e filtra por username ao digitar", async () => {
       const spy = mockFetchRoutes({
-        "GET /api/follows": [200, FOLLOWS],
-        "GET /api/follows/search": [200, { results: [CAIO] }],
+        ...ROUTES,
+        "GET /api/follows/search": [page([ANA, BETO, CAIO]), page([CAIO])],
       });
       await openSearch();
 
+      expect(await screen.findByText("@beto")).toBeOnTheScreen();
+      expect(screen.getByText("@caio")).toBeOnTheScreen();
+
       await type("cai");
-      expect(await screen.findByText("@caio")).toBeOnTheScreen();
-      const searchUrl = spy.mock.calls
-        .map(([url]) => new URL(String(url)))
-        .find((url) => url.pathname === "/api/follows/search");
-      expect(searchUrl?.searchParams.get("q")).toBe("cai");
-    });
-
-    it("sem texto não busca nem mostra nada", async () => {
-      const spy = mockFetchRoutes({ "GET /api/follows": [200, FOLLOWS] });
-      await openSearch();
-
-      await type("   ");
-      expect(screen.queryByText("Nenhum resultado encontrado.")).toBeNull();
+      await waitFor(() => expect(screen.queryByText("@beto")).toBeNull());
+      expect(screen.getByText("@caio")).toBeOnTheScreen();
       expect(
-        spy.mock.calls.some(([url]) => String(url).includes("/search")),
-      ).toBe(false);
+        urlsOf(spy, "/api/follows/search").map((url) => url.searchParams.get("q")),
+      ).toEqual(["", "cai"]);
     });
 
     it("avisa quando ninguém é encontrado", async () => {
       mockFetchRoutes({
-        "GET /api/follows": [200, FOLLOWS],
-        "GET /api/follows/search": [200, { results: [] }],
+        ...ROUTES,
+        "GET /api/follows/search": [page([ANA]), page([])],
       });
       await openSearch();
+      await screen.findByText("@ana");
 
       await type("zzz");
       expect(
@@ -194,10 +218,8 @@ describe("FollowersScreen", () => {
 
   it("mostra o erro e tenta de novo", async () => {
     mockFetchRoutes({
-      "GET /api/follows": [
-        [500, { error: "Falhou" }],
-        [200, FOLLOWS],
-      ],
+      ...ROUTES,
+      "GET /api/follows/followers": [[500, { error: "Falhou" }], page([ANA])],
     });
     await renderScreen();
 
