@@ -1,7 +1,9 @@
 import FollowersScreen from "@/app/(tabs)/followers";
+import { router, Stack } from "expo-router";
 import { useSession } from "@/store";
 import {
   act,
+  cleanup,
   fireEvent,
   mockFetchRoutes,
   renderRouter,
@@ -45,6 +47,18 @@ const ROUTES = {
 const renderScreen = () =>
   renderRouter(
     { index: () => null, "(tabs)/followers/index": FollowersScreen },
+    { initialUrl: "/followers" },
+  );
+
+/** Com a pilha do layout raiz, para a tela de Seguidores continuar montada sob o perfil. */
+const renderWithProfile = () =>
+  renderRouter(
+    {
+      _layout: () => <Stack screenOptions={{ headerShown: false }} />,
+      index: () => null,
+      "(tabs)/followers/index": FollowersScreen,
+      "user/[username]": () => null,
+    },
     { initialUrl: "/followers" },
   );
 
@@ -170,7 +184,13 @@ describe("FollowersScreen", () => {
 
   describe("Pesquisar", () => {
     beforeEach(() => jest.useFakeTimers());
-    afterEach(() => jest.useRealTimers());
+    // Desmonta ainda com o relógio falso: com os timers reais de volta, o
+    // `cleanup` do RNTL espera timers falsos que nunca disparam e os testes
+    // seguintes estouram o tempo.
+    afterEach(async () => {
+      await cleanup();
+      jest.useRealTimers();
+    });
 
     const openSearch = async () => {
       await renderScreen();
@@ -228,5 +248,33 @@ describe("FollowersScreen", () => {
     ).toBeOnTheScreen();
     await fireEvent.press(screen.getByText("Tentar novamente"));
     expect(await screen.findByText("Ana Souza")).toBeOnTheScreen();
+  });
+
+  it("tocar em uma pessoa abre o perfil dela e voltar mantém a lista", async () => {
+    const fetch = mockFetchRoutes(ROUTES);
+    const view = await renderWithProfile();
+
+    await screen.findByText("Ana Souza");
+    const loaded = urlsOf(fetch, "/api/follows/followers").length;
+
+    await fireEvent.press(screen.getByLabelText("Ver perfil de Ana Souza"));
+    expect(view).toHavePathname("/user/ana");
+
+    await act(async () => router.back());
+
+    expect(view).toHavePathname("/followers");
+    expect(screen.getByText("Ana Souza")).toBeOnTheScreen();
+    expect(urlsOf(fetch, "/api/follows/followers")).toHaveLength(loaded);
+  });
+
+  it("abre o perfil a partir da busca", async () => {
+    mockFetchRoutes({ ...ROUTES, "GET /api/follows/search": page([CAIO]) });
+    const view = await renderWithProfile();
+    await screen.findByText("Ana Souza");
+
+    await fireEvent.press(screen.getByLabelText("Pesquisar"));
+    await fireEvent.press(await screen.findByLabelText("Ver perfil de caio"));
+
+    expect(view).toHavePathname("/user/caio");
   });
 });

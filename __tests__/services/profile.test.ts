@@ -15,11 +15,11 @@ const PROFILE = {
   ],
 };
 
-describe("profileApi.me", () => {
+describe("profileApi.card", () => {
   it("envia GET /api/profile com Authorization Bearer e devolve o cartão", async () => {
     const fetch = mockFetch(200, { profile: PROFILE });
 
-    await expect(profileApi.me("meu-token")).resolves.toEqual({ profile: PROFILE });
+    await expect(profileApi.card("meu-token")).resolves.toEqual({ profile: PROFILE });
 
     const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
     expect(url).toBe(`${API_URL}/api/profile`);
@@ -30,10 +30,28 @@ describe("profileApi.me", () => {
   it("lança ApiError quando o perfil não existe", async () => {
     mockFetch(404, { error: "Perfil nao encontrado" });
 
-    const failure = profileApi.me("token");
+    const failure = profileApi.card("token");
 
     await expect(failure).rejects.toBeInstanceOf(ApiError);
     await expect(failure).rejects.toMatchObject({ status: 404 });
+  });
+});
+
+describe("profileApi com username", () => {
+  it("consulta /api/profiles/:username nas três rotas, com o username codificado", async () => {
+    const fetch = jest
+      .spyOn(globalThis, "fetch")
+      .mockImplementation(async () => new Response(JSON.stringify({}), { status: 200 }));
+
+    await profileApi.card("token", "ana maria");
+    await profileApi.stats("token", "ana maria");
+    await profileApi.recentlyPlayed("token", 4, "ana maria");
+
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([
+      `${API_URL}/api/profiles/ana%20maria`,
+      `${API_URL}/api/profiles/ana%20maria/stats`,
+      `${API_URL}/api/profiles/ana%20maria/recently-played?limit=4`,
+    ]);
   });
 });
 

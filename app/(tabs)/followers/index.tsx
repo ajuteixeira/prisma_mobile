@@ -4,8 +4,8 @@ import { COLORS } from "@/constants";
 import { useFollowCounts, useFollowList } from "@/hooks";
 import { followsApi, type FollowProfile } from "@/services";
 import { useSession } from "@/store";
-import { describeApiError } from "@/utils";
-import { useFocusEffect, useScrollToTop } from "expo-router";
+import { describeApiError, openUserProfile } from "@/utils";
+import { useFocusEffect, useRouter, useScrollToTop } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -46,6 +46,7 @@ const keyOf = (person: FollowProfile) => String(person.profile_id);
  * alfabética e filtra por username ao digitar.
  */
 export default function FollowersScreen() {
+  const router = useRouter();
   const token = useSession((state) => state.token);
   const counts = useFollowCounts();
   const [tab, setTab] = useState<Tab>("followers");
@@ -63,11 +64,26 @@ export default function FollowersScreen() {
   const listRef = useRef<FlatList<FollowProfile>>(null);
   useScrollToTop(listRef);
 
+  // Voltar de um perfil aberto daqui mantém a lista e a rolagem.
+  const returningFromProfile = useRef(false);
+
   // A aba aberta recomeça do topo ao focar a tela, ao trocar de aba e a cada busca.
   useFocusEffect(
     useCallback(() => {
+      if (returningFromProfile.current) {
+        returningFromProfile.current = false;
+        return;
+      }
       reset();
     }, [reset]),
+  );
+
+  const openProfile = useCallback(
+    (person: FollowProfile) => {
+      returningFromProfile.current = true;
+      openUserProfile(router, person.username);
+    },
+    [router],
   );
 
   const updateFollowers = followers.update;
@@ -229,7 +245,9 @@ export default function FollowersScreen() {
         testID="follow-list"
         data={list}
         keyExtractor={keyOf}
-        renderItem={({ item }) => <FollowRow person={item} onToggle={toggle} />}
+        renderItem={({ item }) => (
+          <FollowRow person={item} onToggle={toggle} onOpen={openProfile} />
+        )}
         ListHeaderComponent={header}
         ListEmptyComponent={empty}
         ListFooterComponent={

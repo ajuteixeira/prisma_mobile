@@ -46,6 +46,17 @@ const renderScreen = () =>
     { initialUrl: "/ranking" },
   );
 
+const renderWithProfiles = () =>
+  renderRouter(
+    {
+      index: () => null,
+      "(tabs)/ranking/index": RankingScreen,
+      "(tabs)/profile/index": () => null,
+      "user/[username]": () => null,
+    },
+    { initialUrl: "/ranking" },
+  );
+
 describe("RankingScreen", () => {
   beforeEach(() => {
     useSession.setState({ token: "abc", user: USER });
@@ -94,5 +105,23 @@ describe("RankingScreen", () => {
     ).toBeOnTheScreen();
     await fireEvent.press(screen.getByText("Tentar novamente"));
     expect(await screen.findByText("ana")).toBeOnTheScreen();
+  });
+
+  it("tocar em um jogador abre o perfil dele", async () => {
+    mockFetchRoutes({ "GET /api/ranking": [200, { ranking: RANKING }] });
+    const view = await renderWithProfiles();
+
+    await fireEvent.press(await screen.findByLabelText("1º, ana, 30 conquistas"));
+
+    expect(view).toHavePathname("/user/ana");
+  });
+
+  it("tocar na própria linha abre a aba Perfil", async () => {
+    mockFetchRoutes({ "GET /api/ranking": [200, { ranking: RANKING }] });
+    const view = await renderWithProfiles();
+
+    await fireEvent.press(await screen.findByLabelText("2º, carly, 20 conquistas"));
+
+    expect(view).toHavePathname("/profile");
   });
 });

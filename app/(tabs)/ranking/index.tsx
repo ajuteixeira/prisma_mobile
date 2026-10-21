@@ -7,8 +7,10 @@ import { Callout, Icon } from "@/components/ui";
 import { COLORS } from "@/constants";
 import { useRanking } from "@/hooks";
 import type { RankingEntry } from "@/services";
+import { openUserProfile } from "@/utils";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -45,6 +47,7 @@ const rank = (
 
 /** Ranking (artboard 6b): você e quem você segue, por conquistas desbloqueadas. */
 export default function RankingScreen() {
+  const router = useRouter();
   const { data, loading, error, reload } = useRanking();
   const [filter, setFilter] = useState<RankingFilter>("all");
   const [search, setSearch] = useState("");
@@ -52,6 +55,14 @@ export default function RankingScreen() {
   const ranked = useMemo(
     () => rank(data ?? [], filter, search),
     [data, filter, search],
+  );
+
+  const openProfile = useCallback(
+    (entry: RankingEntry) =>
+      entry.is_current_user
+        ? router.navigate("/profile")
+        : openUserProfile(router, entry.username),
+    [router],
   );
 
   let empty = null;
@@ -129,6 +140,7 @@ export default function RankingScreen() {
                 entry={item.entry}
                 position={index + 1}
                 count={item.count}
+                onPress={openProfile}
               />
             ))}
           </View>

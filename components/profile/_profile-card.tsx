@@ -20,18 +20,32 @@ const OnlineDot = (
   />
 );
 
+/** Contagem do cartão; sem `onPress`, só texto. */
 const Stat = memo(
-  ({ value, label, onPress }: { value: number; label: string; onPress: () => void }) => (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${value} ${label.toLowerCase()}`}
-      onPress={onPress}
-      className="min-w-0 flex-1 items-center gap-0.5"
-    >
-      <Text className="text-[17px] font-extrabold text-prisma-ink">{value}</Text>
-      <Text className="text-[12.5px] text-prisma-muted">{label}</Text>
-    </Pressable>
-  ),
+  ({ value, label, onPress }: { value: number; label: string; onPress?: () => void }) => {
+    const content = (
+      <>
+        <Text className="text-[17px] font-extrabold text-prisma-ink">{value}</Text>
+        <Text className="text-[12.5px] text-prisma-muted">{label}</Text>
+      </>
+    );
+    const a11yLabel = `${value} ${label.toLowerCase()}`;
+
+    return onPress ? (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={a11yLabel}
+        onPress={onPress}
+        className="min-w-0 flex-1 items-center gap-0.5"
+      >
+        {content}
+      </Pressable>
+    ) : (
+      <View accessible accessibilityLabel={a11yLabel} className="min-w-0 flex-1 items-center gap-0.5">
+        {content}
+      </View>
+    );
+  },
 );
 
 Stat.displayName = "Stat";
@@ -44,7 +58,7 @@ const AchievementTile = memo(
   }: {
     achievement: PinnedAchievement;
     index: number;
-    onPress: (achievement: PinnedAchievement) => void;
+    onPress?: (achievement: PinnedAchievement) => void;
   }) => {
     const tint = TILE_TINTS[index % TILE_TINTS.length];
     // Ícones vêm das plataformas e às vezes somem; nesse caso fica o troféu.
@@ -53,9 +67,10 @@ const AchievementTile = memo(
     return (
       <Pressable
         testID="pinned-achievement"
-        accessibilityRole="button"
-        accessibilityLabel={`Detalhes de ${achievement.name}`}
-        onPress={() => onPress(achievement)}
+        accessibilityRole={onPress ? "button" : undefined}
+        accessibilityLabel={onPress ? `Detalhes de ${achievement.name}` : achievement.name}
+        disabled={!onPress}
+        onPress={() => onPress?.(achievement)}
         className="min-w-0 flex-1 items-center gap-2"
       >
         <View
@@ -91,10 +106,14 @@ AchievementTile.displayName = "AchievementTile";
 type ProfileCardProps = {
   profile: ProfileCardData;
   onShare: () => void;
-  onPressFollowers: () => void;
-  onPressFollowing: () => void;
-  onManagePins: () => void;
-  onPressAchievement: (achievement: PinnedAchievement) => void;
+  onPressFollowers?: () => void;
+  onPressFollowing?: () => void;
+  /** Abre a pinagem. Sem ele, o "Gerenciar" some. */
+  onManagePins?: () => void;
+  /** Toque numa conquista fixada. Sem ele, os quadros não são tocáveis. */
+  onPressAchievement?: (achievement: PinnedAchievement) => void;
+  /** Mostra o ponto de online no avatar. O app só conhece o status do próprio usuário. */
+  online?: boolean;
 };
 
 /**
@@ -109,6 +128,7 @@ export const ProfileCard = memo(
     onPressFollowing,
     onManagePins,
     onPressAchievement,
+    online = false,
   }: ProfileCardProps) => (
     <View className="rounded-3xl border border-white/[0.06] bg-prisma-surface px-[18px] pb-[18px] pt-5">
       <Pressable
@@ -125,7 +145,7 @@ export const ProfileCard = memo(
           username={profile.username}
           uri={profile.avatar_url}
           size={88}
-          badge={OnlineDot}
+          badge={online ? OnlineDot : undefined}
         />
         <View className="min-w-0 flex-1">
           <Text
@@ -155,16 +175,18 @@ export const ProfileCard = memo(
           CONQUISTAS FIXADAS
         </Text>
         {/* Mesmo "Gerenciar" da web, que abre a pinagem. */}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Gerenciar conquistas fixadas"
-          onPress={onManagePins}
-          hitSlop={8}
-          className="flex-row items-center gap-1.5"
-        >
-          <Icon name="pin" size={12} color={COLORS.accent} />
-          <Text className="text-[13px] font-semibold text-prisma-accent">Gerenciar</Text>
-        </Pressable>
+        {onManagePins ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Gerenciar conquistas fixadas"
+            onPress={onManagePins}
+            hitSlop={8}
+            className="flex-row items-center gap-1.5"
+          >
+            <Icon name="pin" size={12} color={COLORS.accent} />
+            <Text className="text-[13px] font-semibold text-prisma-accent">Gerenciar</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {profile.pinned_achievements.length > 0 ? (
