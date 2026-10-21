@@ -219,22 +219,29 @@ export const RecentGamesList = memo(({ games }: { games: RecentGame[] }) => (
 
 RecentGamesList.displayName = "RecentGamesList";
 
-/** Ocupa o lugar do destaque enquanto nenhuma plataforma trouxe jogos. */
-export const RecentlyPlayedEmpty = memo(({ onConnect }: { onConnect: () => void }) => (
+/**
+ * Ocupa o lugar do destaque enquanto nenhuma plataforma trouxe jogos. Sem
+ * `onConnect`, o perfil é de outra pessoa e o botão de vincular some.
+ */
+export const RecentlyPlayedEmpty = memo(({ onConnect }: { onConnect?: () => void }) => (
   <View className="items-center rounded-[22px] border border-dashed border-white/[0.12] px-5 py-7">
     <Icon name="gamepad" size={22} color="#374151" />
     <Text className="mt-2.5 text-[15px] font-bold text-prisma-ink">Nenhum jogo por aqui ainda</Text>
     <Text className="mt-1 text-center text-[13.5px] leading-5 text-prisma-muted">
-      Vincule uma plataforma para ver seus jogos recentes.
+      {onConnect
+        ? "Vincule uma plataforma para ver seus jogos recentes."
+        : "Os jogos aparecem quando a pessoa vincular uma plataforma."}
     </Text>
-    <Pressable
-      accessibilityRole="button"
-      onPress={onConnect}
-      className="mt-4 h-11 flex-row items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.06] px-4"
-    >
-      <Icon name="link" size={14} color={COLORS.accent} />
-      <Text className="text-[14px] font-semibold text-prisma-body">Conectar plataformas</Text>
-    </Pressable>
+    {onConnect ? (
+      <Pressable
+        accessibilityRole="button"
+        onPress={onConnect}
+        className="mt-4 h-11 flex-row items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.06] px-4"
+      >
+        <Icon name="link" size={14} color={COLORS.accent} />
+        <Text className="text-[14px] font-semibold text-prisma-body">Conectar plataformas</Text>
+      </Pressable>
+    ) : null}
   </View>
 ));
 
