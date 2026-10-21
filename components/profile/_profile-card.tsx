@@ -37,13 +37,27 @@ const Stat = memo(
 Stat.displayName = "Stat";
 
 const AchievementTile = memo(
-  ({ achievement, index }: { achievement: PinnedAchievement; index: number }) => {
+  ({
+    achievement,
+    index,
+    onPress,
+  }: {
+    achievement: PinnedAchievement;
+    index: number;
+    onPress: (achievement: PinnedAchievement) => void;
+  }) => {
     const tint = TILE_TINTS[index % TILE_TINTS.length];
     // Ícones vêm das plataformas e às vezes somem; nesse caso fica o troféu.
     const [broken, setBroken] = useState(false);
 
     return (
-      <View testID="pinned-achievement" className="min-w-0 flex-1 items-center gap-2">
+      <Pressable
+        testID="pinned-achievement"
+        accessibilityRole="button"
+        accessibilityLabel={`Detalhes de ${achievement.name}`}
+        onPress={() => onPress(achievement)}
+        className="min-w-0 flex-1 items-center gap-2"
+      >
         <View
           className="aspect-square w-full items-center justify-center overflow-hidden rounded-[18px] border"
           style={{ backgroundColor: `rgba(${tint.rgb}, 0.1)`, borderColor: `rgba(${tint.rgb}, 0.22)` }}
@@ -67,7 +81,7 @@ const AchievementTile = memo(
         >
           {achievement.name}
         </Text>
-      </View>
+      </Pressable>
     );
   },
 );
@@ -79,6 +93,8 @@ type ProfileCardProps = {
   onShare: () => void;
   onPressFollowers: () => void;
   onPressFollowing: () => void;
+  onManagePins: () => void;
+  onPressAchievement: (achievement: PinnedAchievement) => void;
 };
 
 /**
@@ -86,7 +102,14 @@ type ProfileCardProps = {
  * seguidores/seguindo, bio e as até 4 conquistas fixadas.
  */
 export const ProfileCard = memo(
-  ({ profile, onShare, onPressFollowers, onPressFollowing }: ProfileCardProps) => (
+  ({
+    profile,
+    onShare,
+    onPressFollowers,
+    onPressFollowing,
+    onManagePins,
+    onPressAchievement,
+  }: ProfileCardProps) => (
     <View className="rounded-3xl border border-white/[0.06] bg-prisma-surface px-[18px] pb-[18px] pt-5">
       <Pressable
         accessibilityRole="button"
@@ -127,14 +150,32 @@ export const ProfileCard = memo(
 
       <View className="mb-4 mt-[18px] h-px bg-white/[0.06]" />
 
-      <Text className="mb-3 text-[12px] font-semibold text-prisma-muted" style={{ letterSpacing: 1 }}>
-        CONQUISTAS FIXADAS
-      </Text>
+      <View className="mb-3 flex-row items-center justify-between">
+        <Text className="text-[12px] font-semibold text-prisma-muted" style={{ letterSpacing: 1 }}>
+          CONQUISTAS FIXADAS
+        </Text>
+        {/* Mesmo "Gerenciar" da web, que abre a pinagem. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Gerenciar conquistas fixadas"
+          onPress={onManagePins}
+          hitSlop={8}
+          className="flex-row items-center gap-1.5"
+        >
+          <Icon name="pin" size={12} color={COLORS.accent} />
+          <Text className="text-[13px] font-semibold text-prisma-accent">Gerenciar</Text>
+        </Pressable>
+      </View>
 
       {profile.pinned_achievements.length > 0 ? (
         <View className="flex-row gap-2.5">
           {profile.pinned_achievements.map((achievement, index) => (
-            <AchievementTile key={achievement.id} achievement={achievement} index={index} />
+            <AchievementTile
+              key={achievement.id}
+              achievement={achievement}
+              index={index}
+              onPress={onPressAchievement}
+            />
           ))}
           {/* Mantém a largura de 1/4 por quadro mesmo com menos de 4 fixadas. */}
           {Array.from({ length: Math.max(0, 4 - profile.pinned_achievements.length) }, (_, i) => (

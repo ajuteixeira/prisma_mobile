@@ -4,6 +4,7 @@ export * from "./_use-edit-profile";
 export * from "./_use-focus-fetch";
 export * from "./_use-follows";
 export * from "./_use-logout";
+export * from "./_use-pin-achievements";
 export * from "./_use-platform-accounts";
 export * from "./_use-pressed";
 export * from "./_use-profile";

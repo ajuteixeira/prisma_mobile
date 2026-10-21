@@ -1,4 +1,6 @@
 import {
+  AchievementDetailDialog,
+  PinAchievementsSheet,
   PlatformDistributionCard,
   ProfileCard,
   ProfileStatsCard,
@@ -13,6 +15,7 @@ import { profileApi } from "@/services";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useCallback, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Share, Text, View } from "react-native";
 
 const RetryButton = ({ onPress, label }: { onPress: () => void; label?: string }) => (
@@ -137,6 +140,14 @@ export default function ProfileScreen() {
   const { data: profile, error, reload } = useProfile();
   // TODO: abrir já na aba "Seguindo" quando a tela de Seguidores existir (artboard 6c).
   const openFollowers = () => router.push("/followers");
+  const [pinning, setPinning] = useState(false);
+  const [detailId, setDetailId] = useState<number | null>(null);
+  const closeDetail = useCallback(() => setDetailId(null), []);
+  const closePins = useCallback(() => setPinning(false), []);
+  const onPinsSaved = useCallback(() => {
+    setPinning(false);
+    reload();
+  }, [reload]);
 
   return (
     <View className="flex-1 bg-prisma-background">
@@ -166,6 +177,8 @@ export default function ProfileScreen() {
               onShare={() => shareProfile(profile.username)}
               onPressFollowers={openFollowers}
               onPressFollowing={openFollowers}
+              onManagePins={() => setPinning(true)}
+              onPressAchievement={(achievement) => setDetailId(achievement.id)}
             />
             <ProfileSections />
           </>
@@ -183,6 +196,17 @@ export default function ProfileScreen() {
           </View>
         )}
       </ScrollView>
+
+      {profile ? (
+        <PinAchievementsSheet
+          visible={pinning}
+          pinned={profile.pinned_achievements}
+          onClose={closePins}
+          onSaved={onPinsSaved}
+        />
+      ) : null}
+
+      <AchievementDetailDialog achievementId={detailId} onClose={closeDetail} />
     </View>
   );
 }

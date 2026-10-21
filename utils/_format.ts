@@ -41,3 +41,14 @@ export const formatPlayedDate = (iso: string, now = new Date()) => {
 /** % de conquistas desbloqueadas, truncada para só chegar a 100 com o jogo completo. */
 export const completionPercent = (unlocked: number, total: number) =>
   total > 0 ? Math.floor((unlocked / total) * 100) : 0;
+
+/**
+ * "Desbloqueada em 04/03/2026", como o modal da web. Lê a data direto do texto
+ * (a API manda sem fuso), para não virar o dia ao converter para o horário local.
+ */
+export const formatUnlockDate = (iso: string | null) => {
+  const match = iso?.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return "Data desconhecida";
+  const [, year, month, day] = match;
+  return `Desbloqueada em ${day}/${month}/${year}`;
+};
