@@ -2,6 +2,7 @@ export * from "./_use-countdown";
 export * from "./_use-delete-account";
 export * from "./_use-edit-profile";
 export * from "./_use-focus-fetch";
+export * from "./_use-follows";
 export * from "./_use-logout";
 export * from "./_use-platform-accounts";
 export * from "./_use-pressed";
