@@ -5,3 +5,7 @@ export const goBackOr = (router: ReturnType<typeof useRouter>, fallback: Href) =
   if (router.canGoBack()) router.back();
   else router.replace(fallback);
 };
+
+/** Abre o perfil só leitura de `username` por cima das abas. */
+export const openUserProfile = (router: ReturnType<typeof useRouter>, username: string) =>
+  router.push({ pathname: "/user/[username]", params: { username } });

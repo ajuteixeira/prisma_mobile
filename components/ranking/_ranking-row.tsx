@@ -1,8 +1,9 @@
 import { Icon, SpectrumAvatar } from "@/components/ui";
 import { COLORS, PLATFORMS } from "@/constants";
+import { usePressed } from "@/hooks/_use-pressed";
 import type { RankingEntry } from "@/services";
 import { memo } from "react";
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 /** Ouro, prata e bronze; do 4º em diante, neutro. */
 const MEDALS = ["#d4a017", "#c0c7d1", "#cd7f32"] as const;
@@ -12,19 +13,26 @@ type RankingRowProps = {
   position: number;
   /** Conquistas exibidas: o total ou só a plataforma filtrada. */
   count: number;
+  onPress: (entry: RankingEntry) => void;
 };
 
-/** Linha do ranking: posição, avatar, nome, plataformas e conquistas. */
+/** Linha do ranking: posição, avatar, nome, plataformas e conquistas. Tocável por inteiro. */
 export const RankingRow = memo(
-  ({ entry, position, count }: RankingRowProps) => {
+  ({ entry, position, count, onPress }: RankingRowProps) => {
+    const { pressed, handlers } = usePressed();
     const medal = MEDALS[position - 1];
     const platforms = PLATFORMS.filter((platform) =>
       entry.platforms.includes(platform.slug),
     );
 
     return (
-      <View
+      <Pressable
+        accessibilityRole="button"
         accessibilityLabel={`${position}º, ${entry.username}, ${count} conquistas`}
+        accessibilityHint="Abre o perfil"
+        onPress={() => onPress(entry)}
+        {...handlers}
+        style={{ opacity: pressed ? 0.6 : 1 }}
         className={`flex-row items-center gap-3 rounded-[18px] border px-3.5 py-3 ${
           entry.is_current_user
             ? "border-prisma-accent/30 bg-prisma-accent/[0.08]"
@@ -86,7 +94,7 @@ export const RankingRow = memo(
           <Text className="text-[17px] font-bold text-prisma-ink">{count}</Text>
           <Text className="text-[11px] text-prisma-faint">conquistas</Text>
         </View>
-      </View>
+      </Pressable>
     );
   },
 );
