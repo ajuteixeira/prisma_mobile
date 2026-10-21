@@ -5,9 +5,9 @@ import { useFollowCounts, useFollowList } from "@/hooks";
 import { followsApi, type FollowProfile } from "@/services";
 import { useSession } from "@/store";
 import { describeApiError } from "@/utils";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useScrollToTop } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -59,6 +59,9 @@ export default function FollowersScreen() {
   // Estado de follow já trocado na tela, à espera da resposta da API.
   const [overrides, setOverrides] = useState<Record<number, boolean>>({});
   const [toggleError, setToggleError] = useState<string | null>(null);
+  // Tocar na aba Seguidores já aberta volta ao topo, já que a lista não tem fim.
+  const listRef = useRef<FlatList<FollowProfile>>(null);
+  useScrollToTop(listRef);
 
   // A aba aberta recomeça do topo ao focar a tela, ao trocar de aba e a cada busca.
   useFocusEffect(
@@ -222,6 +225,7 @@ export default function FollowersScreen() {
     <View className="flex-1 bg-prisma-background">
       <StatusBar style="light" />
       <FlatList
+        ref={listRef}
         testID="follow-list"
         data={list}
         keyExtractor={keyOf}
