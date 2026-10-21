@@ -79,6 +79,7 @@ type ProfileCardProps = {
   onShare: () => void;
   onPressFollowers: () => void;
   onPressFollowing: () => void;
+  onManagePins: () => void;
 };
 
 /**
@@ -86,7 +87,7 @@ type ProfileCardProps = {
  * seguidores/seguindo, bio e as até 4 conquistas fixadas.
  */
 export const ProfileCard = memo(
-  ({ profile, onShare, onPressFollowers, onPressFollowing }: ProfileCardProps) => (
+  ({ profile, onShare, onPressFollowers, onPressFollowing, onManagePins }: ProfileCardProps) => (
     <View className="rounded-3xl border border-white/[0.06] bg-prisma-surface px-[18px] pb-[18px] pt-5">
       <Pressable
         accessibilityRole="button"
@@ -127,9 +128,22 @@ export const ProfileCard = memo(
 
       <View className="mb-4 mt-[18px] h-px bg-white/[0.06]" />
 
-      <Text className="mb-3 text-[12px] font-semibold text-prisma-muted" style={{ letterSpacing: 1 }}>
-        CONQUISTAS FIXADAS
-      </Text>
+      <View className="mb-3 flex-row items-center justify-between">
+        <Text className="text-[12px] font-semibold text-prisma-muted" style={{ letterSpacing: 1 }}>
+          CONQUISTAS FIXADAS
+        </Text>
+        {/* Mesmo "Gerenciar" da web, que abre a pinagem. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Gerenciar conquistas fixadas"
+          onPress={onManagePins}
+          hitSlop={8}
+          className="flex-row items-center gap-1.5"
+        >
+          <Icon name="pin" size={12} color={COLORS.accent} />
+          <Text className="text-[13px] font-semibold text-prisma-accent">Gerenciar</Text>
+        </Pressable>
+      </View>
 
       {profile.pinned_achievements.length > 0 ? (
         <View className="flex-row gap-2.5">

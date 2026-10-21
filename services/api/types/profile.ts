@@ -7,6 +7,15 @@ export type PinnedAchievement = {
   position: number;
 };
 
+/** Conquista desbloqueada na lista da pinagem; `position` só vem nas já fixadas. */
+export type AchievementOption = Omit<PinnedAchievement, "position"> & { position: number | null };
+
+/** Uma página de `GET /api/profile/achievements`; `next_offset` é `null` no fim. */
+export type AchievementPage = {
+  results: AchievementOption[];
+  next_offset: number | null;
+};
+
 /** Cartão de perfil como `GET /api/profile` o serializa. */
 export type ProfileCardData = {
   id: number;

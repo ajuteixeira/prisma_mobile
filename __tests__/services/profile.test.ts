@@ -137,3 +137,48 @@ describe("profileApi.recentlyPlayed", () => {
     });
   });
 });
+
+describe("profileApi.achievements", () => {
+  it("busca uma página das conquistas desbloqueadas com offset e busca", async () => {
+    const page = { results: [{ ...PROFILE.pinned_achievements[0] }], next_offset: 20 };
+    const fetch = mockFetch(200, page);
+
+    await expect(profileApi.achievements("meu-token", 20, "hades")).resolves.toEqual(page);
+
+    const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${API_URL}/api/profile/achievements?offset=20&q=hades`);
+    expect(init.method).toBe("GET");
+    expect(init.headers).toMatchObject({ Authorization: "Bearer meu-token" });
+  });
+
+  it("não envia q quando a busca está vazia", async () => {
+    const fetch = mockFetch(200, { results: [], next_offset: null });
+
+    await profileApi.achievements("token", 0);
+
+    expect(fetch.mock.calls[0][0]).toBe(`${API_URL}/api/profile/achievements?offset=0`);
+  });
+});
+
+describe("profileApi.setPinned", () => {
+  it("envia PUT /api/profile/pinned-achievements com os ids na ordem", async () => {
+    const fetch = mockFetch(200, { pinned_achievements: PROFILE.pinned_achievements });
+
+    await expect(profileApi.setPinned("meu-token", [3, 1])).resolves.toEqual({
+      pinned_achievements: PROFILE.pinned_achievements,
+    });
+
+    const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${API_URL}/api/profile/pinned-achievements`);
+    expect(init.method).toBe("PUT");
+    expect(JSON.parse(String(init.body))).toEqual({ ids: [3, 1] });
+  });
+
+  it("expõe o 422 de seleção inválida", async () => {
+    mockFetch(422, { error: "Voce so pode fixar ate 4 conquistas." });
+
+    await expect(profileApi.setPinned("token", [1, 2, 3, 4, 5])).rejects.toMatchObject({
+      status: 422,
+    });
+  });
+});

@@ -1,6 +1,13 @@
 import ProfileScreen from "@/app/(tabs)/profile";
 import { useSession, useSync } from "@/store";
-import { act, fireEvent, mockFetchRoutes, renderRouter, screen } from "@/__tests__/utils";
+import {
+  act,
+  fetchBodyOf,
+  fireEvent,
+  mockFetchRoutes,
+  renderRouter,
+  screen,
+} from "@/__tests__/utils";
 import { Share } from "react-native";
 
 const USER = { id: 1, email: "carly@prisma.gg", username: "carly", full_name: null };
@@ -317,5 +324,141 @@ describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
     await fireEvent.press(screen.getByLabelText("Tentar carregar os jogos recentes de novo"));
 
     expect(await screen.findByTestId("recently-played-card")).toBeOnTheScreen();
+  });
+});
+
+const option = (id: number, name: string, position: number | null = null) => ({
+  id,
+  name,
+  game_name: "Hades",
+  icon_url: null,
+  position,
+});
+
+describe("ProfileScreen — fixar conquistas", () => {
+  beforeEach(() => {
+    useSession.setState({ token: "abc", user: USER });
+  });
+
+  const openSheet = async () => {
+    await fireEvent.press(await screen.findByLabelText("Gerenciar conquistas fixadas"));
+    return screen.findByText("Fixar conquistas");
+  };
+
+  it("lista as conquistas desbloqueadas, com as fixadas marcadas", async () => {
+    mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/achievements": [
+        200,
+        { results: [option(1, "Mestre Atirador", 1), option(2, "Fantasma")], next_offset: null },
+      ],
+    });
+    await renderScreen();
+    await openSheet();
+
+    expect(await screen.findByText("Fantasma")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Mestre Atirador, fixada")).toBeOnTheScreen();
+    expect(screen.getByLabelText("Fantasma")).toBeOnTheScreen();
+    expect(screen.getByText("1/4 selecionadas")).toBeOnTheScreen();
+  });
+
+  it("carrega a próxima página ao chegar no fim da lista", async () => {
+    const fetch = mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/achievements": [
+        [200, { results: [option(1, "Mestre Atirador", 1)], next_offset: 20 }],
+        [200, { results: [option(2, "Fantasma")], next_offset: null }],
+      ],
+    });
+    await renderScreen();
+    await openSheet();
+    await screen.findByLabelText("Mestre Atirador, fixada");
+
+    await fireEvent(screen.getByTestId("pin-achievement-list"), "endReached");
+
+    expect(await screen.findByText("Fantasma")).toBeOnTheScreen();
+    const urls = fetch.mock.calls.map(([url]) => String(url));
+    expect(urls).toContain("http://api.test/api/profile/achievements?offset=20");
+
+    // Sem próxima página, chegar ao fim de novo não busca mais nada.
+    const calls = fetch.mock.calls.length;
+    await fireEvent(screen.getByTestId("pin-achievement-list"), "endReached");
+    expect(fetch.mock.calls).toHaveLength(calls);
+  });
+
+  it("não deixa passar de 4 conquistas", async () => {
+    const pinned = [option(1, "A", 1), option(2, "B", 2), option(3, "C", 3), option(4, "D", 4)];
+    mockFetchRoutes({
+      "GET /api/profile": [200, { profile: { ...PROFILE, pinned_achievements: pinned } }],
+      "GET /api/profile/achievements": [
+        200,
+        {
+          results: [
+            option(1, "A", 1),
+            option(2, "B", 2),
+            option(3, "C", 3),
+            option(4, "D", 4),
+            option(5, "E"),
+          ],
+          next_offset: null,
+        },
+      ],
+    });
+    await renderScreen();
+    await openSheet();
+
+    await fireEvent.press(await screen.findByLabelText("E"));
+
+    expect(screen.getByText("Você só pode fixar até 4 conquistas.")).toBeOnTheScreen();
+    expect(screen.getByText("4/4 selecionadas")).toBeOnTheScreen();
+  });
+
+  it("salva a seleção na ordem e atualiza o cartão", async () => {
+    const fetch = mockFetchRoutes({
+      "GET /api/profile": [
+        [200, { profile: PROFILE }],
+        [200, { profile: { ...PROFILE, pinned_achievements: [option(2, "Fantasma", 1)] } }],
+      ],
+      "GET /api/profile/achievements": [
+        200,
+        { results: [option(1, "Mestre Atirador", 1), option(2, "Fantasma")], next_offset: null },
+      ],
+      "PUT /api/profile/pinned-achievements": [
+        200,
+        { pinned_achievements: [option(2, "Fantasma", 1)] },
+      ],
+    });
+    await renderScreen();
+    await openSheet();
+
+    await fireEvent.press(await screen.findByLabelText("Mestre Atirador, fixada"));
+    await fireEvent.press(screen.getByLabelText("Fantasma"));
+    await fireEvent.press(screen.getByText("Salvar"));
+
+    expect(fetchBodyOf(fetch, "PUT", "/api/profile/pinned-achievements")).toEqual({ ids: [2] });
+    expect(await screen.findByTestId("pinned-achievement-name")).toHaveTextContent("Fantasma");
+    expect(screen.queryByText("Fixar conquistas")).not.toBeOnTheScreen();
+  });
+
+  it("mostra o erro da API ao salvar e mantém a sheet aberta", async () => {
+    mockFetchRoutes({
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/achievements": [
+        200,
+        { results: [option(1, "Mestre Atirador", 1)], next_offset: null },
+      ],
+      "PUT /api/profile/pinned-achievements": [
+        422,
+        { error: "Escolha apenas conquistas concluidas." },
+      ],
+    });
+    await renderScreen();
+    await openSheet();
+    await screen.findByLabelText("Mestre Atirador, fixada");
+
+    await fireEvent.press(screen.getByText("Salvar"));
+
+    expect(await screen.findByText("Escolha apenas conquistas concluidas.")).toBeOnTheScreen();
+    expect(screen.getByText("Fixar conquistas")).toBeOnTheScreen();
   });
 });

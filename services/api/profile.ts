@@ -1,7 +1,9 @@
 import { settings } from "@/config";
 import { request } from "./_client";
 import type {
+  AchievementPage,
   ApiUser,
+  PinnedAchievement,
   ProfileCardData,
   ProfileStatsResponse,
   ProfileUpdatePayload,
@@ -54,6 +56,21 @@ export const profileApi = {
       : [];
     return { games, total: count(data?.total) ?? games.length };
   },
+
+  /** Uma página das conquistas desbloqueadas para fixar; `query` filtra por conquista ou jogo. */
+  achievements: (token: string, offset: number, query = "") => {
+    const params = new URLSearchParams({ offset: String(offset) });
+    if (query) params.set("q", query);
+    return request<AchievementPage>(`/api/profile/achievements?${params}`, { token });
+  },
+
+  /** Substitui as fixadas pelas `ids`, nesta ordem (até 4). */
+  setPinned: (token: string, ids: number[]) =>
+    request<{ pinned_achievements: PinnedAchievement[] }>("/api/profile/pinned-achievements", {
+      token,
+      method: "PUT",
+      body: { ids },
+    }),
 
   /** URL do perfil público na versão web (`GET /:username`). */
   publicUrl: (username: string) =>

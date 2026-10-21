@@ -32,6 +32,7 @@ const renderCard = (profile: ProfileCardData = CARLY, handlers = {}) =>
       onShare={jest.fn()}
       onPressFollowers={jest.fn()}
       onPressFollowing={jest.fn()}
+      onManagePins={jest.fn()}
       {...handlers}
     />,
   );
@@ -54,6 +55,15 @@ describe("ProfileCard", () => {
       within(tile).getByTestId("pinned-achievement-name").props.children,
     );
     expect(names).toEqual(["Mestre Atirador", "Fantasma", "Velocidade da Luz", "Perfeição"]);
+  });
+
+  it("o botão Gerenciar abre a pinagem", async () => {
+    const onManagePins = jest.fn();
+    await renderCard(CARLY, { onManagePins });
+
+    await fireEvent.press(screen.getByLabelText("Gerenciar conquistas fixadas"));
+
+    expect(onManagePins).toHaveBeenCalledTimes(1);
   });
 
   it("usa a imagem da conquista quando existe e um troféu quando não", async () => {
