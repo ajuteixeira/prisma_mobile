@@ -13,7 +13,10 @@ export const usePressed = () => {
   const onPressOut = useCallback(() => setPressed(false), []);
 
   return useMemo(
-    () => ({ pressed, handlers: { onPressIn, onPressOut } satisfies PressableProps }),
+    () => ({
+      pressed,
+      handlers: { onPressIn, onPressOut } satisfies PressableProps,
+    }),
     [onPressIn, onPressOut, pressed],
   );
 };

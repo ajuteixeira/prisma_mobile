@@ -14,7 +14,8 @@ type RecentlyPlayedResponse = {
   total?: unknown;
 };
 
-const text = (value: unknown) => (typeof value === "string" && value ? value : null);
+const text = (value: unknown) =>
+  typeof value === "string" && value ? value : null;
 const count = (value: unknown) =>
   typeof value === "number" && Number.isFinite(value) ? value : null;
 
@@ -38,13 +39,18 @@ const toRecentGame = (raw: unknown, index: number): RecentGame => {
 
 export const profileApi = {
   /** Bio, avatar, seguidores/seguindo e conquistas fixadas do usuário logado. */
-  me: (token: string) => request<{ profile: ProfileCardData }>("/api/profile", { token }),
+  me: (token: string) =>
+    request<{ profile: ProfileCardData }>("/api/profile", { token }),
 
   /** Estatísticas e troféus por plataforma do usuário logado. */
-  stats: (token: string) => request<ProfileStatsResponse>("/api/profile/stats", { token }),
+  stats: (token: string) =>
+    request<ProfileStatsResponse>("/api/profile/stats", { token }),
 
   /** Os `limit` jogos jogados mais recentemente pelo usuário logado, do mais novo ao mais antigo. */
-  recentlyPlayed: async (token: string, limit: number): Promise<RecentlyPlayed> => {
+  recentlyPlayed: async (
+    token: string,
+    limit: number,
+  ): Promise<RecentlyPlayed> => {
     const data = await request<RecentlyPlayedResponse>(
       `/api/profile/recently-played?limit=${limit}`,
       { token },

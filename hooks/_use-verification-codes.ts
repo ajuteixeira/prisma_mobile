@@ -16,15 +16,23 @@ const describeCodeError = (error: unknown) =>
 /** Códigos `PRISMA-XXXX` de posse por plataforma, reaproveitados enquanto valem. */
 export const useVerificationCodes = () => {
   const token = useSession((state) => state.token);
-  const [codes, setCodes] = useState<Partial<Record<PlatformSlug, IssuedCode>>>({});
+  const [codes, setCodes] = useState<Partial<Record<PlatformSlug, IssuedCode>>>(
+    {},
+  );
   const request = useRequest(describeCodeError);
 
   /** Sem `force`, só busca quando não há um código válido para a plataforma. */
   const issue = async (slug: PlatformSlug, force = false) => {
     const current = codes[slug];
-    if (!token || (!force && current && current.expiresAt - EXPIRY_MARGIN > Date.now())) return;
+    if (
+      !token ||
+      (!force && current && current.expiresAt - EXPIRY_MARGIN > Date.now())
+    )
+      return;
 
-    const issued = await request.run(() => platformsApi.verificationCode(slug, token));
+    const issued = await request.run(() =>
+      platformsApi.verificationCode(slug, token),
+    );
     if (issued)
       setCodes((all) => ({
         ...all,
@@ -33,7 +41,8 @@ export const useVerificationCodes = () => {
   };
 
   /** Descarta o código da plataforma: cada vínculo exige um novo. */
-  const discard = (slug: PlatformSlug) => setCodes(({ [slug]: _used, ...rest }) => rest);
+  const discard = (slug: PlatformSlug) =>
+    setCodes(({ [slug]: _used, ...rest }) => rest);
 
   return {
     get: (slug: PlatformSlug) => codes[slug] ?? null,

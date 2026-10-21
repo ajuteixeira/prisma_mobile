@@ -5,7 +5,10 @@ import { useRouter } from "expo-router";
 import { useRequest } from "./_use-request";
 
 const describeLogoutError = (error: unknown) =>
-  describeApiError(error, "Não foi possível sair. Verifique sua conexão e tente novamente.");
+  describeApiError(
+    error,
+    "Não foi possível sair. Verifique sua conexão e tente novamente.",
+  );
 
 /** Encerra a sessão na API e no app, e leva ao login. Na falha, a sessão local continua. */
 export const useLogout = () => {
@@ -24,5 +27,10 @@ export const useLogout = () => {
     router.replace("/login");
   };
 
-  return { logout, loading: request.loading, error: request.error, clearError: () => request.setError(null) };
+  return {
+    logout,
+    loading: request.loading,
+    error: request.error,
+    clearError: () => request.setError(null),
+  };
 };

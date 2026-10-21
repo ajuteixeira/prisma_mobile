@@ -26,7 +26,8 @@ export const authApi = {
     request<AuthResponse>("/api/auth/register", { body: payload }),
 
   /** Credenciais erradas voltam `401`; a sessão tem o mesmo formato do cadastro. */
-  login: (payload: LoginPayload) => request<AuthResponse>("/api/auth/login", { body: payload }),
+  login: (payload: LoginPayload) =>
+    request<AuthResponse>("/api/auth/login", { body: payload }),
 
   /** Confere se username e/ou e-mail ainda estão livres; só volta as chaves enviadas. */
   availability: (fields: { username?: string; email?: string }) =>
@@ -34,10 +35,13 @@ export const authApi = {
 
   /** Envia o link de redefinição; a nova senha é criada na versão web. */
   forgotPassword: (payload: ForgotPasswordPayload) =>
-    request<ForgotPasswordResponse>("/api/auth/password/forgot", { body: payload }),
+    request<ForgotPasswordResponse>("/api/auth/password/forgot", {
+      body: payload,
+    }),
 
   /** Encerra no servidor a sessão do token; o Bearer é obrigatório. */
-  logout: (token: string) => request<null>("/api/auth/logout", { token, method: "POST" }),
+  logout: (token: string) =>
+    request<null>("/api/auth/logout", { token, method: "POST" }),
 
   /** Apaga a conta do token com perfil, plataformas, jogos e conquistas; `204` no sucesso. */
   deleteAccount: (token: string) =>
