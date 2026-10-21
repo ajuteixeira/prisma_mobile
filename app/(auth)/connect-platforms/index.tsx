@@ -12,6 +12,7 @@ import {
 } from "@/constants";
 import { usePlatformAccounts, useRequest, useVerificationCodes } from "@/hooks";
 import { ApiError } from "@/services";
+import { startSync } from "@/store";
 import { describeApiError, goBackOr } from "@/utils";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -81,7 +82,7 @@ export default function ConnectPlatformsScreen() {
 
   const finish = () => {
     if (busy || connected === 0) return;
-    // TODO(api): disparar a sincronização inicial quando a API expuser a rota.
+    startSync();
     router.replace("/profile");
   };
 

@@ -1,6 +1,6 @@
 import ProfileScreen from "@/app/(tabs)/profile";
-import { useSession } from "@/store";
-import { fireEvent, mockFetchRoutes, renderRouter, screen } from "@/__tests__/utils";
+import { useSession, useSync } from "@/store";
+import { act, fireEvent, mockFetchRoutes, renderRouter, screen } from "@/__tests__/utils";
 import { Share } from "react-native";
 
 const USER = { id: 1, email: "carly@prisma.gg", username: "carly", full_name: null };
@@ -252,6 +252,25 @@ describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
 
     expect(await screen.findByTestId("recently-played-card")).toBeOnTheScreen();
     expect(screen.queryByText("JOGOS RECENTES")).not.toBeOnTheScreen();
+  });
+
+  it("recarrega os dados quando a sincronização traz jogos novos", async () => {
+    const fetch = mockFetchRoutes(
+      routes([
+        [200, recentlyPlayed([])],
+        [200, recentlyPlayed(["Valorant"])],
+      ]),
+    );
+    await renderScreen();
+    expect(await screen.findByText("Nenhum jogo por aqui ainda")).toBeOnTheScreen();
+
+    await act(async () => useSync.setState((state) => ({ revision: state.revision + 1 })));
+
+    expect(await screen.findByTestId("recently-played-card")).toHaveTextContent(/Valorant/);
+    const calls = (path: string) =>
+      fetch.mock.calls.filter(([url]) => new URL(String(url)).pathname === path).length;
+    expect(calls("/api/profile")).toBe(2);
+    expect(calls("/api/profile/stats")).toBe(2);
   });
 
   it("sem jogos, convida a conectar uma plataforma", async () => {

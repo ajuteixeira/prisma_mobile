@@ -1,9 +1,11 @@
 import { useSession } from "@/store";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
+import { useReloadOnSync } from "./_use-reload-on-sync";
 
 /**
- * Busca dados com o token da sessão sempre que a tela ganha foco. `fetch` e
+ * Busca dados com o token da sessão sempre que a tela ganha foco e a cada avanço
+ * da sincronização (conta concluída ou fim). `fetch` e
  * `describeError` precisam ser estáveis (definidos fora do componente). Sem
  * token não busca e expõe `missingTokenError`.
  */
@@ -42,6 +44,8 @@ export const useFocusFetch = <T>(
       load();
     }, [load]),
   );
+
+  useReloadOnSync(load);
 
   return { data, loading, error, reload: load };
 };
