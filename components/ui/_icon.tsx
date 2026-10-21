@@ -15,17 +15,9 @@ export const ICONS = {
   mailOpen: { ios: "envelope.open.fill", android: "drafts", web: "drafts" },
   lock: { ios: "lock.fill", android: "lock", web: "lock" },
   eye: { ios: "eye.fill", android: "visibility", web: "visibility" },
-  eyeOff: {
-    ios: "eye.slash.fill",
-    android: "visibility_off",
-    web: "visibility_off",
-  },
+  eyeOff: { ios: "eye.slash.fill", android: "visibility_off", web: "visibility_off" },
   check: { ios: "checkmark", android: "check", web: "check" },
-  checkCircle: {
-    ios: "checkmark.circle.fill",
-    android: "check_circle",
-    web: "check_circle",
-  },
+  checkCircle: { ios: "checkmark.circle.fill", android: "check_circle", web: "check_circle" },
   info: { ios: "info.circle.fill", android: "info", web: "info" },
   alert: { ios: "exclamationmark.circle.fill", android: "error", web: "error" },
   user: { ios: "person.fill", android: "person", web: "person" },
@@ -33,33 +25,13 @@ export const ICONS = {
   shield: { ios: "checkmark.shield.fill", android: "shield", web: "shield" },
   link: { ios: "link", android: "link", web: "link" },
   close: { ios: "xmark", android: "close", web: "close" },
-  copy: {
-    ios: "doc.on.doc.fill",
-    android: "content_copy",
-    web: "content_copy",
-  },
+  copy: { ios: "doc.on.doc.fill", android: "content_copy", web: "content_copy" },
   trophy: { ios: "trophy.fill", android: "emoji_events", web: "emoji_events" },
-  gamepad: {
-    ios: "gamecontroller.fill",
-    android: "sports_esports",
-    web: "sports_esports",
-  },
-  joystick: {
-    ios: "arcade.stick",
-    android: "videogame_asset",
-    web: "videogame_asset",
-  },
-  console: {
-    ios: "gamecontroller",
-    android: "stadia_controller",
-    web: "stadia_controller",
-  },
+  gamepad: { ios: "gamecontroller.fill", android: "sports_esports", web: "sports_esports" },
+  joystick: { ios: "arcade.stick", android: "videogame_asset", web: "videogame_asset" },
+  console: { ios: "gamecontroller", android: "stadia_controller", web: "stadia_controller" },
   settings: { ios: "gearshape.fill", android: "settings", web: "settings" },
-  signOut: {
-    ios: "rectangle.portrait.and.arrow.right",
-    android: "logout",
-    web: "logout",
-  },
+  signOut: { ios: "rectangle.portrait.and.arrow.right", android: "logout", web: "logout" },
   trash: { ios: "trash.fill", android: "delete", web: "delete" },
   users: { ios: "person.2.fill", android: "group", web: "group" },
   key: { ios: "key.fill", android: "key", web: "key" },
@@ -68,11 +40,8 @@ export const ICONS = {
   pieChart: { ios: "chart.pie.fill", android: "pie_chart", web: "pie_chart" },
   crown: { ios: "crown.fill", android: "crown", web: "crown" },
   search: { ios: "magnifyingglass", android: "search", web: "search" },
-  chevronRight: {
-    ios: "chevron.right",
-    android: "chevron_right",
-    web: "chevron_right",
-  },
+  chevronRight: { ios: "chevron.right", android: "chevron_right", web: "chevron_right" },
+  chevronDown: { ios: "chevron.down", android: "expand_more", web: "expand_more" },
 } as const satisfies Record<string, SymbolName>;
 
 export type IconName = keyof typeof ICONS;
@@ -84,16 +53,14 @@ type IconProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-export const Icon = memo(
-  ({ name, size = 16, color = COLORS.accent, style }: IconProps) => (
-    <SymbolView
-      name={ICONS[name]}
-      size={size}
-      tintColor={color}
-      resizeMode="scaleAspectFit"
-      style={[{ width: size, height: size }, style]}
-    />
-  ),
-);
+export const Icon = memo(({ name, size = 16, color = COLORS.accent, style }: IconProps) => (
+  <SymbolView
+    name={ICONS[name]}
+    size={size}
+    tintColor={color}
+    resizeMode="scaleAspectFit"
+    style={[{ width: size, height: size }, style]}
+  />
+));
 
 Icon.displayName = "Icon";

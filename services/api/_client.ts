@@ -39,8 +39,7 @@ const parseFieldErrors = (errors: unknown): ApiFieldErrors =>
     ? Object.fromEntries(
         Object.entries(errors).filter(
           (entry): entry is [string, string[]] =>
-            Array.isArray(entry[1]) &&
-            entry[1].every((message) => typeof message === "string"),
+            Array.isArray(entry[1]) && entry[1].every((message) => typeof message === "string"),
         ),
       )
     : {};
@@ -51,11 +50,7 @@ const parseFieldErrors = (errors: unknown): ApiFieldErrors =>
  */
 export const request = async <T>(
   path: string,
-  {
-    body,
-    token,
-    method = body === undefined ? "GET" : "POST",
-  }: {
+  { body, token, method = body === undefined ? "GET" : "POST" }: {
     body?: unknown;
     token?: string;
     method?: string;

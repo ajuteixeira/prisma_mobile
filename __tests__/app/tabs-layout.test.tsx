@@ -1,6 +1,6 @@
 import TabsLayout from "@/app/(tabs)/_layout";
-import { useSession } from "@/store";
-import { fireEvent, renderRouter, screen } from "@/__tests__/utils";
+import { resetSync, useSession } from "@/store";
+import { act, fireEvent, mockFetchRoutes, renderRouter, screen } from "@/__tests__/utils";
 
 const USER = { id: 1, email: "carly@prisma.gg", username: "carly", full_name: "Carly Mendes" };
 
@@ -17,9 +17,13 @@ const renderTabs = () =>
   );
 
 describe("Tab bar", () => {
-  beforeEach(() => useSession.setState({ token: "abc", user: USER }));
+  beforeEach(() => {
+    useSession.setState({ token: "abc", user: USER });
+    resetSync();
+  });
 
   it("mostra as 4 abas do protótipo, na ordem, com Perfil ativo", async () => {
+    mockFetchRoutes({ "POST /api/sync": [200, { started: false, sync: { running: false } }] });
     await renderTabs();
 
     const tabs = screen.getAllByRole("button").map((tab) => tab.props.accessibilityLabel);
@@ -28,11 +32,39 @@ describe("Tab bar", () => {
   });
 
   it("Ajustes abre as configurações", async () => {
+    mockFetchRoutes({ "POST /api/sync": [200, { started: false, sync: { running: false } }] });
     const view = await renderTabs();
 
     await fireEvent.press(screen.getByLabelText("Ajustes"));
 
     expect(view).toHavePathname("/settings");
+  });
+
+  it("sincroniza as contas pendentes ao entrar e mostra o progresso", async () => {
+    const fetch = mockFetchRoutes({
+      "POST /api/sync": [
+        202,
+        {
+          started: true,
+          sync: {
+            running: true,
+            accounts_total: 1,
+            accounts_done: 0,
+            current: { platform: "steam", games_done: 4, games_total: 20 },
+            platforms: [{ platform: "steam", sync_status: "running" }],
+          },
+        },
+      ],
+      "GET /api/sync": [200, { sync: { running: true } }],
+    });
+    await renderTabs();
+
+    expect(await screen.findByText("Steam · 4 de 20 jogos")).toBeOnTheScreen();
+    expect(fetch.mock.calls[0][1]).toMatchObject({
+      method: "POST",
+      headers: { Authorization: "Bearer abc" },
+    });
+    await act(async () => resetSync());
   });
 
   it("sem sessão vai para o login", async () => {

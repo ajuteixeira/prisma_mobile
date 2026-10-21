@@ -112,9 +112,10 @@ describe("ConnectPlatformsScreen", () => {
 
   describe("Xbox (OAuth)", () => {
     it("vincula pelo navegador e sincroniza os cards", async () => {
-      mockFetchRoutes({
+      const fetch = mockFetchRoutes({
         "GET /api/platforms": [NONE_LINKED, [200, { platforms: [account("xbox")] }]],
         "POST /api/platforms/xbox/connect-url": [200, { url: "https://xbox.test/oauth" }],
+        "POST /api/sync": [202, { started: true, sync: { running: false } }],
       });
       openAuthSession.mockResolvedValue({
         type: "success",
@@ -127,6 +128,11 @@ describe("ConnectPlatformsScreen", () => {
       expect(await screen.findByText("1 de 4 contas vinculadas")).toBeOnTheScreen();
       expect(screen.getByLabelText("Desvincular Xbox Live")).toBeOnTheScreen();
       expect(openAuthSession).toHaveBeenCalledWith("https://xbox.test/oauth", "prisma://connect");
+      expect(
+        fetch.mock.calls.some(
+          ([url, init]) => init?.method === "POST" && new URL(String(url)).pathname === "/api/sync",
+        ),
+      ).toBe(true);
     });
 
     it("volta ao estado inicial quando o login é cancelado", async () => {

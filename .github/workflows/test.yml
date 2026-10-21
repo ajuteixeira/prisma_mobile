@@ -1,0 +1,14 @@
+name: Testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t prisma_mobile .
+      - run: docker run --rm prisma_mobile bun run test --ci

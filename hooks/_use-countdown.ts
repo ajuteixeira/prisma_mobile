@@ -6,10 +6,7 @@ export const useCountdown = (seconds: number, startNow = false) => {
 
   useEffect(() => {
     if (remaining <= 0) return;
-    const timeout = setTimeout(
-      () => setRemaining((current) => current - 1),
-      1000,
-    );
+    const timeout = setTimeout(() => setRemaining((current) => current - 1), 1000);
     return () => clearTimeout(timeout);
   }, [remaining]);
 

@@ -1,16 +1,7 @@
 import { profileSchema } from "@/schemas";
-import {
-  profileApi,
-  type ProfileCardData,
-  type ProfileUpdatePayload,
-} from "@/services";
+import { profileApi, type ProfileCardData, type ProfileUpdatePayload } from "@/services";
 import { useSession } from "@/store";
-import {
-  describeApiError,
-  fieldErrorMap,
-  pickAvatar,
-  type PickedImage,
-} from "@/utils";
+import { describeApiError, fieldErrorMap, pickAvatar, type PickedImage } from "@/utils";
 import { useState } from "react";
 import { useRequest } from "./_use-request";
 import { useUsernameAvailability } from "./_use-username-availability";
@@ -18,11 +9,7 @@ import { useUsernameAvailability } from "./_use-username-availability";
 type Draft = { fullName: string; username: string; bio: string };
 
 /** Campos que diferem de `initial`, mais a foto nova quando houver. */
-const changedFields = (
-  draft: Draft,
-  initial: Draft,
-  photo: PickedImage | null,
-) => {
+const changedFields = (draft: Draft, initial: Draft, photo: PickedImage | null) => {
   const changes: ProfileUpdatePayload = {};
   const fullName = draft.fullName.trim();
   const bio = draft.bio.trim();
@@ -37,10 +24,7 @@ const changedFields = (
  * Formulário "Editar perfil": rascunho, foto nova e o salvar em
  * `PATCH /api/profile`, que atualiza o usuário da sessão. `onDone` fecha o formulário.
  */
-export const useEditProfile = (
-  profile: ProfileCardData,
-  onDone: () => void,
-) => {
+export const useEditProfile = (profile: ProfileCardData, onDone: () => void) => {
   const token = useSession((state) => state.token);
   const user = useSession((state) => state.user);
   const signIn = useSession((state) => state.signIn);
@@ -54,19 +38,13 @@ export const useEditProfile = (
   const [photo, setPhoto] = useState<PickedImage | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [saved, setSaved] = useState(false);
-  const usernameStatus = useUsernameAvailability(
-    draft.username,
-    initial.username,
-  );
+  const usernameStatus = useUsernameAvailability(draft.username, initial.username);
 
   const request = useRequest((error) => {
     const errors = fieldErrorMap(error);
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return null;
-    return describeApiError(
-      error,
-      "Não foi possível salvar. Verifique sua conexão e tente novamente.",
-    );
+    return describeApiError(error, "Não foi possível salvar. Verifique sua conexão e tente novamente.");
   });
 
   const canSave =
@@ -78,11 +56,7 @@ export const useEditProfile = (
   const pickPhoto = async () => {
     const picked = await pickAvatar();
     if (!picked) return;
-    if ("error" in picked)
-      return setFieldErrors((current) => ({
-        ...current,
-        avatar: picked.error,
-      }));
+    if ("error" in picked) return setFieldErrors((current) => ({ ...current, avatar: picked.error }));
     setFieldErrors(({ avatar: _avatar, ...rest }) => rest);
     setPhoto(picked);
   };

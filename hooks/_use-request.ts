@@ -14,10 +14,7 @@ export const useRequest = (describeError: DescribeError = describeApiError) => {
   const [error, setError] = useState<string | null>(null);
 
   /** Resultado de `request`, ou `undefined` na falha (a mensagem fica em `error`). */
-  const run = async <T>(
-    request: () => Promise<T>,
-    onError: DescribeError = describeError,
-  ) => {
+  const run = async <T>(request: () => Promise<T>, onError: DescribeError = describeError) => {
     if (loading) return undefined;
     setLoading(true);
     setError(null);

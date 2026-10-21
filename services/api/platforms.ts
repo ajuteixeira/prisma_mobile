@@ -1,14 +1,9 @@
 import type { PlatformSlug } from "@/constants";
 import { request } from "./_client";
-import type {
-  OwnershipPayload,
-  PlatformAccount,
-  VerificationCode,
-} from "./types";
+import type { OwnershipPayload, PlatformAccount, VerificationCode } from "./types";
 
 export const platformsApi = {
-  list: (token: string) =>
-    request<{ platforms: PlatformAccount[] }>("/api/platforms", { token }),
+  list: (token: string) => request<{ platforms: PlatformAccount[] }>("/api/platforms", { token }),
 
   /**
    * URL de autorização da Steam (OpenID, exige a Web API Key) ou do Xbox (OAuth).

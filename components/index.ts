@@ -3,4 +3,5 @@ export * from "./auth";
 export * from "./profile";
 export * from "./ranking";
 export * from "./settings";
+export * from "./sync";
 export * from "./ui";
