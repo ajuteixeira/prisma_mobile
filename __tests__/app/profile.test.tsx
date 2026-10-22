@@ -1,5 +1,6 @@
+import TabsLayout from "@/app/(tabs)/_layout";
 import ProfileScreen from "@/app/(tabs)/profile";
-import { useSession, useSync } from "@/store";
+import { resetSync, useSession, useSync } from "@/store";
 import {
   act,
   fetchBodyOf,
@@ -7,8 +8,9 @@ import {
   mockFetchRoutes,
   renderRouter,
   screen,
+  waitFor,
 } from "@/__tests__/utils";
-import { Share } from "react-native";
+import { FlatList, Share } from "react-native";
 
 const USER = { id: 1, email: "carly@prisma.gg", username: "carly", full_name: null };
 
@@ -200,72 +202,106 @@ describe("ProfileScreen — estatísticas e troféus por plataforma", () => {
   });
 });
 
-const recentGame = (id: number, name: string) => ({
+const profileGame = (id: number, name: string) => ({
   id,
   name,
   cover_url: null,
+  icon_url: null,
   platform: { slug: "steam", name: "Steam" },
   playtime_minutes: 600,
-  last_played_at: "2026-09-28T15:00:00Z",
+  last_played_at: "2026-09-28T15:00:00",
   unlocked_achievements: 5,
   total_achievements: 10,
+  completion_percent: 50.0,
 });
 
-const recentlyPlayed = (names: string[]) => ({
-  recently_played: names.map((name, index) => recentGame(index + 1, name)),
-  total: names.length,
-  limit: 4,
-  offset: 0,
+const gamesPage = (names: string[], next_offset: number | null = null, firstId = 1) => ({
+  games: names.map((name, index) => profileGame(firstId + index, name)),
+  next_offset,
 });
 
-describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
+const rowNames = () =>
+  screen.getAllByTestId("game-row").map((row) => row.props.accessibilityLabel.split(",")[0]);
+
+describe("ProfileScreen — jogado recentemente e jogos", () => {
   beforeEach(() => {
     useSession.setState({ token: "abc", user: USER });
   });
 
-  const routes = (recent: [number, unknown] | [number, unknown][]) => ({
+  const routes = (games: [number, unknown] | [number, unknown][]) => ({
     "GET /api/profile": [200, { profile: PROFILE }] as [number, unknown],
     "GET /api/profile/stats": [200, STATS] as [number, unknown],
-    "GET /api/profile/recently-played": recent,
+    "GET /api/profile/games": games,
   });
 
-  it("destaca o último jogado e lista do 2º ao 4º em jogos recentes", async () => {
+  it("destaca o último jogado e lista todos os jogos em JOGOS, inclusive o destaque", async () => {
     const fetch = mockFetchRoutes(
-      routes([200, recentlyPlayed(["Valorant", "Apex Legends", "CS:GO", "Phasmophobia"])]),
+      routes([200, gamesPage(["Valorant", "Apex Legends", "CS:GO", "Phasmophobia", "Hades"])]),
     );
     await renderScreen();
 
     expect(await screen.findByText("JOGADO RECENTEMENTE")).toBeOnTheScreen();
     expect(screen.getByTestId("recently-played-card")).toHaveTextContent(/Valorant/);
-    expect(screen.getByText("JOGOS RECENTES")).toBeOnTheScreen();
-    expect(
-      screen.getAllByTestId("recent-game-row").map((row) => row.props.accessibilityLabel),
-    ).toEqual([
-      expect.stringContaining("Apex Legends"),
-      expect.stringContaining("CS:GO"),
-      expect.stringContaining("Phasmophobia"),
-    ]);
+    expect(screen.getByText("JOGOS")).toBeOnTheScreen();
+    expect(screen.queryByText("JOGOS RECENTES")).not.toBeOnTheScreen();
+    expect(rowNames()).toEqual(["Valorant", "Apex Legends", "CS:GO", "Phasmophobia", "Hades"]);
 
-    const call = fetch.mock.calls.find(([url]) => String(url).includes("/recently-played"));
-    expect(String(call?.[0])).toContain("limit=4");
-    expect(call?.[1]).toMatchObject({
-      headers: { Authorization: "Bearer abc" },
-    });
+    const call = fetch.mock.calls.find(([url]) => String(url).includes("/api/profile/games"));
+    expect(String(call?.[0])).toBe("http://api.test/api/profile/games?offset=0");
+    expect(call?.[1]).toMatchObject({ headers: { Authorization: "Bearer abc" } });
   });
 
-  it("com um jogo só, mostra o destaque e esconde jogos recentes", async () => {
-    mockFetchRoutes(routes([200, recentlyPlayed(["Valorant"])]));
+  it("carrega a próxima página ao chegar no fim da rolagem", async () => {
+    const fetch = mockFetchRoutes(
+      routes([
+        [200, gamesPage(["Valorant", "Apex Legends"], 20)],
+        [200, gamesPage(["Hades"], null, 21)],
+      ]),
+    );
     await renderScreen();
+    expect(await screen.findByText("JOGOS")).toBeOnTheScreen();
 
-    expect(await screen.findByTestId("recently-played-card")).toBeOnTheScreen();
-    expect(screen.queryByText("JOGOS RECENTES")).not.toBeOnTheScreen();
+    await fireEvent(screen.getByTestId("profile-list"), "endReached");
+
+    expect(await screen.findByText("Hades")).toBeOnTheScreen();
+    expect(rowNames()).toEqual(["Valorant", "Apex Legends", "Hades"]);
+    expect(fetch.mock.calls.map(([url]) => String(url))).toContain(
+      "http://api.test/api/profile/games?offset=20",
+    );
+
+    // Sem próxima página, chegar ao fim de novo não busca mais nada.
+    const calls = fetch.mock.calls.length;
+    await fireEvent(screen.getByTestId("profile-list"), "endReached");
+    expect(fetch.mock.calls).toHaveLength(calls);
+  });
+
+  it("falha na próxima página mantém os jogos e permite tentar de novo", async () => {
+    mockFetchRoutes(
+      routes([
+        [200, gamesPage(["Valorant"], 20)],
+        [500, { error: "Falhou" }],
+        [200, gamesPage(["Hades"], null, 21)],
+      ]),
+    );
+    await renderScreen();
+    expect(await screen.findByText("JOGOS")).toBeOnTheScreen();
+
+    await fireEvent(screen.getByTestId("profile-list"), "endReached");
+
+    expect(await screen.findByLabelText("Tentar carregar mais jogos")).toBeOnTheScreen();
+    expect(rowNames()).toEqual(["Valorant"]);
+
+    await fireEvent.press(screen.getByLabelText("Tentar carregar mais jogos"));
+
+    expect(await screen.findByText("Hades")).toBeOnTheScreen();
+    expect(screen.queryByLabelText("Tentar carregar mais jogos")).not.toBeOnTheScreen();
   });
 
   it("recarrega os dados quando a sincronização traz jogos novos", async () => {
     const fetch = mockFetchRoutes(
       routes([
-        [200, recentlyPlayed([])],
-        [200, recentlyPlayed(["Valorant"])],
+        [200, gamesPage([])],
+        [200, gamesPage(["Valorant"])],
       ]),
     );
     await renderScreen();
@@ -274,18 +310,20 @@ describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
     await act(async () => useSync.setState((state) => ({ revision: state.revision + 1 })));
 
     expect(await screen.findByTestId("recently-played-card")).toHaveTextContent(/Valorant/);
+    expect(rowNames()).toEqual(["Valorant"]);
     const calls = (path: string) =>
       fetch.mock.calls.filter(([url]) => new URL(String(url)).pathname === path).length;
     expect(calls("/api/profile")).toBe(2);
     expect(calls("/api/profile/stats")).toBe(2);
+    expect(calls("/api/profile/games")).toBe(2);
   });
 
-  it("sem jogos, convida a conectar uma plataforma", async () => {
-    mockFetchRoutes(routes([200, recentlyPlayed([])]));
+  it("sem jogos, convida a conectar uma plataforma e esconde JOGOS", async () => {
+    mockFetchRoutes(routes([200, gamesPage([])]));
     const view = await renderScreen();
 
     expect(await screen.findByText("Nenhum jogo por aqui ainda")).toBeOnTheScreen();
-    expect(screen.queryByText("JOGOS RECENTES")).not.toBeOnTheScreen();
+    expect(screen.queryByText("JOGOS")).not.toBeOnTheScreen();
 
     await fireEvent.press(screen.getByText("Conectar plataformas"));
 
@@ -295,7 +333,7 @@ describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
   it("mostra o carregamento enquanto a API não responde", async () => {
     const pending = new Promise<Response>(() => undefined);
     jest.spyOn(globalThis, "fetch").mockImplementation(async (input) =>
-      String(input).includes("/recently-played")
+      String(input).includes("/api/profile/games")
         ? pending
         : new Response(JSON.stringify({ profile: PROFILE, ...STATS }), {
             status: 200,
@@ -304,26 +342,75 @@ describe("ProfileScreen — jogado recentemente e jogos recentes", () => {
     );
     await renderScreen();
 
-    expect(await screen.findByLabelText("Carregando jogos recentes")).toBeOnTheScreen();
+    expect(await screen.findByLabelText("Carregando jogos")).toBeOnTheScreen();
   });
 
   it("falha nos jogos não esconde o restante e permite tentar de novo", async () => {
     mockFetchRoutes(
       routes([
         [500, { error: "Falhou" }],
-        [200, recentlyPlayed(["Valorant"])],
+        [200, gamesPage(["Valorant"])],
       ]),
     );
     await renderScreen();
 
-    expect(
-      await screen.findByText("Não foi possível carregar seus jogos recentes."),
-    ).toBeOnTheScreen();
+    expect(await screen.findByText("Não foi possível carregar seus jogos.")).toBeOnTheScreen();
     expect(screen.getByText("@carly")).toBeOnTheScreen();
 
-    await fireEvent.press(screen.getByLabelText("Tentar carregar os jogos recentes de novo"));
+    await fireEvent.press(screen.getByLabelText("Tentar carregar os jogos de novo"));
 
     expect(await screen.findByTestId("recently-played-card")).toBeOnTheScreen();
+  });
+});
+
+describe("ProfileScreen — voltar ao topo", () => {
+  beforeEach(() => {
+    useSession.setState({ token: "abc", user: USER });
+    resetSync();
+  });
+
+  const renderTabs = () =>
+    renderRouter(
+      {
+        "(tabs)/_layout": TabsLayout,
+        "(tabs)/profile/index": ProfileScreen,
+        "(tabs)/ranking/index": () => null,
+        "(tabs)/followers/index": () => null,
+        "(tabs)/settings/index": () => null,
+      },
+      { initialUrl: "/profile" },
+    );
+
+  const mockRoutes = () =>
+    mockFetchRoutes({
+      "POST /api/sync": [200, { started: false, sync: { running: false } }],
+      "GET /api/profile": [200, { profile: PROFILE }],
+      "GET /api/profile/stats": [200, STATS],
+      "GET /api/profile/games": [200, gamesPage(["Valorant"])],
+    });
+
+  it("tocar no ícone Perfil com a aba aberta rola até o topo", async () => {
+    mockRoutes();
+    await renderTabs();
+    expect(await screen.findByText("JOGOS")).toBeOnTheScreen();
+    const scroll = jest.spyOn(FlatList.prototype, "scrollToOffset");
+
+    await fireEvent.press(screen.getByLabelText("Perfil"));
+
+    // O `useScrollToTop` rola no quadro seguinte ao toque.
+    await waitFor(() => expect(scroll).toHaveBeenCalledWith({ offset: 0, animated: true }));
+  });
+
+  it("voltar de outra aba abre o perfil no topo", async () => {
+    mockRoutes();
+    await renderTabs();
+    expect(await screen.findByText("JOGOS")).toBeOnTheScreen();
+    await fireEvent.press(screen.getByLabelText("Ajustes"));
+    const scroll = jest.spyOn(FlatList.prototype, "scrollToOffset");
+
+    await fireEvent.press(screen.getByLabelText("Perfil"));
+
+    expect(scroll).toHaveBeenCalledWith({ offset: 0, animated: false });
   });
 });
 

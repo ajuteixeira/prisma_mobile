@@ -1,17 +1,17 @@
 import { Callout, PrismaBackground } from "@/components/ui";
 import { COLORS, PROFILE_BEAMS, PROFILE_HERO_HEIGHT } from "@/constants";
-import { useProfile, useProfileStats, useRecentlyPlayed } from "@/hooks";
-import { profileApi } from "@/services";
+import { useProfile, useProfileGames, useProfileStats } from "@/hooks";
+import { profileApi, type ProfileGame } from "@/services";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter, useScrollToTop } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useCallback, useState, type ReactNode } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Share, Text, View } from "react-native";
+import { useCallback, useRef, useState, type ReactNode } from "react";
+import { ActivityIndicator, FlatList, Pressable, Share, Text, View } from "react-native";
 import { AchievementDetailDialog } from "./_achievement-detail-dialog";
 import { PinAchievementsSheet } from "./_pin-achievements-sheet";
 import { ProfileCard } from "./_profile-card";
 import { PlatformDistributionCard, ProfileStatsCard } from "./_profile-stats";
-import { RecentGamesList, RecentlyPlayedCard, RecentlyPlayedEmpty } from "./_recently-played";
+import { GameRow, RecentlyPlayedCard, RecentlyPlayedEmpty } from "./_recently-played";
 
 const RetryButton = ({ onPress, label }: { onPress: () => void; label?: string }) => (
   <Pressable
@@ -67,36 +67,41 @@ const SectionLabel = ({ children }: { children: string }) => (
   </Text>
 );
 
+type ProfileGames = ReturnType<typeof useProfileGames>;
+
+const keyOfGame = (game: ProfileGame) => String(game.id);
+const renderGame = ({ item }: { item: ProfileGame }) => <GameRow game={item} />;
+const GameSeparator = () => <View className="h-2.5" />;
+
 /**
- * Seções abaixo do cartão. Uma única busca alimenta o destaque ("Jogado
- * recentemente", 1º jogo) e a lista ("Jogos recentes", do 2º ao 4º), que fica
- * depois das estatísticas e só aparece quando há mais de um jogo.
+ * Seções abaixo do cartão. A mesma lista de jogos alimenta o destaque ("Jogado
+ * recentemente", o 1º jogo) e a lista "Jogos", que vem depois das estatísticas
+ * com todos os jogos, inclusive o do destaque, e é renderizada pelo `FlatList`.
  */
-const ProfileSections = ({ username }: { username?: string }) => {
+const ProfileSections = ({ username, games }: { username?: string; games: ProfileGames }) => {
   const router = useRouter();
-  const { data, loading, error, reload } = useRecentlyPlayed(username);
-  const [latest, ...others] = data?.games ?? [];
+  const latest = games.items?.[0];
 
   let recentlyPlayed = null;
   if (latest) {
     recentlyPlayed = <RecentlyPlayedCard game={latest} />;
-  } else if (data) {
+  } else if (games.items) {
     recentlyPlayed = (
       <RecentlyPlayedEmpty
         onConnect={username ? undefined : () => router.push("/connect-platforms")}
       />
     );
-  } else if (error) {
+  } else if (games.error) {
     recentlyPlayed = (
       <View className="gap-3">
-        <Callout tone="danger">{error}</Callout>
-        <RetryButton onPress={reload} label="Tentar carregar os jogos recentes de novo" />
+        <Callout tone="danger">{games.error}</Callout>
+        <RetryButton onPress={games.retry} label="Tentar carregar os jogos de novo" />
       </View>
     );
-  } else if (loading) {
+  } else if (games.loading) {
     recentlyPlayed = (
       <View
-        accessibilityLabel="Carregando jogos recentes"
+        accessibilityLabel="Carregando jogos"
         className="h-[200px] items-center justify-center rounded-[22px] border border-white/[0.06] bg-prisma-surface"
       >
         <ActivityIndicator color={COLORS.accent} />
@@ -115,14 +120,31 @@ const ProfileSections = ({ username }: { username?: string }) => {
 
       <ProfileStatsSection username={username} />
 
-      {others.length > 0 ? (
-        <>
-          <SectionLabel>JOGOS RECENTES</SectionLabel>
-          <RecentGamesList games={others} />
-        </>
-      ) : null}
+      {latest ? <SectionLabel>JOGOS</SectionLabel> : null}
     </>
   );
+};
+
+/** Fim da lista "Jogos": carregando a próxima página ou o erro dela. */
+const GamesFooter = ({ games }: { games: ProfileGames }) => {
+  if (games.loadingMore) {
+    return (
+      <View accessibilityLabel="Carregando mais jogos" className="py-4">
+        <ActivityIndicator color={COLORS.accent} />
+      </View>
+    );
+  }
+
+  if (games.items?.length && games.error) {
+    return (
+      <View className="mt-3 gap-3">
+        <Callout tone="danger">{games.error}</Callout>
+        <RetryButton onPress={games.retry} label="Tentar carregar mais jogos" />
+      </View>
+    );
+  }
+
+  return null;
 };
 
 const shareProfile = (username: string, own: boolean) => {
@@ -142,7 +164,7 @@ type ProfileViewProps = {
 
 /**
  * Perfil (artboard 6a): cartão, jogado recentemente, estatísticas, troféus por
- * plataforma e jogos recentes. No próprio perfil, seguidores/seguindo abrem a
+ * plataforma e todos os jogos, carregados aos poucos ao rolar. No próprio perfil, seguidores/seguindo abrem a
  * aba Seguidores, as conquistas fixadas abrem detalhes e pinagem e o estado
  * vazio oferece vincular plataformas.
  */
@@ -150,6 +172,16 @@ export const ProfileView = ({ username, header }: ProfileViewProps) => {
   const router = useRouter();
   const own = !username;
   const { data: profile, error, reload } = useProfile(username);
+  const games = useProfileGames(username);
+  const listRef = useRef<FlatList<ProfileGame>>(null);
+  // Tocar no ícone Perfil com a aba já aberta rola até o topo...
+  useScrollToTop(listRef);
+  // ...e o perfil sempre abre no topo, mesmo vindo de outra aba.
+  useFocusEffect(
+    useCallback(() => {
+      listRef.current?.scrollToOffset({ offset: 0, animated: false });
+    }, []),
+  );
   // TODO: abrir já na aba "Seguindo" quando a tela de Seguidores existir (artboard 6c).
   const openFollowers = own ? () => router.push("/followers") : undefined;
   const [pinning, setPinning] = useState(false);
@@ -177,40 +209,52 @@ export const ProfileView = ({ username, header }: ProfileViewProps) => {
         />
       </View>
 
-      <ScrollView
+      <FlatList
+        ref={listRef}
+        testID="profile-list"
+        data={profile ? (games.items ?? []) : []}
+        keyExtractor={keyOfGame}
+        renderItem={renderGame}
+        ItemSeparatorComponent={GameSeparator}
+        ListHeaderComponent={
+          <>
+            {header}
+            {profile ? (
+              <>
+                <ProfileCard
+                  profile={profile}
+                  online={own}
+                  onShare={() => shareProfile(profile.username, own)}
+                  onPressFollowers={openFollowers}
+                  onPressFollowing={openFollowers}
+                  // Detalhe e pinagem usam `/api/profile/achievements`, que só cobre o usuário logado.
+                  onManagePins={own ? () => setPinning(true) : undefined}
+                  onPressAchievement={own ? (achievement) => setDetailId(achievement.id) : undefined}
+                />
+                <ProfileSections username={username} games={games} />
+              </>
+            ) : error ? (
+              <View className="gap-3">
+                <Callout tone="danger">{error}</Callout>
+                <RetryButton onPress={reload} />
+              </View>
+            ) : (
+              <View
+                accessibilityLabel="Carregando perfil"
+                className="h-[300px] items-center justify-center rounded-3xl border border-white/[0.06] bg-prisma-surface"
+              >
+                <ActivityIndicator color={COLORS.accent} />
+              </View>
+            )}
+          </>
+        }
+        ListFooterComponent={profile ? <GamesFooter games={games} /> : null}
+        onEndReached={games.loadMore}
+        onEndReachedThreshold={0.5}
         className="flex-1"
         contentContainerClassName={`px-5 pb-[120px] ${header ? "pt-[52px]" : "pt-[64px]"}`}
         showsVerticalScrollIndicator={false}
-      >
-        {header}
-        {profile ? (
-          <>
-            <ProfileCard
-              profile={profile}
-              online={own}
-              onShare={() => shareProfile(profile.username, own)}
-              onPressFollowers={openFollowers}
-              onPressFollowing={openFollowers}
-              // Detalhe e pinagem usam `/api/profile/achievements`, que só cobre o usuário logado.
-              onManagePins={own ? () => setPinning(true) : undefined}
-              onPressAchievement={own ? (achievement) => setDetailId(achievement.id) : undefined}
-            />
-            <ProfileSections username={username} />
-          </>
-        ) : error ? (
-          <View className="gap-3">
-            <Callout tone="danger">{error}</Callout>
-            <RetryButton onPress={reload} />
-          </View>
-        ) : (
-          <View
-            accessibilityLabel="Carregando perfil"
-            className="h-[300px] items-center justify-center rounded-3xl border border-white/[0.06] bg-prisma-surface"
-          >
-            <ActivityIndicator color={COLORS.accent} />
-          </View>
-        )}
-      </ScrollView>
+      />
 
       {own && profile ? (
         <PinAchievementsSheet

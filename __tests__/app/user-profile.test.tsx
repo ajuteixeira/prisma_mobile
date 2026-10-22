@@ -25,10 +25,7 @@ const STATS = {
 const ROUTES = {
   "GET /api/profiles/ana": [200, { profile: ANA }] as [number, object],
   "GET /api/profiles/ana/stats": [200, STATS] as [number, object],
-  "GET /api/profiles/ana/recently-played": [200, { recently_played: [], total: 0 }] as [
-    number,
-    object,
-  ],
+  "GET /api/profiles/ana/games": [200, { games: [], next_offset: null }] as [number, object],
 };
 
 const renderScreen = (initialUrl = "/user/ana") =>
