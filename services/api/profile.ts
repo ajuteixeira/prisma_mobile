@@ -6,15 +6,15 @@ import type {
   ApiUser,
   PinnedAchievement,
   ProfileCardData,
+  ProfileGame,
+  ProfileGamePage,
   ProfileStatsResponse,
   ProfileUpdatePayload,
-  RecentGame,
-  RecentlyPlayed,
 } from "./types";
 
-type RecentlyPlayedResponse = {
-  recently_played?: unknown;
-  total?: unknown;
+type ProfileGamesResponse = {
+  games?: unknown;
+  next_offset?: unknown;
 };
 
 const text = (value: unknown) => (typeof value === "string" && value ? value : null);
@@ -22,15 +22,16 @@ const count = (value: unknown) =>
   typeof value === "number" && Number.isFinite(value) ? value : null;
 
 /** Lê um jogo sem confiar no formato: campo ausente ou com outro tipo vira `null`/0. */
-const toRecentGame = (raw: unknown, index: number): RecentGame => {
+const toProfileGame = (raw: unknown, fallbackId: number): ProfileGame => {
   const game = (raw ?? {}) as Record<string, unknown>;
   const platform = (game.platform ?? {}) as Record<string, unknown>;
   const slug = text(platform.slug);
 
   return {
-    id: count(game.id) ?? index,
+    id: count(game.id) ?? fallbackId,
     name: text(game.name) ?? "Jogo sem nome",
     cover_url: text(game.cover_url),
+    icon_url: text(game.icon_url),
     platform: slug ? { slug, name: text(platform.name) ?? slug } : null,
     playtime_minutes: count(game.playtime_minutes),
     last_played_at: text(game.last_played_at),
@@ -53,22 +54,19 @@ export const profileApi = {
     request<ProfileStatsResponse>(`${basePath(username)}/stats`, { token }),
 
   /**
-   * Os `limit` jogos jogados mais recentemente, do mais novo ao mais antigo.
-   * Sem `username`, do usuário logado.
+   * Uma página de todos os jogos, do jogado mais recente ao mais antigo; a ordem
+   * é fixa na API. Sem `username`, do usuário logado.
    */
-  recentlyPlayed: async (
-    token: string,
-    limit: number,
-    username?: string,
-  ): Promise<RecentlyPlayed> => {
-    const data = await request<RecentlyPlayedResponse>(
-      `${basePath(username)}/recently-played?limit=${limit}`,
+  games: async (token: string, offset: number, username?: string): Promise<ProfileGamePage> => {
+    const data = await request<ProfileGamesResponse>(
+      `${basePath(username)}/games?offset=${offset}`,
       { token },
     );
-    const games = Array.isArray(data?.recently_played)
-      ? data.recently_played.map(toRecentGame)
+    // Sem `id`, usa a posição na lista inteira (negativa, para não colidir com ids reais).
+    const games = Array.isArray(data?.games)
+      ? data.games.map((raw, index) => toProfileGame(raw, -(offset + index + 1)))
       : [];
-    return { games, total: count(data?.total) ?? games.length };
+    return { games, next_offset: count(data?.next_offset) };
   },
 
   /** Uma página das conquistas desbloqueadas para fixar; `query` filtra por conquista ou jogo. */

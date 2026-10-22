@@ -1,7 +1,10 @@
-import { ApiError, profileApi } from "@/services";
-import { SESSION_EXPIRED } from "@/utils";
-import { useCallback } from "react";
+import { ApiError, profileApi, type ProfileGame } from "@/services";
+import { useSession } from "@/store";
+import { describeApiError, SESSION_EXPIRED } from "@/utils";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { useFocusFetch } from "./_use-focus-fetch";
+import { useReloadOnSync } from "./_use-reload-on-sync";
 
 const isStatus = (error: unknown, status: number) =>
   error instanceof ApiError && error.status === status;
@@ -46,23 +49,89 @@ export const useProfileStats = (username?: string) => {
   return useFocusFetch(fetchStats, username ? describeOtherStatsError : describeStatsError);
 };
 
-/** Um destaque em "Jogado recentemente" mais três em "Jogos recentes". */
-const RECENT_GAMES_LIMIT = 4;
-
-const describeRecentlyPlayedError = () => "Não foi possível carregar seus jogos recentes.";
-const describeOtherRecentlyPlayedError = () => "Não foi possível carregar os jogos recentes.";
+const describeGamesError = () => "Não foi possível carregar seus jogos.";
+const describeOtherGamesError = () => "Não foi possível carregar os jogos.";
 
 /**
- * Jogos mais recentes, recarregados a cada foco porque a sincronização traz
- * jogos novos. Sem `username`, do usuário logado.
+ * Todos os jogos do perfil, do jogado mais recente ao mais antigo, carregados
+ * aos poucos: recomeça da primeira página a cada foco e a cada avanço da
+ * sincronização, e `loadMore` traz a próxima. Respostas de um recomeço anterior
+ * são descartadas. Sem `username`, do usuário logado.
  */
-export const useRecentlyPlayed = (username?: string) => {
-  const fetchRecentlyPlayed = useCallback(
-    (token: string) => profileApi.recentlyPlayed(token, RECENT_GAMES_LIMIT, username),
-    [username],
+export const useProfileGames = (username?: string) => {
+  const token = useSession((state) => state.token);
+  const [items, setItems] = useState<ProfileGame[] | null>(null);
+  const [loading, setLoading] = useState(Boolean(token));
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const nextOffset = useRef<number | null>(null);
+  const failedOffset = useRef<number | null>(null);
+  const generation = useRef(0);
+  const busy = useRef(false);
+
+  const fetchPage = useCallback(
+    async (offset: number) => {
+      if (!token) return;
+      const current = generation.current;
+      busy.current = true;
+      failedOffset.current = null;
+      try {
+        const page = await profileApi.games(token, offset, username);
+        if (current !== generation.current) return;
+        nextOffset.current = page.next_offset;
+        setItems((previous) =>
+          offset === 0 ? page.games : [...(previous ?? []), ...page.games],
+        );
+        setError(null);
+      } catch (pageError) {
+        if (current !== generation.current) return;
+        failedOffset.current = offset;
+        if (offset > 0) setError(describeApiError(pageError));
+        else setError((username ? describeOtherGamesError : describeGamesError)());
+      } finally {
+        if (current === generation.current) {
+          busy.current = false;
+          setLoading(false);
+          setLoadingMore(false);
+        }
+      }
+    },
+    [token, username],
   );
-  return useFocusFetch(
-    fetchRecentlyPlayed,
-    username ? describeOtherRecentlyPlayedError : describeRecentlyPlayedError,
+
+  const reset = useCallback(() => {
+    generation.current += 1;
+    nextOffset.current = null;
+    setLoading(Boolean(token));
+    setLoadingMore(false);
+    return fetchPage(0);
+  }, [fetchPage, token]);
+
+  const loadMore = useCallback(() => {
+    if (busy.current || nextOffset.current === null) return;
+    setLoadingMore(true);
+    fetchPage(nextOffset.current);
+  }, [fetchPage]);
+
+  /** Refaz a página que falhou: a primeira recomeça a lista, as outras continuam dela. */
+  const retry = useCallback(() => {
+    const offset = failedOffset.current;
+    if (!offset) {
+      reset();
+      return;
+    }
+    if (busy.current) return;
+    setLoadingMore(true);
+    fetchPage(offset);
+  }, [fetchPage, reset]);
+
+  useFocusEffect(
+    useCallback(() => {
+      reset();
+    }, [reset]),
   );
+
+  useReloadOnSync(reset);
+
+  return { items, loading, loadingMore, error, reset, loadMore, retry };
 };

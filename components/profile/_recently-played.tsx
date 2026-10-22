@@ -1,6 +1,6 @@
 import { Icon, type IconName } from "@/components/ui";
 import { BRAND_GRADIENT, COLORS, PLATFORMS } from "@/constants";
-import type { RecentGame } from "@/services";
+import type { ProfileGame } from "@/services";
 import { completionPercent, formatPlayedDate, formatPlaytime } from "@/utils";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -16,7 +16,7 @@ const PROGRESS_GRADIENT = [BRAND_GRADIENT[0], COLORS.accent] as const;
 type PlatformBadge = { name: string; icon: IconName; color: string };
 
 /** Ícone e cor do catálogo do app; plataformas desconhecidas ficam com o nome da API. */
-const platformOf = (game: RecentGame): PlatformBadge | null => {
+const platformOf = (game: ProfileGame): PlatformBadge | null => {
   if (!game.platform) return null;
   const known = PLATFORMS.find((platform) => platform.slug === game.platform?.slug);
   return known
@@ -93,7 +93,7 @@ const ProgressBar = ({
  * data da última sessão e o progresso das conquistas. Horas e data somem quando
  * a API não as informa.
  */
-export const RecentlyPlayedCard = memo(({ game }: { game: RecentGame }) => {
+export const RecentlyPlayedCard = memo(({ game }: { game: ProfileGame }) => {
   const platform = platformOf(game);
   const playedOn = game.last_played_at ? formatPlayedDate(game.last_played_at) : null;
   const meta = [
@@ -156,7 +156,8 @@ export const RecentlyPlayedCard = memo(({ game }: { game: RecentGame }) => {
 
 RecentlyPlayedCard.displayName = "RecentlyPlayedCard";
 
-const RecentGameRow = memo(({ game }: { game: RecentGame }) => {
+/** Linha da lista "Jogos" (artboard 6a): miniatura, % e resumo das conquistas. */
+export const GameRow = memo(({ game }: { game: ProfileGame }) => {
   const platform = platformOf(game);
   const percent = completionPercent(game.unlocked_achievements, game.total_achievements);
   const color = percent >= 100 ? COLORS.success : COLORS.accent;
@@ -172,13 +173,13 @@ const RecentGameRow = memo(({ game }: { game: RecentGame }) => {
 
   return (
     <View
-      testID="recent-game-row"
+      testID="game-row"
       accessible
       accessibilityLabel={`${game.name}, ${percent}%, ${meta}`}
       className="flex-row items-center gap-[13px] rounded-[18px] border border-white/[0.06] bg-prisma-surface p-3"
     >
       <Cover
-        uri={game.cover_url}
+        uri={game.icon_url}
         iconSize={20}
         style={{ width: 52, height: 52, borderRadius: 13 }}
       />
@@ -206,18 +207,7 @@ const RecentGameRow = memo(({ game }: { game: RecentGame }) => {
   );
 });
 
-RecentGameRow.displayName = "RecentGameRow";
-
-/** "Jogos recentes" (artboard 6a): uma linha por jogo, com % e resumo das conquistas. */
-export const RecentGamesList = memo(({ games }: { games: RecentGame[] }) => (
-  <View className="gap-2.5">
-    {games.map((game) => (
-      <RecentGameRow key={game.id} game={game} />
-    ))}
-  </View>
-));
-
-RecentGamesList.displayName = "RecentGamesList";
+GameRow.displayName = "GameRow";
 
 /**
  * Ocupa o lugar do destaque enquanto nenhuma plataforma trouxe jogos. Sem

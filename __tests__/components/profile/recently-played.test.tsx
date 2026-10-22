@@ -1,11 +1,12 @@
-import { RecentGamesList, RecentlyPlayedCard, RecentlyPlayedEmpty } from "@/components/profile";
-import type { RecentGame } from "@/services";
+import { GameRow, RecentlyPlayedCard, RecentlyPlayedEmpty } from "@/components/profile";
+import type { ProfileGame } from "@/services";
 import { fireEvent, render, screen } from "@/__tests__/utils";
 
-const game = (overrides: Partial<RecentGame> = {}): RecentGame => ({
+const game = (overrides: Partial<ProfileGame> = {}): ProfileGame => ({
   id: 1,
   name: "Counter-Strike: Global Offensive",
   cover_url: "https://cdn.test/730.jpg",
+  icon_url: "https://cdn.test/730-icon.jpg",
   platform: { slug: "steam", name: "Steam" },
   playtime_minutes: 50700,
   last_played_at: new Date(2025, 9, 28, 12).toISOString(),
@@ -59,47 +60,61 @@ describe("RecentlyPlayedCard", () => {
   });
 });
 
-describe("RecentGamesList", () => {
-  it("mostra cada jogo com porcentagem e resumo, como no protótipo", async () => {
+describe("GameRow", () => {
+  it("mostra o jogo com porcentagem e resumo, como no protótipo", async () => {
     await render(
-      <RecentGamesList
-        games={[
-          game({
+      <>
+        <GameRow
+          game={game({
             id: 2,
             name: "Valorant",
             playtime_minutes: 14040,
             unlocked_achievements: 31,
             total_achievements: 50,
-          }),
-          game({
+          })}
+        />
+        <GameRow
+          game={game({
             id: 3,
             name: "Phasmophobia",
             playtime_minutes: 33711,
             unlocked_achievements: 54,
             total_achievements: 54,
-          }),
-        ]}
-      />,
+          })}
+        />
+      </>,
     );
 
-    expect(screen.getAllByTestId("recent-game-row")).toHaveLength(2);
+    expect(screen.getAllByTestId("game-row")).toHaveLength(2);
     expect(screen.getByText("Valorant")).toBeOnTheScreen();
     expect(screen.getByText("62%")).toBeOnTheScreen();
     expect(screen.getByText("31/50 conquistas · 234 h · Steam")).toBeOnTheScreen();
     expect(screen.getByText("100%")).toBeOnTheScreen();
   });
 
+  it("usa o ícone do jogo como miniatura", async () => {
+    await render(<GameRow game={game()} />);
+
+    expect(screen.getByTestId("recent-game-cover").props.source).toEqual([
+      expect.objectContaining({ uri: "https://cdn.test/730-icon.jpg" }),
+    ]);
+  });
+
+  it("sem imagem, mostra o ícone no lugar da miniatura", async () => {
+    await render(<GameRow game={game({ icon_url: null })} />);
+
+    expect(screen.getByTestId("recent-game-cover-fallback")).toBeOnTheScreen();
+  });
+
   it("resume jogos sem conquistas sem mostrar 0/0", async () => {
     await render(
-      <RecentGamesList
-        games={[
-          game({
-            name: "Roblox",
-            unlocked_achievements: 0,
-            total_achievements: 0,
-            playtime_minutes: 0,
-          }),
-        ]}
+      <GameRow
+        game={game({
+          name: "Roblox",
+          unlocked_achievements: 0,
+          total_achievements: 0,
+          playtime_minutes: 0,
+        })}
       />,
     );
 
