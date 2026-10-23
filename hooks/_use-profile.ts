@@ -1,10 +1,8 @@
-import { ApiError, profileApi, type ProfileGame } from "@/services";
-import { useSession } from "@/store";
-import { describeApiError, SESSION_EXPIRED } from "@/utils";
-import { useFocusEffect } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { ApiError, profileApi } from "@/services";
+import { SESSION_EXPIRED } from "@/utils";
+import { useCallback } from "react";
 import { useFocusFetch } from "./_use-focus-fetch";
-import { useReloadOnSync } from "./_use-reload-on-sync";
+import { useFocusPages } from "./_use-focus-pages";
 
 const isStatus = (error: unknown, status: number) =>
   error instanceof ApiError && error.status === status;
@@ -54,84 +52,15 @@ const describeOtherGamesError = () => "Não foi possível carregar os jogos.";
 
 /**
  * Todos os jogos do perfil, do jogado mais recente ao mais antigo, carregados
- * aos poucos: recomeça da primeira página a cada foco e a cada avanço da
- * sincronização, e `loadMore` traz a próxima. Respostas de um recomeço anterior
- * são descartadas. Sem `username`, do usuário logado.
+ * aos poucos com `useFocusPages`. Sem `username`, do usuário logado.
  */
 export const useProfileGames = (username?: string) => {
-  const token = useSession((state) => state.token);
-  const [items, setItems] = useState<ProfileGame[] | null>(null);
-  const [loading, setLoading] = useState(Boolean(token));
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const nextOffset = useRef<number | null>(null);
-  const failedOffset = useRef<number | null>(null);
-  const generation = useRef(0);
-  const busy = useRef(false);
-
   const fetchPage = useCallback(
-    async (offset: number) => {
-      if (!token) return;
-      const current = generation.current;
-      busy.current = true;
-      failedOffset.current = null;
-      try {
-        const page = await profileApi.games(token, offset, username);
-        if (current !== generation.current) return;
-        nextOffset.current = page.next_offset;
-        setItems((previous) =>
-          offset === 0 ? page.games : [...(previous ?? []), ...page.games],
-        );
-        setError(null);
-      } catch (pageError) {
-        if (current !== generation.current) return;
-        failedOffset.current = offset;
-        if (offset > 0) setError(describeApiError(pageError));
-        else setError((username ? describeOtherGamesError : describeGamesError)());
-      } finally {
-        if (current === generation.current) {
-          busy.current = false;
-          setLoading(false);
-          setLoadingMore(false);
-        }
-      }
+    async (token: string, offset: number) => {
+      const page = await profileApi.games(token, offset, username);
+      return { items: page.games, next_offset: page.next_offset };
     },
-    [token, username],
+    [username],
   );
-
-  const reset = useCallback(() => {
-    generation.current += 1;
-    nextOffset.current = null;
-    setLoading(Boolean(token));
-    setLoadingMore(false);
-    return fetchPage(0);
-  }, [fetchPage, token]);
-
-  const loadMore = useCallback(() => {
-    if (busy.current || nextOffset.current === null) return;
-    setLoadingMore(true);
-    fetchPage(nextOffset.current);
-  }, [fetchPage]);
-
-  /** Refaz a página que falhou: a primeira recomeça a lista, as outras continuam dela. */
-  const retry = useCallback(() => {
-    const offset = failedOffset.current;
-    if (!offset) {
-      reset();
-      return;
-    }
-    if (busy.current) return;
-    setLoadingMore(true);
-    fetchPage(offset);
-  }, [fetchPage, reset]);
-
-  useFocusEffect(
-    useCallback(() => {
-      reset();
-    }, [reset]),
-  );
-
-  useReloadOnSync(reset);
-
-  return { items, loading, loadingMore, error, reset, loadMore, retry };
+  return useFocusPages(fetchPage, username ? describeOtherGamesError : describeGamesError);
 };

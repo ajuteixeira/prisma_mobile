@@ -4,9 +4,13 @@ import type {
   AchievementDetail,
   AchievementPage,
   ApiUser,
+  GameAchievement,
+  GameAchievementFilter,
+  GameAchievementPage,
   PinnedAchievement,
   ProfileCardData,
   ProfileGame,
+  ProfileGameDetail,
   ProfileGamePage,
   ProfileStatsResponse,
   ProfileUpdatePayload,
@@ -14,6 +18,11 @@ import type {
 
 type ProfileGamesResponse = {
   games?: unknown;
+  next_offset?: unknown;
+};
+
+type GameAchievementsResponse = {
+  achievements?: unknown;
   next_offset?: unknown;
 };
 
@@ -37,6 +46,20 @@ const toProfileGame = (raw: unknown, fallbackId: number): ProfileGame => {
     last_played_at: text(game.last_played_at),
     unlocked_achievements: count(game.unlocked_achievements) ?? 0,
     total_achievements: count(game.total_achievements) ?? 0,
+  };
+};
+
+/** Lê uma conquista do jogo sem confiar no formato, como `toProfileGame`. */
+const toGameAchievement = (raw: unknown, fallbackId: number): GameAchievement => {
+  const achievement = (raw ?? {}) as Record<string, unknown>;
+
+  return {
+    id: count(achievement.id) ?? fallbackId,
+    name: text(achievement.name) ?? "Conquista sem nome",
+    description: text(achievement.description),
+    icon_url: text(achievement.icon_url),
+    achieved: achievement.achieved === true,
+    unlocked_at: text(achievement.unlocked_at),
   };
 };
 
@@ -67,6 +90,37 @@ export const profileApi = {
       ? data.games.map((raw, index) => toProfileGame(raw, -(offset + index + 1)))
       : [];
     return { games, next_offset: count(data?.next_offset) };
+  },
+
+  /** Um jogo do perfil para a tela de detalhes. Sem `username`, do usuário logado. */
+  game: async (token: string, id: number, username?: string): Promise<ProfileGameDetail> => {
+    const data = await request<{ game?: unknown }>(`${basePath(username)}/games/${id}`, {
+      token,
+    });
+    const raw = (data?.game ?? {}) as Record<string, unknown>;
+    return { ...toProfileGame(raw, id), last_unlock_at: text(raw.last_unlock_at) };
+  },
+
+  /**
+   * Uma página das conquistas do jogo: desbloqueadas primeiro (da mais recente) e
+   * depois as bloqueadas. Sem `username`, do usuário logado.
+   */
+  gameAchievements: async (
+    token: string,
+    id: number,
+    filter: GameAchievementFilter,
+    offset: number,
+    username?: string,
+  ): Promise<GameAchievementPage> => {
+    const params = new URLSearchParams({ filter, offset: String(offset) });
+    const data = await request<GameAchievementsResponse>(
+      `${basePath(username)}/games/${id}/achievements?${params}`,
+      { token },
+    );
+    const achievements = Array.isArray(data?.achievements)
+      ? data.achievements.map((raw, index) => toGameAchievement(raw, -(offset + index + 1)))
+      : [];
+    return { achievements, next_offset: count(data?.next_offset) };
   },
 
   /** Uma página das conquistas desbloqueadas para fixar; `query` filtra por conquista ou jogo. */

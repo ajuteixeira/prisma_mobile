@@ -161,6 +161,90 @@ describe("profileApi.games", () => {
   });
 });
 
+describe("profileApi.game", () => {
+  it("busca o jogo com o Bearer e lê o último desbloqueio", async () => {
+    const fetch = mockFetch(200, {
+      game: {
+        id: 42,
+        name: "Hades",
+        cover_url: "https://cdn.test/capa.jpg",
+        icon_url: "https://cdn.test/icone.jpg",
+        platform: { slug: "steam", name: "Steam" },
+        playtime_minutes: 90,
+        last_played_at: "2026-10-01T12:00:00",
+        last_unlock_at: "2026-09-30T20:15:00",
+        unlocked_achievements: 1,
+        total_achievements: 2,
+        completion_percent: 50.0,
+      },
+    });
+
+    await expect(profileApi.game("meu-token", 42)).resolves.toMatchObject({
+      id: 42,
+      name: "Hades",
+      last_unlock_at: "2026-09-30T20:15:00",
+      unlocked_achievements: 1,
+    });
+
+    const [url, init] = fetch.mock.calls[0] as [string, RequestInit];
+    expect(url).toBe(`${API_URL}/api/profile/games/42`);
+    expect(init.headers).toMatchObject({ Authorization: "Bearer meu-token" });
+  });
+
+  it("de outro perfil, consulta /api/profiles/:username/games/:id", async () => {
+    const fetch = mockFetch(200, { game: { id: 42, name: "Hades" } });
+
+    await profileApi.game("token", 42, "ana maria");
+
+    expect(fetch.mock.calls[0][0]).toBe(`${API_URL}/api/profiles/ana%20maria/games/42`);
+  });
+});
+
+describe("profileApi.gameAchievements", () => {
+  it("envia o filtro e o offset e normaliza cada conquista", async () => {
+    const fetch = mockFetch(200, {
+      achievements: [
+        {
+          id: 7,
+          name: "Fuga",
+          description: "Escape do submundo.",
+          icon_url: "https://cdn.test/fuga.png",
+          achieved: true,
+          unlocked_at: "2026-09-30T20:15:00",
+        },
+        { name: "Sem dados", achieved: "sim" },
+      ],
+      next_offset: 40,
+    });
+
+    await expect(profileApi.gameAchievements("token", 42, "unlocked", 20)).resolves.toEqual({
+      achievements: [
+        {
+          id: 7,
+          name: "Fuga",
+          description: "Escape do submundo.",
+          icon_url: "https://cdn.test/fuga.png",
+          achieved: true,
+          unlocked_at: "2026-09-30T20:15:00",
+        },
+        {
+          id: -22,
+          name: "Sem dados",
+          description: null,
+          icon_url: null,
+          achieved: false,
+          unlocked_at: null,
+        },
+      ],
+      next_offset: 40,
+    });
+
+    expect(fetch.mock.calls[0][0]).toBe(
+      `${API_URL}/api/profile/games/42/achievements?filter=unlocked&offset=20`,
+    );
+  });
+});
+
 describe("profileApi.achievements", () => {
   it("busca uma página das conquistas desbloqueadas com offset e busca", async () => {
     const page = { results: [{ ...PROFILE.pinned_achievements[0] }], next_offset: 20 };

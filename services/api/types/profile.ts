@@ -94,3 +94,31 @@ export type ProfileGamePage = {
   games: ProfileGame[];
   next_offset: number | null;
 };
+
+/** Jogo de `GET /api/profile/games/:id`: o mesmo da lista e o último desbloqueio. */
+export type ProfileGameDetail = ProfileGame & {
+  /** ISO 8601, sem fuso; `null` quando nada foi desbloqueado. */
+  last_unlock_at: string | null;
+};
+
+/** Filtro das conquistas na tela do jogo, como os segmentos do protótipo. */
+export type GameAchievementFilter = "all" | "unlocked" | "locked";
+
+/** Conquista de `GET /api/profile/games/:id/achievements`, desbloqueada ou não. */
+export type GameAchievement = {
+  /** Id da conquista no catálogo (único no jogo). */
+  id: number;
+  name: string;
+  description: string | null;
+  /** Ícone aceso se desbloqueada, apagado se não; a API cai de um para o outro. */
+  icon_url: string | null;
+  achieved: boolean;
+  /** ISO 8601, sem fuso; `null` nas bloqueadas. */
+  unlocked_at: string | null;
+};
+
+/** Uma página das conquistas do jogo; `next_offset` é `null` no fim. */
+export type GameAchievementPage = {
+  achievements: GameAchievement[];
+  next_offset: number | null;
+};
