@@ -13,19 +13,24 @@ const COVER_BACKGROUND = "#1b2230";
 /** Barra do destaque: do azul da marca ao azul claro, como no protótipo. */
 const PROGRESS_GRADIENT = [BRAND_GRADIENT[0], COLORS.accent] as const;
 
-type PlatformBadge = { name: string; icon: IconName; color: string };
+type PlatformBadge = { name: string; icon: IconName; color: string; tint: string };
 
-/** Ícone e cor do catálogo do app; plataformas desconhecidas ficam com o nome da API. */
-const platformOf = (game: ProfileGame): PlatformBadge | null => {
+/** Ícone e cores do catálogo do app; plataformas desconhecidas ficam com o nome da API. */
+export const platformOf = (game: ProfileGame): PlatformBadge | null => {
   if (!game.platform) return null;
   const known = PLATFORMS.find((platform) => platform.slug === game.platform?.slug);
   return known
-    ? { name: known.name, icon: known.icon, color: known.color }
-    : { name: game.platform.name, icon: "gamepad", color: COLORS.muted };
+    ? { name: known.name, icon: known.icon, color: known.color, tint: known.tint }
+    : {
+        name: game.platform.name,
+        icon: "gamepad",
+        color: COLORS.muted,
+        tint: "rgba(156, 163, 175, 0.12)",
+      };
 };
 
 /** Capa do jogo; sem URL (ou se a imagem falhar) fica o controle sobre o fundo neutro. */
-const Cover = ({
+export const GameCover = ({
   uri,
   iconSize,
   style,
@@ -59,7 +64,8 @@ const Cover = ({
   );
 };
 
-const ProgressBar = ({
+/** Barra de progresso das conquistas: gradiente da marca ou uma cor só. */
+export const ProgressBar = ({
   percent,
   height,
   fill,
@@ -93,7 +99,13 @@ const ProgressBar = ({
  * data da última sessão e o progresso das conquistas. Horas e data somem quando
  * a API não as informa.
  */
-export const RecentlyPlayedCard = memo(({ game }: { game: ProfileGame }) => {
+type GamePressProps = {
+  game: ProfileGame;
+  /** Abre a tela do jogo; sem ele, o card não é tocável. */
+  onPress?: (game: ProfileGame) => void;
+};
+
+export const RecentlyPlayedCard = memo(({ game, onPress }: GamePressProps) => {
   const platform = platformOf(game);
   const playedOn = game.last_played_at ? formatPlayedDate(game.last_played_at) : null;
   const meta = [
@@ -103,12 +115,16 @@ export const RecentlyPlayedCard = memo(({ game }: { game: ProfileGame }) => {
   const percent = completionPercent(game.unlocked_achievements, game.total_achievements);
 
   return (
-    <View
+    <Pressable
       testID="recently-played-card"
+      accessibilityRole="button"
+      accessibilityLabel={`Abrir ${game.name}`}
+      disabled={!onPress}
+      onPress={() => onPress?.(game)}
       className="overflow-hidden rounded-[22px] border border-white/[0.06] bg-prisma-surface"
     >
       <View className="h-[130px]">
-        <Cover uri={game.cover_url} iconSize={32} style={{ height: 130 }} />
+        <GameCover uri={game.cover_url} iconSize={32} style={{ height: 130 }} />
         <LinearGradient
           pointerEvents="none"
           colors={["rgba(18, 22, 29, 0)", COLORS.surface]}
@@ -150,14 +166,14 @@ export const RecentlyPlayedCard = memo(({ game }: { game: ProfileGame }) => {
           <Text className="mt-3.5 text-[12px] text-prisma-faint">Este jogo não tem conquistas</Text>
         )}
       </View>
-    </View>
+    </Pressable>
   );
 });
 
 RecentlyPlayedCard.displayName = "RecentlyPlayedCard";
 
 /** Linha da lista "Jogos" (artboard 6a): miniatura, % e resumo das conquistas. */
-export const GameRow = memo(({ game }: { game: ProfileGame }) => {
+export const GameRow = memo(({ game, onPress }: GamePressProps) => {
   const platform = platformOf(game);
   const percent = completionPercent(game.unlocked_achievements, game.total_achievements);
   const color = percent >= 100 ? COLORS.success : COLORS.accent;
@@ -172,13 +188,15 @@ export const GameRow = memo(({ game }: { game: ProfileGame }) => {
     .join(" · ");
 
   return (
-    <View
+    <Pressable
       testID="game-row"
-      accessible
+      accessibilityRole="button"
       accessibilityLabel={`${game.name}, ${percent}%, ${meta}`}
+      disabled={!onPress}
+      onPress={() => onPress?.(game)}
       className="flex-row items-center gap-[13px] rounded-[18px] border border-white/[0.06] bg-prisma-surface p-3"
     >
-      <Cover
+      <GameCover
         uri={game.icon_url}
         iconSize={20}
         style={{ width: 52, height: 52, borderRadius: 13 }}
@@ -203,7 +221,7 @@ export const GameRow = memo(({ game }: { game: ProfileGame }) => {
           />
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 });
 

@@ -33,6 +33,7 @@ const renderScreen = () =>
       "(tabs)/profile/index": ProfileScreen,
       "(tabs)/followers/index": () => null,
       "(auth)/connect-platforms/index": () => null,
+      "game/[id]": () => null,
     },
     { initialUrl: "/profile" },
   );
@@ -249,6 +250,24 @@ describe("ProfileScreen — jogado recentemente e jogos", () => {
     const call = fetch.mock.calls.find(([url]) => String(url).includes("/api/profile/games"));
     expect(String(call?.[0])).toBe("http://api.test/api/profile/games?offset=0");
     expect(call?.[1]).toMatchObject({ headers: { Authorization: "Bearer abc" } });
+  });
+
+  it("tocar num jogo da lista abre a tela do jogo", async () => {
+    mockFetchRoutes(routes([200, gamesPage(["Valorant", "Apex Legends"])]));
+    const view = await renderScreen();
+
+    await fireEvent.press((await screen.findAllByTestId("game-row"))[1]);
+
+    expect(view).toHavePathname("/game/2");
+  });
+
+  it("tocar no destaque abre a tela do último jogado", async () => {
+    mockFetchRoutes(routes([200, gamesPage(["Valorant", "Apex Legends"])]));
+    const view = await renderScreen();
+
+    await fireEvent.press(await screen.findByLabelText("Abrir Valorant"));
+
+    expect(view).toHavePathname("/game/1");
   });
 
   it("carrega a próxima página ao chegar no fim da rolagem", async () => {

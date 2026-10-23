@@ -2,6 +2,7 @@ import { Callout, PrismaBackground } from "@/components/ui";
 import { COLORS, PROFILE_BEAMS, PROFILE_HERO_HEIGHT } from "@/constants";
 import { useProfile, useProfileGames, useProfileStats } from "@/hooks";
 import { profileApi, type ProfileGame } from "@/services";
+import { openGame } from "@/utils";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter, useScrollToTop } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -70,7 +71,6 @@ const SectionLabel = ({ children }: { children: string }) => (
 type ProfileGames = ReturnType<typeof useProfileGames>;
 
 const keyOfGame = (game: ProfileGame) => String(game.id);
-const renderGame = ({ item }: { item: ProfileGame }) => <GameRow game={item} />;
 const GameSeparator = () => <View className="h-2.5" />;
 
 /**
@@ -78,13 +78,21 @@ const GameSeparator = () => <View className="h-2.5" />;
  * recentemente", o 1º jogo) e a lista "Jogos", que vem depois das estatísticas
  * com todos os jogos, inclusive o do destaque, e é renderizada pelo `FlatList`.
  */
-const ProfileSections = ({ username, games }: { username?: string; games: ProfileGames }) => {
+const ProfileSections = ({
+  username,
+  games,
+  onOpenGame,
+}: {
+  username?: string;
+  games: ProfileGames;
+  onOpenGame: (game: ProfileGame) => void;
+}) => {
   const router = useRouter();
   const latest = games.items?.[0];
 
   let recentlyPlayed = null;
   if (latest) {
-    recentlyPlayed = <RecentlyPlayedCard game={latest} />;
+    recentlyPlayed = <RecentlyPlayedCard game={latest} onPress={onOpenGame} />;
   } else if (games.items) {
     recentlyPlayed = (
       <RecentlyPlayedEmpty
@@ -173,6 +181,14 @@ export const ProfileView = ({ username, header }: ProfileViewProps) => {
   const own = !username;
   const { data: profile, error, reload } = useProfile(username);
   const games = useProfileGames(username);
+  const openGameScreen = useCallback(
+    (game: ProfileGame) => openGame(router, game.id, username),
+    [router, username],
+  );
+  const renderGame = useCallback(
+    ({ item }: { item: ProfileGame }) => <GameRow game={item} onPress={openGameScreen} />,
+    [openGameScreen],
+  );
   const listRef = useRef<FlatList<ProfileGame>>(null);
   // Tocar no ícone Perfil com a aba já aberta rola até o topo...
   useScrollToTop(listRef);
@@ -231,7 +247,7 @@ export const ProfileView = ({ username, header }: ProfileViewProps) => {
                   onManagePins={own ? () => setPinning(true) : undefined}
                   onPressAchievement={own ? (achievement) => setDetailId(achievement.id) : undefined}
                 />
-                <ProfileSections username={username} games={games} />
+                <ProfileSections username={username} games={games} onOpenGame={openGameScreen} />
               </>
             ) : error ? (
               <View className="gap-3">

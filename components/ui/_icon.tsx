@@ -38,6 +38,7 @@ export const ICONS = {
   camera: { ios: "camera.fill", android: "photo_camera", web: "photo_camera" },
   share: { ios: "square.and.arrow.up", android: "share", web: "share" },
   pieChart: { ios: "chart.pie.fill", android: "pie_chart", web: "pie_chart" },
+  clock: { ios: "clock.fill", android: "schedule", web: "schedule" },
   crown: { ios: "crown.fill", android: "crown", web: "crown" },
   pin: { ios: "pin.fill", android: "push_pin", web: "push_pin" },
   search: { ios: "magnifyingglass", android: "search", web: "search" },
