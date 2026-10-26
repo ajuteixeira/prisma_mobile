@@ -92,6 +92,15 @@ describe("GameRow", () => {
     expect(screen.getByText("100%")).toBeOnTheScreen();
   });
 
+  it("tocar na linha avisa qual jogo foi escolhido", async () => {
+    const onPress = jest.fn();
+    await render(<GameRow game={game({ id: 9 })} onPress={onPress} />);
+
+    await fireEvent.press(screen.getByTestId("game-row"));
+
+    expect(onPress).toHaveBeenCalledWith(expect.objectContaining({ id: 9 }));
+  });
+
   it("usa o ícone do jogo como miniatura", async () => {
     await render(<GameRow game={game()} />);
 

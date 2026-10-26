@@ -36,6 +36,7 @@ const renderScreen = (initialUrl = "/user/ana") =>
       "(tabs)/followers/index": () => null,
       "(auth)/login/index": () => null,
       "user/[username]": UserProfileScreen,
+      "game/[id]": () => null,
     },
     { initialUrl },
   );
@@ -54,6 +55,37 @@ describe("UserProfileScreen", () => {
     expect(screen.getByText("Fantasma")).toBeOnTheScreen();
     expect(await screen.findByText("1.234")).toBeOnTheScreen();
     expect(fetch.mock.calls[0][1]).toMatchObject({ headers: { Authorization: "Bearer abc" } });
+  });
+
+  it("tocar num jogo abre a tela do jogo no perfil da pessoa", async () => {
+    mockFetchRoutes({
+      ...ROUTES,
+      "GET /api/profiles/ana/games": [
+        200,
+        {
+          games: [
+            {
+              id: 5,
+              name: "Celeste",
+              cover_url: null,
+              icon_url: null,
+              platform: null,
+              playtime_minutes: null,
+              last_played_at: null,
+              unlocked_achievements: 0,
+              total_achievements: 0,
+            },
+          ],
+          next_offset: null,
+        },
+      ],
+    });
+    const view = await renderScreen();
+
+    await fireEvent.press(await screen.findByTestId("game-row"));
+
+    expect(view).toHavePathname("/game/5");
+    expect(view).toHaveSearchParams({ id: "5", username: "ana" });
   });
 
   it("é só leitura: sem vincular plataformas, pinagem, detalhes ou seguidores", async () => {
