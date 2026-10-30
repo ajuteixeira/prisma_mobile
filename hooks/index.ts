@@ -1,3 +1,4 @@
+export * from "./_use-auth";
 export * from "./_use-countdown";
 export * from "./_use-delete-account";
 export * from "./_use-edit-profile";
