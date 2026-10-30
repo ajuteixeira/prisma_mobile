@@ -60,7 +60,8 @@ describe("Tab bar", () => {
     await renderTabs();
 
     expect(await screen.findByText("Steam · 4 de 20 jogos")).toBeOnTheScreen();
-    expect(fetch.mock.calls[0][1]).toMatchObject({
+    const syncCall = fetch.mock.calls.find(([url]) => String(url).endsWith("/api/sync"));
+    expect(syncCall?.[1]).toMatchObject({
       method: "POST",
       headers: { Authorization: "Bearer abc" },
     });
