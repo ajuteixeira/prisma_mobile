@@ -36,6 +36,9 @@ export const authApi = {
   forgotPassword: (payload: ForgotPasswordPayload) =>
     request<ForgotPasswordResponse>("/api/auth/password/forgot", { body: payload }),
 
+  /** Confere se o token ainda vale; `401` quando expirou ou foi revogado. */
+  me: (token: string) => request<unknown>("/api/auth/me", { token }),
+
   /** Encerra no servidor a sessão do token; o Bearer é obrigatório. */
   logout: (token: string) => request<null>("/api/auth/logout", { token, method: "POST" }),
 

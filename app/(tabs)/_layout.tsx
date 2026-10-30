@@ -1,12 +1,13 @@
 import { SyncBanner } from "@/components/sync";
 import { PrismaTabBar } from "@/components/ui";
-import { startSync, useSession } from "@/store";
+import { useAuth } from "@/hooks";
+import { startSync } from "@/store";
 import { Redirect, Tabs } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
 
 const TabsLayout = () => {
-  const token = useSession((state) => state.token);
+  const { token } = useAuth();
 
   useEffect(() => {
     if (token) startSync();
