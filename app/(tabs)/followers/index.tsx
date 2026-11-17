@@ -16,6 +16,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { FollowersSkeleton } from "@/components/skeletons";
 
 type Tab = "followers" | "following" | "search";
 
@@ -218,14 +219,7 @@ export default function FollowersScreen() {
       </View>
     );
   } else if (initialLoading || active.loading) {
-    empty = (
-      <View
-        accessibilityLabel="Carregando seguidores"
-        className="h-[200px] items-center justify-center"
-      >
-        <ActivityIndicator color={COLORS.accent} />
-      </View>
-    );
+    empty = <FollowersSkeleton />;
   } else {
     empty = (
       <View className="items-center px-5 pt-10">

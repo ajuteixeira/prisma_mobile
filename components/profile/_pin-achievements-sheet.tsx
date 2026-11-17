@@ -5,6 +5,7 @@ import type { AchievementOption, PinnedAchievement } from "@/services";
 import { Image } from "expo-image";
 import { memo, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
+import { AchievementRowsSkeleton } from "@/components/skeletons";
 
 /** Mesmo atraso da busca da web (`phx-debounce="300"`). */
 const SEARCH_DEBOUNCE_MS = 300;
@@ -102,11 +103,7 @@ const PinAchievementsForm = ({ pinned, onClose, onSaved }: PinAchievementsFormPr
       </View>
     );
   } else if (list.items === null) {
-    empty = (
-      <View accessibilityLabel="Carregando conquistas" className="h-[200px] items-center justify-center">
-        <ActivityIndicator color={COLORS.accent} />
-      </View>
-    );
+    empty = <AchievementRowsSkeleton />;
   } else {
     empty = (
       <View className="items-center px-5 pt-10">

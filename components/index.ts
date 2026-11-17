@@ -4,5 +4,6 @@ export * from "./profile";
 export * from "./followers";
 export * from "./ranking";
 export * from "./settings";
+export * from "./skeletons";
 export * from "./sync";
 export * from "./ui";

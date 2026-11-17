@@ -12,6 +12,7 @@ import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AchievementIcon } from "./_achievement-icon";
 import { GameAchievementSheet } from "./_game-achievement-sheet";
+import { AchievementRowsSkeleton, GameSkeleton } from "@/components/skeletons";
 
 const COVER_HEIGHT = 190;
 
@@ -313,18 +314,14 @@ export const GameView = ({ id, username }: GameViewProps) => {
       <View className="flex-1 bg-prisma-surface">
         <StatusBar style="light" />
         <CloseButton onPress={close} top={insets.top + 12} />
-        <View className="flex-1 justify-center px-5">
-          {game.error ? (
-            <View className="gap-3">
-              <Callout tone="danger">{game.error}</Callout>
-              <RetryButton onPress={game.reload} label="Tentar carregar o jogo de novo" />
-            </View>
-          ) : (
-            <View accessibilityLabel="Carregando jogo" className="items-center">
-              <ActivityIndicator color={COLORS.accent} />
-            </View>
-          )}
-        </View>
+        {game.error ? (
+          <View className="flex-1 justify-center gap-3 px-5">
+            <Callout tone="danger">{game.error}</Callout>
+            <RetryButton onPress={game.reload} label="Tentar carregar o jogo de novo" />
+          </View>
+        ) : (
+          <GameSkeleton coverHeight={COVER_HEIGHT} />
+        )}
       </View>
     );
   }
@@ -347,8 +344,8 @@ export const GameView = ({ id, username }: GameViewProps) => {
     );
   } else {
     empty = (
-      <View accessibilityLabel="Carregando conquistas" className="items-center py-6">
-        <ActivityIndicator color={COLORS.accent} />
+      <View className="mx-5">
+        <AchievementRowsSkeleton />
       </View>
     );
   }

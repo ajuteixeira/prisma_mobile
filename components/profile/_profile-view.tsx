@@ -13,6 +13,7 @@ import { PinAchievementsSheet } from "./_pin-achievements-sheet";
 import { ProfileCard } from "./_profile-card";
 import { PlatformDistributionCard, ProfileStatsCard } from "./_profile-stats";
 import { GameRow, RecentlyPlayedCard, RecentlyPlayedEmpty } from "./_recently-played";
+import { ProfileCardSkeleton, ProfileStatsSkeleton, RecentlyPlayedSkeleton } from "@/components/skeletons";
 
 const RetryButton = ({ onPress, label }: { onPress: () => void; label?: string }) => (
   <Pressable
@@ -49,14 +50,7 @@ const ProfileStatsSection = ({ username }: { username?: string }) => {
 
   if (!loading) return null;
 
-  return (
-    <View
-      accessibilityLabel="Carregando estatísticas"
-      className="mt-[26px] h-[220px] items-center justify-center rounded-[20px] border border-white/[0.06] bg-prisma-surface"
-    >
-      <ActivityIndicator color={COLORS.accent} />
-    </View>
-  );
+  return <ProfileStatsSkeleton />;
 };
 
 const SectionLabel = ({ children }: { children: string }) => (
@@ -107,14 +101,7 @@ const ProfileSections = ({
       </View>
     );
   } else if (games.loading) {
-    recentlyPlayed = (
-      <View
-        accessibilityLabel="Carregando jogos"
-        className="h-[200px] items-center justify-center rounded-[22px] border border-white/[0.06] bg-prisma-surface"
-      >
-        <ActivityIndicator color={COLORS.accent} />
-      </View>
-    );
+    recentlyPlayed = <RecentlyPlayedSkeleton />;
   }
 
   return (
@@ -255,12 +242,10 @@ export const ProfileView = ({ username, header }: ProfileViewProps) => {
                 <RetryButton onPress={reload} />
               </View>
             ) : (
-              <View
-                accessibilityLabel="Carregando perfil"
-                className="h-[300px] items-center justify-center rounded-3xl border border-white/[0.06] bg-prisma-surface"
-              >
-                <ActivityIndicator color={COLORS.accent} />
-              </View>
+              <>
+                <ProfileCardSkeleton />
+                <ProfileStatsSkeleton />
+              </>
             )}
           </>
         }

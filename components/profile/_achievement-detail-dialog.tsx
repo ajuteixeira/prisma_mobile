@@ -13,7 +13,8 @@ import { useSession } from "@/store";
 import { formatUnlockDate } from "@/utils";
 import { Image } from "expo-image";
 import { memo, useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { Bone, BoneText } from "@/components/skeletons";
 
 const LOAD_ERROR = "Não foi possível carregar a conquista.";
 
@@ -123,8 +124,10 @@ export const AchievementDetailDialog = memo(
       );
     } else {
       body = (
-        <View accessibilityLabel="Carregando conquista" className="h-[220px] items-center justify-center">
-          <ActivityIndicator color={COLORS.accent} />
+        <View accessibilityLabel="Carregando conquista" className="h-[220px] items-center gap-3 pt-2">
+          <Bone className="h-20 w-20 rounded-[20px]" />
+          <Bone variant="rounded" className="mt-2 h-4 w-1/2" />
+          <BoneText _lines={2} gap={2} className="h-3" />
         </View>
       );
     }
