@@ -56,6 +56,9 @@ export const request = async <T>(
     method?: string;
   } = {},
 ): Promise<T> => {
+  if (__DEV__ && settings.SIMULATED_DELAY_MS > 0 && method === "GET") {
+    await new Promise((resolve) => setTimeout(resolve, settings.SIMULATED_DELAY_MS));
+  }
   const response = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: {
