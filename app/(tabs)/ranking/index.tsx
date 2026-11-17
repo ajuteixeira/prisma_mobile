@@ -12,13 +12,13 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
   Pressable,
   ScrollView,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { RankingSkeleton } from "@/components/skeletons";
 
 type RankedEntry = { entry: RankingEntry; count: number };
 
@@ -82,14 +82,7 @@ export default function RankingScreen() {
       </View>
     );
   } else if (loading && !data) {
-    empty = (
-      <View
-        accessibilityLabel="Carregando ranking"
-        className="h-[200px] items-center justify-center"
-      >
-        <ActivityIndicator color={COLORS.accent} />
-      </View>
-    );
+    empty = <RankingSkeleton />;
   } else {
     empty = (
       <Text className="py-8 text-center text-sm text-prisma-muted">
